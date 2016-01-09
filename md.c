@@ -69,7 +69,7 @@ unsigned int total_malloced = 0L;
 unsigned int hiwater = 0L;
 
 #ifdef DEBUGMALLOC_EXTENSIONS
-void check_all_blocks PROT((int));
+void check_all_blocks (int);
 
 outbuffer_t out;
 
@@ -93,7 +93,7 @@ void MDinit()
 }
 
 void
-MDmalloc P4(md_node_t *, node, int, size, int, tag, char *, desc)
+MDmalloc(md_node_t *  node, int  size, int  tag, char *  desc)
 {
     unsigned int h;
     static int count = 0;
@@ -137,7 +137,7 @@ MDmalloc P4(md_node_t *, node, int, size, int, tag, char *, desc)
 }
 
 #ifdef DEBUGMALLOC_EXTENSIONS
-void set_tag P2(void *, ptr, int, tag) {
+void set_tag(void *  ptr, int  tag) {
     md_node_t *node = PTR_TO_NODET(ptr);
     
     if ((node->tag & 0xff) < MAX_CATEGORY) {
@@ -161,7 +161,7 @@ void set_tag P2(void *, ptr, int, tag) {
 #endif
 
 int
-MDfree P1(void *, ptr)
+MDfree(void *  ptr)
 {
     unsigned int h;
     int tmp;
@@ -212,7 +212,7 @@ MDfree P1(void *, ptr)
 }
 
 #ifdef DEBUGMALLOC_EXTENSIONS
-char *dump_debugmalloc P2(char *, tfn, int, mask)
+char *dump_debugmalloc(char *  tfn, int  mask)
 {
     int j, total = 0, chunks = 0, total2 = 0;
     char *fn;
@@ -259,13 +259,13 @@ char *dump_debugmalloc P2(char *, tfn, int, mask)
 }
 #endif				/* DEBUGMALLOC_EXTENSIONS */
 
-void set_malloc_mask P1(int, mask)
+void set_malloc_mask(int  mask)
 {
     malloc_mask = mask;
 }
 
 #ifdef DEBUGMALLOC_EXTENSIONS
-static void mark_object P1(object_t *, ob) {
+static void mark_object(object_t *  ob) {
 #ifndef NO_ADD_ACTION
     sentence_t *sent;
 #endif
@@ -319,7 +319,7 @@ static void mark_object P1(object_t *, ob) {
 		    ob->name);
 }
 
-void mark_svalue P1(svalue_t *, sv) {
+void mark_svalue(svalue_t *  sv) {
     switch (sv->type) {
     case T_OBJECT:
 	sv->u.ob->extra_ref++;
@@ -353,7 +353,7 @@ void mark_svalue P1(svalue_t *, sv) {
     }    
 }
 
-static void mark_funp P1(funptr_t*, fp) {
+static void mark_funp(funptr_t*  fp) {
     if (fp->hdr.args)
 	fp->hdr.args->extra_ref++;
 
@@ -371,7 +371,7 @@ static void mark_funp P1(funptr_t*, fp) {
     }
 }
 
-static void mark_sentence P1(sentence_t *, sent) {
+static void mark_sentence(sentence_t *  sent) {
     if (sent->flags & V_FUNCTION) {
       if (sent->function.f)
           sent->function.f->hdr.extra_ref++;
@@ -387,7 +387,7 @@ static void mark_sentence P1(sentence_t *, sent) {
 
 static int print_depth = 0;
 
-static void md_print_array  P1(array_t *, vec) {
+static void md_print_array (array_t *  vec) {
     int i;
 
     outbuf_add(&out, "({ ");
@@ -437,7 +437,7 @@ static void md_print_array  P1(array_t *, vec) {
     print_depth--;
 }
 
-static void mark_config PROT((void)) {
+static void mark_config (void) {
     int i;
 
     for (i = 0; i < NUM_CONFIG_STRS; i++) {
@@ -446,7 +446,7 @@ static void mark_config PROT((void)) {
 }
 
 #if defined(PACKAGE_SOCKETS) || defined(PACKAGE_EXTERNAL)
-void mark_sockets PROT((void)) {
+void mark_sockets (void) {
     int i;
     char *s;
 
@@ -479,7 +479,7 @@ static int base_overhead = 0;
 /* Compute the correct values of allocd_strings, allocd_bytes, and
  * bytes_distinct_strings based on blocks that are actually allocated.
  */
-void compute_string_totals P3(int *, asp, int *, abp, int *, bp) {
+void compute_string_totals(int *  asp, int *  abp, int *  bp) {
     int hsh;
     md_node_t *entry;
     malloc_block_t *msbl;
@@ -512,7 +512,7 @@ void compute_string_totals P3(int *, asp, int *, abp, int *, bp) {
  * are printed to stdout and abort() is called.  Otherwise the error messages
  * are added to the outbuffer.
  */
-void check_string_stats P1(outbuffer_t *, out) {
+void check_string_stats(outbuffer_t *  out) {
     int overhead = blocks[TAG_SHARED_STRING & 0xff] * sizeof(block_t)
 	+ blocks[TAG_MALLOC_STRING & 0xff] * sizeof(malloc_block_t);
     int num = blocks[TAG_SHARED_STRING & 0xff] + blocks[TAG_MALLOC_STRING & 0xff];
@@ -578,7 +578,7 @@ void check_string_stats P1(outbuffer_t *, out) {
 #endif
 
 /* currently: 1 - debug, 2 - suppress leak checks */
-void check_all_blocks P1(int, flag) {
+void check_all_blocks(int  flag) {
     int i, j, hsh;
     int tmp;
     md_node_t *entry;

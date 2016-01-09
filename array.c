@@ -18,14 +18,14 @@ int num_arrays;
 int total_array_size;
 #endif
 
-INLINE_STATIC int builtin_sort_array_cmp_fwd PROT((svalue_t *, svalue_t *));
-INLINE_STATIC int builtin_sort_array_cmp_rev PROT((svalue_t *, svalue_t *));
-INLINE_STATIC int sort_array_cmp PROT((svalue_t *, svalue_t *));
+INLINE_STATIC int builtin_sort_array_cmp_fwd (svalue_t *, svalue_t *);
+INLINE_STATIC int builtin_sort_array_cmp_rev (svalue_t *, svalue_t *);
+INLINE_STATIC int sort_array_cmp (svalue_t *, svalue_t *);
 #ifndef NO_ENVIRONMENT
-static int deep_inventory_count PROT((object_t *));
-static void deep_inventory_collect PROT((object_t *, array_t *, int *));
+static int deep_inventory_count (object_t *);
+static void deep_inventory_collect (object_t *, array_t *, int *);
 #endif
-INLINE_STATIC int alist_cmp PROT((svalue_t *, svalue_t *));
+INLINE_STATIC int alist_cmp (svalue_t *, svalue_t *);
 
 /*
  * Make an empty array for everyone to use, never to be deallocated.
@@ -43,7 +43,7 @@ array_t the_null_array =
 };
 
 #ifdef PACKAGE_MUDLIB_STATS
-static void ms_setup_stats P1(array_t *, p) {
+static void ms_setup_stats(array_t *  p) {
     if (current_object) {
 	assign_stats(&p->stats, current_object);
 	add_array_size(&p->stats, p->size);
@@ -74,7 +74,7 @@ static void ms_setup_stats P1(array_t *, p) {
  * Note that we rely a bit on gcc automatically inlining small routines.
  * Speed maniacs may wish to add INLINE liberally.
  */
-static array_t *int_allocate_empty_array P1(int, n) {
+static array_t *int_allocate_empty_array(int  n) {
     array_t *p;
     
 #ifdef ARRAY_STATS
@@ -89,7 +89,7 @@ static array_t *int_allocate_empty_array P1(int, n) {
     return p;
 }
 
-array_t *allocate_empty_array P1(int, n)
+array_t *allocate_empty_array(int  n)
 {
     if (n < 0 || n > max_array_size)
 	error("Illegal array size.\n");
@@ -98,7 +98,7 @@ array_t *allocate_empty_array P1(int, n)
     return int_allocate_empty_array(n);
 }
 
-static array_t *int_allocate_array P1(int, n)
+static array_t *int_allocate_array(int  n)
 {
     array_t *p = int_allocate_empty_array(n);
 
@@ -108,7 +108,7 @@ static array_t *int_allocate_array P1(int, n)
     return p;
 }
 
-array_t *allocate_array P1(int, n)
+array_t *allocate_array(int  n)
 {
     array_t *p = allocate_empty_array(n);
 
@@ -118,7 +118,7 @@ array_t *allocate_array P1(int, n)
     return p;
 }
 
-array_t *allocate_array2 P2(int, n, svalue_t *, svp) {
+array_t *allocate_array2(int  n, svalue_t *  svp) {
     int i;
     array_t *ret;
     
@@ -143,7 +143,7 @@ array_t *allocate_array2 P2(int, n, svalue_t *, svp) {
     return ret;
 }
 
-static void dealloc_empty_array P1(array_t *, p) {
+static void dealloc_empty_array(array_t *  p) {
     ms_remove_stats(p);
 #ifdef ARRAY_STATS
     num_arrays--;
@@ -153,7 +153,7 @@ static void dealloc_empty_array P1(array_t *, p) {
     FREE((char *) p);
 }
 
-void dealloc_array P1(array_t *, p)
+void dealloc_array(array_t *  p)
 {
     int i;
 
@@ -162,7 +162,7 @@ void dealloc_array P1(array_t *, p)
     dealloc_empty_array(p);
 }
 
-void free_array P1(array_t *, p)
+void free_array(array_t *  p)
 {
     if (--(p->ref) > 0 || (p == &the_null_array))
 	return;
@@ -170,7 +170,7 @@ void free_array P1(array_t *, p)
     dealloc_array(p);
 }
 
-void free_empty_array P1(array_t *, p)
+void free_empty_array(array_t *  p)
 {
     if ((--(p->ref) > 0) || (p == &the_null_array))
         return;
@@ -180,7 +180,7 @@ void free_empty_array P1(array_t *, p)
 
 /* Finish setting up an array allocated with ALLOC_ARRAY, resizing it to
    size n */
-static array_t *fix_array P2(array_t *, p, int, n) {
+static array_t *fix_array(array_t *  p, int  n) {
 #ifdef ARRAY_STATS
     num_arrays++;
     total_array_size += sizeof(array_t) + sizeof(svalue_t) * (n-1);
@@ -191,7 +191,7 @@ static array_t *fix_array P2(array_t *, p, int, n) {
     return RESIZE_ARRAY(p, n);
 }
 
-INLINE_STATIC array_t *resize_array P2(array_t *, p, int, n) {
+INLINE_STATIC array_t *resize_array(array_t *  p, int  n) {
 #ifdef ARRAY_STATS
     total_array_size += (n - p->size) * sizeof(svalue_t);
 #endif
@@ -205,7 +205,7 @@ INLINE_STATIC array_t *resize_array P2(array_t *, p, int, n) {
     return p;
 }
 
-array_t *explode_string P4(char *, str, int, slen, char *, del, int, len)
+array_t *explode_string(char *  str, int  slen, char *  del, int  len)
 {
     char *p, *beg, *lastdel = 0;
     int num, j, limit;
@@ -393,7 +393,7 @@ array_t *explode_string P4(char *, str, int, slen, char *, del, int, len)
     return ret;
 }
 
-char *implode_string P3(array_t *, arr, char *, del, int, del_len)
+char *implode_string(array_t *  arr, char *  del, int  del_len)
 {
     int size, i, num;
     char *p, *q;
@@ -503,7 +503,7 @@ array_t *users()
  * Slice of an array.
  * It now frees the passed array
  */
-array_t *slice_array P3(array_t *, p, int, from, int, to)
+array_t *slice_array(array_t *  p, int  from, int  to)
 {
     int cnt;
     svalue_t *sv1, *sv2;
@@ -549,7 +549,7 @@ array_t *slice_array P3(array_t *, p, int, from, int, to)
 /*
  * Copy of an array
  */
-static array_t *copy_array P1(array_t *, p)
+static array_t *copy_array(array_t *  p)
 {
     array_t *d;
     int n;
@@ -563,7 +563,7 @@ static array_t *copy_array P1(array_t *, p)
 }
 
 #ifdef F_COMMANDS
-array_t *commands P1(object_t *, ob)
+array_t *commands(object_t *  ob)
 {
     sentence_t *s;
     array_t *v, *p;
@@ -608,7 +608,7 @@ array_t *commands P1(object_t *, ob)
 
 #ifdef F_FILTER
 void
-filter_array P2(svalue_t *, arg, int, num_arg)
+filter_array(svalue_t *  arg, int  num_arg)
 {
     array_t *vec = arg->u.arr, *r;
     int size;
@@ -654,7 +654,7 @@ filter_array P2(svalue_t *, arg, int, num_arg)
 }
 
 void
-filter_string P2(svalue_t *, arg, int, num_arg)
+filter_string(svalue_t *  arg, int  num_arg)
 {
     if (arg->u.string[0] == 0) {
 	pop_n_elems(num_arg - 1);
@@ -712,7 +712,7 @@ filter_string P2(svalue_t *, arg, int, num_arg)
    */
 
 /* nonstatic, is used in mappings too */
-int sameval P2(svalue_t *, arg1, svalue_t *, arg2)
+int sameval(svalue_t *  arg1, svalue_t *  arg2)
 {
     DEBUG_CHECK(!arg1 || !arg2, "Null pointer passed to sameval.\n");
 
@@ -757,7 +757,7 @@ typedef struct unique_list_s {
 
 static unique_list_t *g_u_list = 0;
 
-static void unique_array_error_handler PROT((void)) {
+static void unique_array_error_handler (void) {
     unique_list_t *unlist = g_u_list;
     unique_t *uptr = unlist->head, *nptr;
 
@@ -772,7 +772,7 @@ static void unique_array_error_handler PROT((void)) {
     FREE((char *)unlist);
 }
 
-void f_unique_array PROT((void)) {
+void f_unique_array (void) {
     array_t *v, *ret;
     int size, i, numkeys = 0, *ind, num_arg = st_num_arg;
     svalue_t *skipval, *sv, *svp;
@@ -876,7 +876,7 @@ void f_unique_array PROT((void)) {
 
 /* Concatenation of two arrays into one
  */
-array_t *add_array P2(array_t *, p, array_t *, r)
+array_t *add_array(array_t *  p, array_t *  r)
 {
     int cnt, res;
     array_t *d;		/* destination */
@@ -940,7 +940,7 @@ array_t *add_array P2(array_t *, p, array_t *, r)
 
 #ifndef NO_ENVIRONMENT
 /* Returns an array of all objects contained in 'ob' */
-array_t *all_inventory P2(object_t *, ob, int, override)
+array_t *all_inventory(object_t *  ob, int  override)
 {
     array_t *d;
     object_t *cur;
@@ -994,7 +994,7 @@ array_t *all_inventory P2(object_t *, ob, int, override)
    */
 #ifdef F_MAP
 void
-map_array P2(svalue_t *, arg, int, num_arg)
+map_array(svalue_t *  arg, int  num_arg)
 {
     array_t *arr = arg->u.arr;
     array_t *r;
@@ -1026,7 +1026,7 @@ map_array P2(svalue_t *, arg, int, num_arg)
 }
 
 void
-map_string P2(svalue_t *, arg, int, num_arg)
+map_string(svalue_t *  arg, int  num_arg)
 {
     char *arr = arg->u.string;
     char *p;
@@ -1087,7 +1087,7 @@ static function_to_call_t *sort_array_ftc;
 
 #define COMPARE_NUMS(x,y) (x < y ? -1 : (x > y ? 1 : 0))
 
-array_t *builtin_sort_array P2(array_t *, inlist, int, dir)
+array_t *builtin_sort_array(array_t *  inlist, int  dir)
 {
     quickSort((char *) inlist->item, inlist->size, sizeof(inlist->item),
 	      (dir<0) ? builtin_sort_array_cmp_rev : builtin_sort_array_cmp_fwd);
@@ -1095,7 +1095,7 @@ array_t *builtin_sort_array P2(array_t *, inlist, int, dir)
     return inlist;
 }
 
-INLINE_STATIC int builtin_sort_array_cmp_fwd P2(svalue_t *, p1, svalue_t *, p2)
+INLINE_STATIC int builtin_sort_array_cmp_fwd(svalue_t *  p1, svalue_t *  p2)
 {
     switch(p1->type | p2->type) {
 	case T_STRING:
@@ -1148,7 +1148,7 @@ INLINE_STATIC int builtin_sort_array_cmp_fwd P2(svalue_t *, p1, svalue_t *, p2)
     return 0;
 }
 
-INLINE_STATIC int builtin_sort_array_cmp_rev P2(svalue_t *, p1, svalue_t *, p2)
+INLINE_STATIC int builtin_sort_array_cmp_rev(svalue_t *  p1, svalue_t *  p2)
 {
     switch(p1->type | p2->type) {
         case T_STRING:
@@ -1202,7 +1202,7 @@ INLINE_STATIC int builtin_sort_array_cmp_rev P2(svalue_t *, p1, svalue_t *, p2)
 }
 
 INLINE_STATIC
-int sort_array_cmp P2(svalue_t *, p1, svalue_t *, p2) {
+int sort_array_cmp(svalue_t *  p1, svalue_t *  p2) {
     svalue_t *d;
 
     push_svalue(p1);
@@ -1218,7 +1218,7 @@ int sort_array_cmp P2(svalue_t *, p1, svalue_t *, p2) {
 }
 
 void
-f_sort_array PROT((void))
+f_sort_array (void)
 {
     svalue_t *arg = sp - st_num_arg + 1;
     array_t *tmp = arg->u.arr;
@@ -1277,7 +1277,7 @@ f_sort_array PROT((void))
 #ifndef NO_ENVIRONMENT
 static int valid_hide_flag;
 
-static int deep_inventory_count P1(object_t *, ob)
+static int deep_inventory_count(object_t *  ob)
 {
     object_t *cur;
     int cnt;
@@ -1307,7 +1307,7 @@ static int deep_inventory_count P1(object_t *, ob)
     return cnt;
 }
 
-static void deep_inventory_collect P3(object_t *, ob, array_t *, inv, int *, i)
+static void deep_inventory_collect(object_t *  ob, array_t *  inv, int *  i)
 {
     object_t *cur;
 
@@ -1337,7 +1337,7 @@ static void deep_inventory_collect P3(object_t *, ob, array_t *, inv, int *, i)
     }
 }
 
-array_t *deep_inventory P2(object_t *, ob, int, take_top)
+array_t *deep_inventory(object_t *  ob, int  take_top)
 {
     array_t *dinv;
     int i;
@@ -1374,7 +1374,7 @@ array_t *deep_inventory P2(object_t *, ob, int, take_top)
 }
 #endif
 
-INLINE_STATIC int alist_cmp P2(svalue_t *, p1, svalue_t *, p2)
+INLINE_STATIC int alist_cmp(svalue_t *  p1, svalue_t *  p2)
 {
     register int d;
 
@@ -1385,7 +1385,7 @@ INLINE_STATIC int alist_cmp P2(svalue_t *, p1, svalue_t *, p2)
     return 0;
 }
 
-INLINE_STATIC svalue_t *alist_sort P1(array_t *, inlist) {
+INLINE_STATIC svalue_t *alist_sort(array_t *  inlist) {
     int size, j, curix, parix, child1, child2, flag;
     svalue_t *sv_tab, *tmp, *table, *sv_ptr, val;
     char *str;
@@ -1470,7 +1470,7 @@ INLINE_STATIC svalue_t *alist_sort P1(array_t *, inlist) {
     return table;
 }
 
-array_t *subtract_array P2(array_t *, minuend, array_t *, subtrahend) {
+array_t *subtract_array(array_t *  minuend, array_t *  subtrahend) {
     array_t *difference;
     svalue_t *source, *dest, *svt;
     int i, size, o, d, l, h, msize;
@@ -1537,7 +1537,7 @@ array_t *subtract_array P2(array_t *, minuend, array_t *, subtrahend) {
     return fix_array(difference, msize);
 }
 
-array_t *intersect_array P2(array_t *, a1, array_t *, a2) {
+array_t *intersect_array(array_t *  a1, array_t *  a2) {
     array_t *a3;
     int d, l, j, i, a1s = a1->size, a2s = a2->size, flag;
     svalue_t *svt_1, *ntab, *sv_tab, *sv_ptr, val, *tmp;
@@ -1663,7 +1663,7 @@ array_t *intersect_array P2(array_t *, a1, array_t *, a2) {
     return fix_array(a3, l);
 }
 
-array_t *union_array P2(array_t *, a1, array_t *, a2) {
+array_t *union_array(array_t *  a1, array_t *  a2) {
     int a1s = a1->size, a2s = a2->size;
     int d, l, j, i, cnt, flag;
     array_t *a3; /* destination */
@@ -1807,7 +1807,7 @@ array_t *union_array P2(array_t *, a1, array_t *, a2) {
     return a3;
 }
 
-int match_single_regexp P2(char *, str, char *, pattern) {
+int match_single_regexp(char *  str, char *  pattern) {
     struct regexp *reg;
     int ret;
     
@@ -1819,7 +1819,7 @@ int match_single_regexp P2(char *, str, char *, pattern) {
     return ret;
 }
 
-array_t *match_regexp P3(array_t *, v, char *, pattern, int, flag) {
+array_t *match_regexp(array_t *  v, char *  pattern, int  flag) {
     struct regexp *reg;
     char *res;
     int num_match, size, match = !(flag & 2);
@@ -1873,7 +1873,7 @@ array_t *match_regexp P3(array_t *, v, char *, pattern, int, flag) {
  * Must be fixed so that any number of files can be returned, now max 256
  * (Sounds like a contradiction to me /Lars).
  */
-array_t *deep_inherit_list P1(object_t *, ob)
+array_t *deep_inherit_list(object_t *  ob)
 {
     array_t *ret;
     program_t *pr, *plist[256];
@@ -1905,7 +1905,7 @@ array_t *deep_inherit_list P1(object_t *, ob)
  * Returns a list of the immediate inherited files.
  *
  */
-array_t *inherit_list P1(object_t *, ob)
+array_t *inherit_list(object_t *  ob)
 {
     array_t *ret;
     program_t *pr, *plist[256];
@@ -1937,14 +1937,14 @@ typedef struct children_filter_s {
     char buf[MAX_OBJECT_NAME_SIZE];
 } children_filter_t;
 
-static int children_filter P2(object_t *, ob, children_filter_t *, cf)
+static int children_filter(object_t *  ob, children_filter_t *  cf)
 {
     int ol = strlen(ob->name);
     return ((ol == cf->len || (ol > cf->len && ob->name[cf->len] == '#')) && !strncmp(ob->name, cf->buf, cf->len));
 }
 
 array_t *
-children P1(char *, str)
+children(char *  str)
 {
     int count;
     children_filter_t cf;
@@ -1971,7 +1971,7 @@ children P1(char *, str)
 }
 
 #ifdef F_LIVINGS
-static int livings_filter P2(object_t *, ob, void *, data)
+static int livings_filter(object_t *  ob, void *  data)
 {
     return (ob->flags & O_ENABLE_COMMANDS);
 }
@@ -1999,7 +1999,7 @@ array_t *livings()
 #endif
 
 #ifdef F_OBJECTS
-void f_objects PROT((void))
+void f_objects (void)
 {
     int count, i;
     char *func;
@@ -2067,7 +2067,7 @@ void f_objects PROT((void))
  * })
  *
  */
-array_t *reg_assoc P4(char *, str, array_t *, pat, array_t *, tok, svalue_t *, def) {
+array_t *reg_assoc(char *  str, array_t *  pat, array_t *  tok, svalue_t *  def) {
     int i, size;
     char *tmp;
     array_t *ret;

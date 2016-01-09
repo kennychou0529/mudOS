@@ -27,14 +27,14 @@ static int current_block;
 
 static parse_node_t *branch_list[2];
 
-static void c_generate_forward_branch PROT((char));
-static void c_update_forward_branch_links PROT((char, parse_node_t *));
-static void c_branch_backwards PROT((char, int));
-static void c_update_forward_branch PROT((void));
-static void c_update_branch_list PROT((parse_node_t *));
+static void c_generate_forward_branch (char);
+static void c_update_forward_branch_links (char, parse_node_t *);
+static void c_branch_backwards (char, int);
+static void c_update_forward_branch (void);
+static void c_update_branch_list (parse_node_t *);
 static void c_generate_loop PROT((int, parse_node_t *, parse_node_t *,
 				  parse_node_t *));
-static void c_generate_else PROT((void));
+static void c_generate_else (void);
 
 #define CURRENT_BLOCK_SIZE (prog_code - mem_block[current_block].block)
 #define UPDATE_BLOCK_SIZE mem_block[current_block].current_size = CURRENT_BLOCK_SIZE
@@ -55,7 +55,7 @@ typedef struct switch_table_s {
 
 static switch_table_t *switch_tables;
 
-static int *add_switch_table P2(int, kind, int, num_cases) {
+static int *add_switch_table(int  kind, int  num_cases) {
     switch_table_t *st;
     switch_table_t **stp;
 
@@ -72,7 +72,7 @@ static int *add_switch_table P2(int, kind, int, num_cases) {
     return &st->data[0];
 }
 
-static void upd_jump P2(int, addr, int, label) {
+static void upd_jump(int  addr, int  label) {
     char *p;
 
     if (!addr) return;
@@ -83,7 +83,7 @@ static void upd_jump P2(int, addr, int, label) {
     *p++ = label % 10 + '0';
 }
 
-static int add_label PROT((void)) {
+static int add_label (void) {
     if (prog_code + 12 > prog_code_max) {
         mem_block_t *mbp = &mem_block[current_block];
 
@@ -101,7 +101,7 @@ static int add_label PROT((void)) {
     return label++;
 }
 
-static void ins_string P1(char *, s) {
+static void ins_string(char *  s) {
     int l = strlen(s);
     
     if (notreached) return;
@@ -133,7 +133,7 @@ static void ins_vstring P1V(char *, format)
     ins_string(buf);
 }
 
-static int ins_jump PROT((void)) {
+static int ins_jump (void) {
     int ret = CURRENT_BLOCK_SIZE;
 
     if (notreached) return 0;
@@ -143,7 +143,7 @@ static int ins_jump PROT((void)) {
 }
 
 static void
-generate_expr_list P1(parse_node_t *, expr) {
+generate_expr_list(parse_node_t *  expr) {
     parse_node_t *pn;
     int n, flag;
     
@@ -166,7 +166,7 @@ generate_expr_list P1(parse_node_t *, expr) {
 }
 
 static void
-generate_lvalue_list P1(parse_node_t *, expr) {
+generate_lvalue_list(parse_node_t *  expr) {
     while ((expr = expr->r.expr)) {
       c_generate_node(expr->l.expr);
       ins_string("c_void_assign();\n");
@@ -174,7 +174,7 @@ generate_lvalue_list P1(parse_node_t *, expr) {
 }
 
 static void
-f_quoted_string P2(FILE *, f, char *, s) {
+f_quoted_string(FILE *  f, char *  s) {
     while (1) {
 	switch (*s) {
 	case 0: return;
@@ -209,7 +209,7 @@ f_quoted_string P2(FILE *, f, char *, s) {
 }
 
 void
-c_generate_node P1(parse_node_t *, expr) {
+c_generate_node(parse_node_t *  expr) {
     if (!expr) return;
 
     switch (expr->kind) {
@@ -507,7 +507,7 @@ c_generate_node P1(parse_node_t *, expr) {
 			    expr->v.number & 0xff, expr->v.number >> 8, num_functionals);
 		current_num_values = expr->r.expr ? expr->r.expr->kind : 0;
 		switch_to_block(A_FUNCTIONALS);
-		ins_vstring("static void LPCFUNCTIONAL_%03i PROT((void)) {\n", num_functionals++);
+		ins_vstring("static void LPCFUNCTIONAL_%03i (void) {\n", num_functionals++);
 		c_generate_node(expr->l.expr);
 		ins_vstring("c_return();\n}\n\n");
 		switch_to_block(save_current_block);
@@ -526,7 +526,7 @@ c_generate_node P1(parse_node_t *, expr) {
 	    ins_vstring("c_anonymous(%i, %i, (POINTER_INT)LPCFUNCTIONAL_%03i);\n",
 			expr->v.number, expr->l.number, num_functionals);
 	    switch_to_block(A_FUNCTIONALS);
-	    ins_vstring("void LPCFUNCTIONAL_%03i PROT((void)) {\n", num_functionals++);
+	    ins_vstring("void LPCFUNCTIONAL_%03i (void) {\n", num_functionals++);
 	    c_generate_node(expr->r.expr);
 	    notreached = 0;
 	    ins_string("\n}\n\n");
@@ -603,11 +603,11 @@ static void c_generate_loop P4(int, test_first, parse_node_t *, block,
 }
 
 void
-c_generate_inherited_init_call P2(int, index, short, f) {
+c_generate_inherited_init_call(int  index, short  f) {
     ins_vstring("c_call_inherited(%i, %i, 0);\npop_stack();\n", index, (int)f);
 }
 
-void c_start_function P1(char *, fname) {
+void c_start_function(char *  fname) {
     notreached = 0;
     if (fname[0] == APPLY___INIT_SPECIAL_CHAR)
 	ins_vstring("static void LPC_%s__LPCinit() {\n",
@@ -624,7 +624,7 @@ void c_end_function() {
 void c_generate___INIT() {
 }
 
-static void c_generate_forward_branch P1(char, b) {
+static void c_generate_forward_branch(char  b) {
     switch (b) {
     case F_LAND:
 	ins_string("C_LAND(");
@@ -660,7 +660,7 @@ c_update_forward_branch() {
     add_label();
 }
 
-static void c_update_forward_branch_links P2(char, kind, parse_node_t *, link_start) {
+static void c_update_forward_branch_links(char  kind, parse_node_t *  link_start) {
     int i = *--forward_branch_ptr;
     int our_label;
     char *p;
@@ -680,7 +680,7 @@ static void c_update_forward_branch_links P2(char, kind, parse_node_t *, link_st
 }
 
 static void
-c_branch_backwards P2(char, b, int, addr) {
+c_branch_backwards(char  b, int  addr) {
     switch (b) {
     case F_BBRANCH_WHEN_ZERO:
 	ins_vstring("C_BRANCH_WHEN_ZERO(goto label%03i);\n", addr);
@@ -701,7 +701,7 @@ c_branch_backwards P2(char, b, int, addr) {
 }
 
 static void
-c_update_branch_list P1(parse_node_t *, bl) {
+c_update_branch_list(parse_node_t *  bl) {
     if (bl) {
 	do {
 	    upd_jump(bl->l.number, label);
@@ -744,7 +744,7 @@ c_uninitialize_parser() {
 static char *protect_allocated_string = 0;
 
 static char *
-protect P1(char *, str) {
+protect(char *  str) {
     static char buf[1024];
     char *p;
     int size = 0;
@@ -780,7 +780,7 @@ protect P1(char *, str) {
 #endif
 
 void
-c_generate_final_program P1(int, x) {
+c_generate_final_program(int  x) {
     switch_table_t *st, *next;
     int i;
     int index = 0;
@@ -884,7 +884,7 @@ c_generate_final_program P1(int, x) {
     }
 }
 
-void c_analyze P1(parse_node_t *, node) {
+void c_analyze(parse_node_t *  node) {
     /* future work */
 }
 #endif

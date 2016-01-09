@@ -43,11 +43,11 @@ static sw_block_t *swap_free;
 
 static int last_data;
 
-static int assert_swap_file PROT((void));
-static int alloc_swap PROT((int));
-static void free_swap PROT((int start, int length));
-static int swap_in PROT((char **, int));
-static int swap_out PROT((char *, int, int *));
+static int assert_swap_file (void);
+static int alloc_swap (int);
+static void free_swap (int start, int length);
+static int swap_in (char **, int);
+static int swap_out (char *, int, int *);
 
 /**
  ** General swapping routines.
@@ -93,7 +93,7 @@ static int assert_swap_file()
  *  Seek the swap file
  */
 static void
-swap_seek P2(long, offset, int, flag) {
+swap_seek(long  offset, int  flag) {
     int ret;
     
     do {
@@ -114,7 +114,7 @@ swap_seek P2(long, offset, int, flag) {
  *
  * Todo - think about better free block allocation methods
  */
-static int alloc_swap P1(int, length)
+static int alloc_swap(int  length)
 {
     sw_block_t *ptr, *prev;
     int ret;
@@ -157,7 +157,7 @@ static int alloc_swap P1(int, length)
  * Todo - think about tradeoff of storing the free block
  * info in the swap file itself.
  */
-static void free_swap P2(int, start, int, length)
+static void free_swap(int  start, int  length)
 {
     sw_block_t *m, *ptr, *prev;
 
@@ -220,7 +220,7 @@ static void free_swap P2(int, start, int, length)
  *   locp    - the swap location is written to the int this points to
  */
 static int
-swap_out P3(char *, block, int, size, int *, locp)
+swap_out(char *  block, int  size, int *  locp)
 {
     if (!block || time_to_swap == 0)
 	return 0;
@@ -258,7 +258,7 @@ swap_out P3(char *, block, int, size, int *, locp)
  *   loc       - position in the swap file to read from
  */
 static int
-swap_in P2(char **, blockp, int, loc)
+swap_in(char **  blockp, int  loc)
 {
     int size;
 
@@ -303,7 +303,7 @@ swap_in P2(char **, blockp, int, loc)
  *   type_start
  */
 int
-locate_out P1(program_t *, prog)
+locate_out(program_t *  prog)
 {
     if (!prog)
 	return 0;
@@ -340,7 +340,7 @@ locate_out P1(program_t *, prog)
  *   type_start
  */
 int
-locate_in P1(program_t *, prog)
+locate_in(program_t *  prog)
 {
     if (!prog)
 	return 0;
@@ -370,7 +370,7 @@ locate_in P1(program_t *, prog)
  *
  * marion - the swap seems to corrupt the function table
  */
-int swap P1(object_t *, ob)
+int swap(object_t *  ob)
 {
     /* the simuls[] table uses pointers to the functions so the simul_efun
      * program cannot be relocated.  locate_in() could be changed to
@@ -415,7 +415,7 @@ int swap P1(object_t *, ob)
     }
 }
 
-void load_ob_from_swap P1(object_t *, ob)
+void load_ob_from_swap(object_t *  ob)
 {
     if (ob->swap_num == -1)
 	fatal("Loading not swapped object.\n");
@@ -441,7 +441,7 @@ void load_ob_from_swap P1(object_t *, ob)
  * Swap out line number information.
  */
 int
-swap_line_numbers P1(program_t *, prog)
+swap_line_numbers(program_t *  prog)
 {
     int size;
 
@@ -465,7 +465,7 @@ swap_line_numbers P1(program_t *, prog)
 /*
  * Reload line number information from swap.
  */
-void load_line_numbers P1(program_t *, prog)
+void load_line_numbers(program_t *  prog)
 {
     int size;
 
@@ -487,7 +487,7 @@ void load_line_numbers P1(program_t *, prog)
 /*
  * Remove the swap space associated with this object.
  */
-void remove_swap_file P1(object_t *, ob)
+void remove_swap_file(object_t *  ob)
 {
     if (!ob)
 	return;
@@ -504,7 +504,7 @@ void remove_swap_file P1(object_t *, ob)
  * Same as above, but to remove line_number swap space.
  */
 void
-remove_line_swap P1(program_t *, prog)
+remove_line_swap(program_t *  prog)
 {
     if (!prog->line_info)
 	load_line_numbers(prog);
@@ -514,7 +514,7 @@ remove_line_swap P1(program_t *, prog)
     prog->line_swap_index = -1;
 }
 
-void print_swap_stats P1(outbuffer_t *, out)
+void print_swap_stats(outbuffer_t *  out)
 {
     int size, cnt, end;
     sw_block_t *m;

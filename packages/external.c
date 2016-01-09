@@ -114,7 +114,7 @@ int external_start P5(int, which, svalue_t *, args,
     }
 }
 
-void f_external_start PROT((void))
+void f_external_start (void)
 {
     int fd, num_arg = st_num_arg;
     svalue_t *arg = sp - num_arg + 1;

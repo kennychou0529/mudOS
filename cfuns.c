@@ -18,14 +18,14 @@ mapping_t *lpc_map;
 
 static svalue_t *lval;
 
-void c_new_class P2(int, which, int, has_values) {
+void c_new_class(int  which, int  has_values) {
     array_t *cl;
     
     cl = allocate_class(&current_prog->classes[which], has_values);
     push_refed_class(cl);
 }
 
-void c_member P1(int, idx) {
+void c_member(int  idx) {
     array_t *arr;
 
     if (sp->type != T_CLASS)
@@ -36,7 +36,7 @@ void c_member P1(int, idx) {
     free_class(arr);
 }
 
-void c_member_lvalue P1(int, idx) {
+void c_member_lvalue(int  idx) {
     array_t *arr;
 
     if (sp->type != T_CLASS)
@@ -67,7 +67,7 @@ void c_return_zero() {
     pop_control_stack();
 }
 
-void c_foreach P3(int, flags, int, idx1, int, idx2) {
+void c_foreach(int  flags, int  idx1, int  idx2) {
     IF_DEBUG(stack_in_use_as_temporary++);
     
     if (flags & FOREACH_MAPPING) {
@@ -127,7 +127,7 @@ void c_foreach P3(int, flags, int, idx1, int, idx2) {
     }
 }
 
-void c_expand_varargs P1(int, where) {
+void c_expand_varargs(int  where) {
     svalue_t *s, *t;
     array_t *arr;
     int n;
@@ -170,7 +170,7 @@ void c_expand_varargs P1(int, where) {
     free_array(arr);
 }
 
-void c_exit_foreach PROT((void)) {
+void c_exit_foreach (void) {
     IF_DEBUG(stack_in_use_as_temporary--);
     if (sp->type == T_REF) {
 	if (!(--sp->u.ref->ref) && sp->u.ref->lvalue == 0)
@@ -191,7 +191,7 @@ void c_exit_foreach PROT((void)) {
     }
 }
 
-int c_next_foreach PROT((void)) {
+int c_next_foreach (void) {
     if ((sp-1)->type == T_LVALUE) {
 	/* mapping */
 	if ((sp-2)->subtype--) {
@@ -234,7 +234,7 @@ int c_next_foreach PROT((void)) {
     return 0;
 }
 
-void c_call_inherited P3(int, inh, int, func, int, num_arg) {
+void c_call_inherited(int  inh, int  func, int  num_arg) {
     inherit_t *ip = current_prog->inherit + inh;
     program_t *temp_prog = ip->prog;
     function_t *funp;
@@ -256,7 +256,7 @@ void c_call_inherited P3(int, inh, int, func, int, num_arg) {
     call_program(current_prog, funp->address);
 }
 
-void c_call P2(int, func, int, num_arg) {
+void c_call(int  func, int  num_arg) {
     function_t *funp;
     
     func += function_index_offset;
@@ -289,7 +289,7 @@ void c_call P2(int, func, int, num_arg) {
     call_program(current_prog, funp->address);
 }
 
-void c_efun_return P1(int, args) {
+void c_efun_return(int  args) {
     svalue_t sv;
 		
     sv = *sp--;
@@ -444,7 +444,7 @@ void c_assign() {
     /* rvalue is already in the correct place */
 }
 
-void c_void_assign_local P1(svalue_t *, var) {
+void c_void_assign_local(svalue_t *  var) {
     if (sp->type == T_INVALID) {
 	sp--;
 	return;
@@ -587,7 +587,7 @@ void c_rindex() {
 }
 
 void
-c_functional P3(int, kind, int, num_arg, POINTER_INT, func) {
+c_functional(int  kind, int  num_arg, POINTER_INT  func) {
     funptr_t *fp;
     
     fp = (funptr_t *)DXALLOC(sizeof(funptr_hdr_t) + sizeof(functional_t),
@@ -618,7 +618,7 @@ c_functional P3(int, kind, int, num_arg, POINTER_INT, func) {
 }
 
 void
-c_anonymous P3(int, num_arg, int, num_local, POINTER_INT, func) {
+c_anonymous(int  num_arg, int  num_local, POINTER_INT  func) {
     funptr_t *fp;
     
     fp = (funptr_t *)DXALLOC(sizeof(funptr_hdr_t) + sizeof(functional_t),
@@ -649,7 +649,7 @@ c_anonymous P3(int, num_arg, int, num_local, POINTER_INT, func) {
 }
 
 void
-c_function_constructor P2(int, kind, int, arg)
+c_function_constructor(int  kind, int  arg)
 {
     funptr_t *fp;
 
@@ -692,7 +692,7 @@ void c_mod() {
     sp->u.number %= (sp+1)->u.number;
 }
 
-void c_add_eq P1(int, is_void) {
+void c_add_eq(int  is_void) {
     DEBUG_CHECK(sp->type != T_LVALUE,
 		"non-lvalue argument to +=\n");
     lval = sp->u.lvalue;
@@ -1262,7 +1262,7 @@ void c_add() {
     }
 }
 
-int c_loop_cond_compare P2(svalue_t *, s1, svalue_t *, s2) {
+int c_loop_cond_compare(svalue_t *  s1, svalue_t *  s2) {
     switch (s1->type | s2->type) {
     case T_NUMBER: 
 	return s1->u.number < s2->u.number;
@@ -1298,7 +1298,7 @@ int c_loop_cond_compare P2(svalue_t *, s1, svalue_t *, s2) {
     return 0;
 }
 
-void c_sscanf P1(int, num_arg) {
+void c_sscanf(int  num_arg) {
     svalue_t *fp;
     int i;
 
@@ -1339,7 +1339,7 @@ void c_sscanf P1(int, num_arg) {
     fp->u.number = i;
 }
 
-void c_parse_command P1(int, num_arg) {
+void c_parse_command(int  num_arg) {
     svalue_t *arg;
     svalue_t *fp;
     int i;
@@ -1388,7 +1388,7 @@ void c_parse_command P1(int, num_arg) {
     fp->u.number = i;
 }
 
-void c_prepare_catch P1(error_context_t *, econ) {
+void c_prepare_catch(error_context_t *  econ) {
     if (!save_context(econ))
 	error("Can't catch too deep recursion error.\n");
     push_control_stack(FRAME_CATCH);
@@ -1398,7 +1398,7 @@ void c_prepare_catch P1(error_context_t *, econ) {
     assign_svalue(&catch_value, &const1);
 }
 
-void c_caught_error P1(error_context_t *, econ) {
+void c_caught_error(error_context_t *  econ) {
     restore_context(econ);
     STACK_INC;
     *sp = catch_value;
@@ -1412,7 +1412,7 @@ void c_caught_error P1(error_context_t *, econ) {
 	error("Can't catch too deep recursion error.\n");
 }
     
-void c_end_catch P1(error_context_t *, econ) {
+void c_end_catch(error_context_t *  econ) {
     free_svalue(&catch_value, "F_END_CATCH");
     catch_value = const0;
     /* We come here when no longjmp() was executed */
@@ -1434,7 +1434,7 @@ typedef struct msl_s {
 
 static msl_t *g_msl_tables = 0;
 
-static void add_switch_list P1(string_switch_entry_t **, tables) {
+static void add_switch_list(string_switch_entry_t **  tables) {
     msl_t *new;
         
     new = ALLOCATE(msl_t, TAG_DEBUGMALLOC, "add_switch_list");
@@ -1442,7 +1442,7 @@ static void add_switch_list P1(string_switch_entry_t **, tables) {
     new->tables = tables;
 }
 	
-void mark_switch_lists PROT((void)) {
+void mark_switch_lists (void) {
     string_switch_entry_t *p, **tables;
     msl_t *msl = g_msl_tables;
     
@@ -1460,7 +1460,7 @@ void mark_switch_lists PROT((void)) {
 }
 #endif
 
-void fix_switches P1(string_switch_entry_t **, tables) {
+void fix_switches(string_switch_entry_t **  tables) {
     string_switch_entry_t *p;
 
 #ifdef DEBUGMALLOC_EXTENSIONS
@@ -1497,7 +1497,7 @@ int c_string_switch_lookup P3(svalue_t *, str, string_switch_entry_t *, table,
     return -1;
 }
 
-void c_evaluate P1(int, num) {
+void c_evaluate(int  num) {
     svalue_t *v;
     svalue_t *arg = sp - num + 1;
 
@@ -1532,7 +1532,7 @@ int c_range_switch_lookup P3(int, num, range_switch_entry_t *, table,
     return 0;
 }
 
-void c_make_ref P1(int, op) {
+void c_make_ref(int  op) {
     ref_t *ref;
 
     /* global and local refs need no protection since they are
@@ -1561,7 +1561,7 @@ void c_make_ref P1(int, op) {
     sp->u.ref = ref;
 }
 
-void c_kill_refs P1(int, num) {
+void c_kill_refs(int  num) {
     while (num--)
 	kill_ref(global_ref_list);
 }

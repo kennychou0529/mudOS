@@ -656,7 +656,7 @@ f_parse_command()
 }
 
 INLINE void
-f_range P1(int, code)
+f_range(int  code)
 {
     int from, to, len;
 
@@ -759,7 +759,7 @@ f_range P1(int, code)
 }
 
 INLINE void
-f_extract_range P1(int, code)
+f_extract_range(int  code)
 {
     int from,  len;
 
@@ -1137,7 +1137,7 @@ f_switch()
 }
 
 void
-call_simul_efun P2(unsigned short, index, int, num_arg)
+call_simul_efun(unsigned short  index, int  num_arg)
 {
     extern object_t *simul_efun_ob;
     
@@ -1238,7 +1238,7 @@ f_function_constructor()
 }
 
 INLINE void
-f__evaluate PROT((void))
+f__evaluate (void)
 {
     svalue_t *v;
     svalue_t *arg = sp - st_num_arg + 1;

@@ -7,10 +7,10 @@
  * Write statistics about objects on file.
  */
 
-static int sumSizes PROT((mapping_t *, mapping_node_t *, void *));
-static int svalue_size PROT((svalue_t *));
+static int sumSizes (mapping_t *, mapping_node_t *, void *);
+static int svalue_size (svalue_t *);
 
-static int sumSizes P3(mapping_t *, m, mapping_node_t *, elt, void *, tp)
+static int sumSizes(mapping_t *  m, mapping_node_t *  elt, void *  tp)
 {
     int *t = (int *)tp;
 
@@ -21,7 +21,7 @@ static int sumSizes P3(mapping_t *, m, mapping_node_t *, elt, void *, tp)
 
 int depth = 0;
 
-static int svalue_size P1(svalue_t *, v)
+static int svalue_size(svalue_t *  v)
 {
     int i, total;
 
@@ -95,7 +95,7 @@ static int svalue_size P1(svalue_t *, v)
     return 0;
 }
 
-int data_size P1(object_t *, ob)
+int data_size(object_t *  ob)
 {
     int total = 0, i;
 
@@ -108,7 +108,7 @@ int data_size P1(object_t *, ob)
     return total;
 }
 
-void dumpstat P1(char *, tfn)
+void dumpstat(char *  tfn)
 {
     FILE *f;
     object_t *ob;

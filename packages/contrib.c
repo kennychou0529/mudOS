@@ -90,7 +90,7 @@ void f_named_livings() {
 /* I forgot who wrote this, please claim it :) */
 #ifdef F_REMOVE_SHADOW
 void
-f_remove_shadow PROT((void))
+f_remove_shadow (void)
 {
     object_t *ob;
     
@@ -116,7 +116,7 @@ f_remove_shadow PROT((void))
    when I added it (added function support, etc) -Beek */
 #ifdef F_QUERY_NOTIFY_FAIL
 void
-f_query_notify_fail PROT((void)) {
+f_query_notify_fail (void) {
     char *p;
 
     if (command_giver && command_giver->interactive) {
@@ -139,7 +139,7 @@ f_query_notify_fail PROT((void)) {
 /* Beek again */
 #ifdef F_STORE_VARIABLE
 void
-f_store_variable PROT((void)) {
+f_store_variable (void) {
     int idx;
     svalue_t *sv;
     unsigned short type;
@@ -156,7 +156,7 @@ f_store_variable PROT((void)) {
 
 #ifdef F_FETCH_VARIABLE
 void
-f_fetch_variable PROT((void)) {
+f_fetch_variable (void) {
     int idx;
     svalue_t *sv;
     unsigned short type;
@@ -173,7 +173,7 @@ f_fetch_variable PROT((void)) {
 /* Beek */
 #ifdef F_SET_PROMPT
 void
-f_set_prompt PROT((void)) {
+f_set_prompt (void) {
     object_t *who;
     if (st_num_arg == 2) {
 	who = sp->u.ob;
@@ -196,9 +196,9 @@ f_set_prompt PROT((void)) {
 #ifdef F_COPY
 static int depth;
 
-static void deep_copy_svalue PROT((svalue_t *, svalue_t *));
+static void deep_copy_svalue (svalue_t *, svalue_t *);
 
-static array_t *deep_copy_array P1( array_t *, arg ) {
+static array_t *deep_copy_array( array_t *  arg ) {
     array_t *vec;
     int i;
     
@@ -209,7 +209,7 @@ static array_t *deep_copy_array P1( array_t *, arg ) {
     return vec;
 }
 
-static array_t *deep_copy_class P1(array_t *, arg) {
+static array_t *deep_copy_class(array_t *  arg) {
     array_t *vec;
     int i;
     
@@ -220,7 +220,7 @@ static array_t *deep_copy_class P1(array_t *, arg) {
     return vec;
 }
 
-static int doCopy P3( mapping_t *, map, mapping_node_t *, elt, mapping_t *, dest) {
+static int doCopy( mapping_t *  map, mapping_node_t *  elt, mapping_t *  dest) {
     svalue_t *sv;
     
     sv = find_for_insert(dest, &elt->values[0], 1);
@@ -233,7 +233,7 @@ static int doCopy P3( mapping_t *, map, mapping_node_t *, elt, mapping_t *, dest
     return 0;
 }
 
-static mapping_t *deep_copy_mapping P1( mapping_t *, arg ) {
+static mapping_t *deep_copy_mapping( mapping_t *  arg ) {
     mapping_t *map;
     
     map = allocate_mapping( 0 ); /* this should be fixed.  -Beek */
@@ -241,7 +241,7 @@ static mapping_t *deep_copy_mapping P1( mapping_t *, arg ) {
     return map;
 }
 
-static void deep_copy_svalue P2(svalue_t *, from, svalue_t *, to) {
+static void deep_copy_svalue(svalue_t *  from, svalue_t *  to) {
     switch (from->type) {
     case T_ARRAY:
 	depth++;
@@ -288,7 +288,7 @@ static void deep_copy_svalue P2(svalue_t *, from, svalue_t *, to) {
     }
 }
 
-void f_copy PROT((void))
+void f_copy (void)
 {
     svalue_t ret;
     
@@ -302,7 +302,7 @@ void f_copy PROT((void))
 /* Gudu@VR */    
 /* flag and extra info by Beek */
 #ifdef F_FUNCTIONS
-void f_functions PROT((void)) {
+void f_functions (void) {
     int i, j, num, index;
     array_t *vec, *subvec;
     function_t *funp;
@@ -402,7 +402,7 @@ void f_functions PROT((void)) {
 
 /* Beek */
 #ifdef F_VARIABLES
-static void fv_recurse P5(array_t *, arr, int *, idx, program_t *, prog, int, type, int, flag) {
+static void fv_recurse(array_t *  arr, int *  idx, program_t *  prog, int  type, int array_t *0) {
     int i;
     array_t *subarr;
     char buf[256];
@@ -432,7 +432,7 @@ static void fv_recurse P5(array_t *, arr, int *, idx, program_t *, prog, int, ty
     *idx += prog->num_variables_defined;
 }
 
-void f_variables PROT((void)) {
+void f_variables (void) {
     int idx = 0;
     array_t *arr;
     int flag = (sp--)->u.number;
@@ -451,7 +451,7 @@ void f_variables PROT((void)) {
 
 /* also Beek */
 #ifdef F_HEART_BEATS
-void f_heart_beats PROT((void)) {
+void f_heart_beats (void) {
     push_refed_array(get_heart_beats());
 }
 #endif
@@ -506,7 +506,7 @@ static int at_end(int i, int imax, int z, int *lens) {
 }
 
 void 
-f_terminal_colour PROT((void))
+f_terminal_colour (void)
 {
     char *instr, *cp, *savestr, *deststr, **parts;
     int num, i, j, k, col, start, space, *lens, maybe_at_end;
@@ -849,7 +849,7 @@ f_terminal_colour PROT((void))
 /* number to chop is added */
 #define PLURAL_CHOP    2
 
-static char *pluralize P1(char *, str) {
+static char *pluralize(char *  str) {
     char *pre, *rel, *end;
     char *p, *of_buf;
     int of_len = 0, plen, slen;
@@ -1258,7 +1258,7 @@ static char *pluralize P1(char *, str) {
 } /* end of pluralize() */
 
 void 
-f_pluralize PROT((void))
+f_pluralize (void)
 {
    char *s;
 
@@ -1276,7 +1276,7 @@ f_pluralize PROT((void))
  * file_length() efun, returns the number of lines in a file.
  * Returns -1 if no privs or file doesn't exist.
  */
-static int file_length P1(char *, file)
+static int file_length(char *  file)
 {
   struct stat st;
   FILE *f;
@@ -1310,7 +1310,7 @@ static int file_length P1(char *, file)
 } /* end of file_length() */
 
 void 
-f_file_length PROT((void))
+f_file_length (void)
 {
     int l;
     
@@ -1322,7 +1322,7 @@ f_file_length PROT((void))
 
 #ifdef F_UPPER_CASE
 void
-f_upper_case PROT((void))
+f_upper_case (void)
 {
     char *str;
 
@@ -1345,7 +1345,7 @@ f_upper_case PROT((void))
 #endif
 
 #ifdef F_REPLACEABLE
-void f_replaceable PROT((void)) {
+void f_replaceable (void) {
     object_t *obj;
     program_t *prog;
     int i, j, num, numignore, replaceable;
@@ -1400,7 +1400,7 @@ void f_replaceable PROT((void)) {
 #endif
 
 #ifdef F_PROGRAM_INFO
-void f_program_info PROT((void)) {
+void f_program_info (void) {
     int func_size = 0;
     int string_size = 0;
     int var_size = 0;
@@ -1513,7 +1513,7 @@ void f_program_info PROT((void)) {
  */
 
 #ifdef F_REMOVE_INTERACTIVE
-void f_remove_interactive PROT((void)) {
+void f_remove_interactive (void) {
     if( (sp->u.ob->flags & O_DESTRUCTED) || !(sp->u.ob->interactive) ) {
 	free_object(sp->u.ob, "f_remove_interactive");
 	*sp = const0;
@@ -1532,7 +1532,7 @@ void f_remove_interactive PROT((void)) {
  * mud.
  */
 #ifdef F_QUERY_IP_PORT
-static int query_ip_port P1(object_t *, ob)
+static int query_ip_port(object_t *  ob)
 {
     if (!ob || ob->interactive == 0)
 	return 0;
@@ -1540,7 +1540,7 @@ static int query_ip_port P1(object_t *, ob)
 }    
 
 void
-f_query_ip_port PROT((void))
+f_query_ip_port (void)
 {
     int tmp;
     
@@ -1615,7 +1615,7 @@ reset_timezone (char *old_tz)
 }
 
 void 
-f_zonetime PROT((void))
+f_zonetime (void)
 {
   char *timezone, *old_tz;
   char *retv;
@@ -1639,7 +1639,7 @@ f_zonetime PROT((void))
 
 #ifdef F_IS_DAYLIGHT_SAVINGS_TIME
 void
-f_is_daylight_savings_time PROT((void))
+f_is_daylight_savings_time (void)
 {
   struct tm *t;
   int       time_to_check;
@@ -1662,14 +1662,14 @@ f_is_daylight_savings_time PROT((void))
 #endif
 
 #ifdef F_DEBUG_MESSAGE
-void f_debug_message PROT((void)) {
+void f_debug_message (void) {
     debug_message("%s\n", sp->u.string);
     free_string_svalue(sp--);
 }
 #endif
 
 #ifdef F_FUNCTION_OWNER
-void f_function_owner PROT((void)) {
+void f_function_owner (void) {
     object_t *owner = sp->u.fp->hdr.owner;
     
     free_funp(sp->u.fp);
@@ -1678,7 +1678,7 @@ void f_function_owner PROT((void)) {
 #endif
 
 #ifdef F_REPEAT_STRING
-void f_repeat_string PROT((void)) {
+void f_repeat_string (void) {
     char *str;
     int repeat, len, newlen;
     char *ret, *p;
@@ -1712,9 +1712,9 @@ void f_repeat_string PROT((void)) {
 #endif
 
 #ifdef F_MEMORY_SUMMARY
-static int memory_share PROT((svalue_t *));
+static int memory_share (svalue_t *);
 
-static int node_share P3(mapping_t *, m, mapping_node_t *, elt, void *, tp) {
+static int node_share(mapping_t *  m, mapping_node_t *  elt, void *  tp) {
     int *t = (int *)tp;
     
     *t += sizeof(mapping_node_t) - 2*sizeof(svalue_t);
@@ -1724,7 +1724,7 @@ static int node_share P3(mapping_t *, m, mapping_node_t *, elt, void *, tp) {
     return 0;
 }
 
-static int memory_share P1(svalue_t *, sv) {
+static int memory_share(svalue_t *  sv) {
     int i, total = sizeof(svalue_t);
     int subtotal;
     static int depth = 0;
@@ -1831,7 +1831,7 @@ static void fms_recurse P4(mapping_t *, map, object_t *, ob,
     *idx += prog->num_variables_defined;
 }
 
-void f_memory_summary PROT((void)) {
+void f_memory_summary (void) {
     mapping_t *result = allocate_mapping(8);
     object_t *ob;
     int idx;
@@ -1863,7 +1863,7 @@ void f_memory_summary PROT((void)) {
 
 /* Marius */
 #ifdef F_QUERY_REPLACED_PROGRAM
-void f_query_replaced_program PROT((void))
+void f_query_replaced_program (void)
 {
     char *res = 0;
 
@@ -1890,7 +1890,7 @@ void f_query_replaced_program PROT((void))
 
 /* Skullslayer@Realms of the Dragon */
 #ifdef F_NETWORK_STATS
-void f_network_stats PROT((void))
+void f_network_stats (void)
 {
     mapping_t *m;
     int i, ports = 0;

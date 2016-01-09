@@ -177,15 +177,15 @@ typedef struct _sprintf_state {
 
 static sprintf_state_t	*sprintf_state = NULL;
 
-static void numadd PROT((outbuffer_t *, int num));
-static void add_space PROT((outbuffer_t *, int indent));
-static void add_justified PROT((char *str, int slen, pad_info_t *pad, int fs, format_info finfo, short int trailing));
-static int add_column PROT((cst ** column, int trailing));
-static int add_table PROT((cst ** table));
+static void numadd (outbuffer_t *, int num);
+static void add_space (outbuffer_t *, int indent);
+static void add_justified (char *str, int slen, pad_info_t *pad, int fs, format_info finfo, short int trailing);
+static int add_column (cst ** column, int trailing);
+static int add_table (cst ** table);
 
 #define ERROR(x) sprintf_error(x, 0)
 
-static void pop_sprintf_state PROT((void)) {
+static void pop_sprintf_state (void) {
     sprintf_state_t *state;
 
     state = sprintf_state;
@@ -209,7 +209,7 @@ static void pop_sprintf_state PROT((void)) {
     FREE(state);
 }
 
-static void push_sprintf_state PROT((void)) {
+static void push_sprintf_state (void) {
     sprintf_state_t *state;
 
     state = ALLOCATE(sprintf_state_t, TAG_TEMPORARY, "push_sprintf_state");
@@ -226,7 +226,7 @@ static void push_sprintf_state PROT((void)) {
  * Anything that has been allocated should be somewhere it can be found and
  * freed later.
  */
-static void sprintf_error P2(int, which, char *, premade) {
+static void sprintf_error(int  which, char *  premade) {
     char lbuf[2048];
     char *err;
     
@@ -281,7 +281,7 @@ static void sprintf_error P2(int, which, char *, premade) {
     error(lbuf);
 }
 
-static void numadd P2(outbuffer_t *, outbuf, int, num)
+static void numadd(outbuffer_t *  outbuf, int  num)
 {
     int i, num_l,		/* length of num as a string */
         nve;			/* true if num negative */
@@ -315,7 +315,7 @@ static void numadd P2(outbuffer_t *, outbuf, int, num)
     }
 }				/* end of numadd() */
 
-static void add_space P2(outbuffer_t *, outbuf, int, indent)
+static void add_space(outbuffer_t *  outbuf, int  indent)
 {
     int l;
     
@@ -331,7 +331,7 @@ static void add_space P2(outbuffer_t *, outbuf, int, indent)
  * and returns a pointer to this string.
  * Scary number of parameters for a recursive function.
  */
-void svalue_to_string P5(svalue_t *, obj, outbuffer_t *, outbuf, int, indent, int, trailing, int, indent2)
+void svalue_to_string(svalue_t *  obj, outbuffer_t *  outbuf, int  indent, int  trailing, int svalue_t *0)
 {
     int i;
 
@@ -508,7 +508,7 @@ void svalue_to_string P5(svalue_t *, obj, outbuffer_t *, outbuf, int, indent, in
 	outbuf_add(outbuf, ",\n");
 }				/* end of svalue_to_string() */
 
-static void add_pad P2(pad_info_t *, pad, int, len) {
+static void add_pad(pad_info_t *  pad, int  len) {
     char *p;
     int padlen;
     
@@ -538,7 +538,7 @@ static void add_pad P2(pad_info_t *, pad, int, len) {
 	memset(p, ' ', len);
 }
 
-INLINE_STATIC void add_nstr P2(char *, str, int, len) {
+INLINE_STATIC void add_nstr(char *  str, int  len) {
     if (outbuf_extend(&(sprintf_state->obuff), len) < len)
 	ERROR(ERR_BUFF_OVERFLOW);
     memcpy(sprintf_state->obuff.buffer + sprintf_state->obuff.real_size, str, len);
@@ -596,7 +596,7 @@ static void add_justified P6(char *, str, int, slen, pad_info_t *, pad,
  * Returns 1 if column completed.
  * Returns 2 if column completed has a \n at the end.
  */
-static int add_column P2(cst **, column, int, trailing)
+static int add_column(cst **  column, int  trailing)
 {
     register unsigned int done;
     char c;
@@ -650,7 +650,7 @@ static int add_column P2(cst **, column, int, trailing)
  * Returns 0 if table not completed.
  * Returns 1 if table completed.
  */
-static int add_table P1(cst **, table)
+static int add_table(cst **  table)
 {
     int done, i;
     cst *tab = *table;			/* always (*table) */
@@ -711,7 +711,7 @@ static int get_curpos() {
 /* We can't use a pointer to a local in a table or column, since it
  * could get overwritten by another on the same line.
  */
-static pad_info_t *make_pad P1(pad_info_t *, p) {
+static pad_info_t *make_pad(pad_info_t *  p) {
     pad_info_t *x;
     if (p->len == 0) return 0;
     x = ALLOCATE(pad_info_t, TAG_TEMPORARY, "make_pad");
@@ -727,7 +727,7 @@ static pad_info_t *make_pad P1(pad_info_t *, p) {
  * this function is called again, or if it's going to be modified (esp.
  * if it risks being free()ed).
  */
-char *string_print_formatted P3(char *, format_str, int, argc, svalue_t *, argv)
+char *string_print_formatted(char *  format_str, int  argc, svalue_t *  argv)
 {
     format_info finfo;
     svalue_t *carg;	/* current arg */

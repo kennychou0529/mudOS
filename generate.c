@@ -3,7 +3,7 @@
 #include "generate.h"
 #include "compiler.h"
 
-static parse_node_t *optimize PROT((parse_node_t *));
+static parse_node_t *optimize (parse_node_t *);
 static parse_node_t **last_local_refs = 0;
 static int optimizer_num_locals;
 
@@ -22,7 +22,7 @@ static int optimizer_num_locals;
  */
 
 static void
-optimize_expr_list P1(parse_node_t *, expr) {
+optimize_expr_list(parse_node_t *  expr) {
     if (!expr) return;
     do {
 	expr->v.expr = optimize(expr->v.expr);
@@ -30,7 +30,7 @@ optimize_expr_list P1(parse_node_t *, expr) {
 }
 
 static void
-optimize_lvalue_list P1(parse_node_t *, expr) {
+optimize_lvalue_list(parse_node_t *  expr) {
     while ((expr = expr->r.expr)) {
 	expr->v.expr = optimize(expr->l.expr);
     }
@@ -42,7 +42,7 @@ optimize_lvalue_list P1(parse_node_t *, expr) {
 static int optimizer_state = 0;
 
 static parse_node_t *
-optimize P1(parse_node_t *, expr) {
+optimize(parse_node_t *  expr) {
     if (!expr) return 0;
 
     switch (expr->kind) {
@@ -220,7 +220,7 @@ char *lpc_tree_name[] = {
     "string", "function", "catch"
 };
 
-static void lpc_tree P2(parse_node_t *, dest, int, num) {
+static void lpc_tree(parse_node_t *  dest, int  num) {
     parse_node_t *pn;
     
     dest->kind = NODE_CALL;
@@ -244,24 +244,24 @@ static void lpc_tree P2(parse_node_t *, dest, int, num) {
     }	
 }
 
-static void lpc_tree_number P2(parse_node_t *, dest, int, num) {
+static void lpc_tree_number(parse_node_t *  dest, int  num) {
     CREATE_NUMBER(dest->v.expr, num);
 }
 
-static void lpc_tree_real P2(parse_node_t *, dest, float, real) {
+static void lpc_tree_real(parse_node_t *  dest, float  real) {
     CREATE_REAL(dest->v.expr, real);
 }
 
-static void lpc_tree_expr P2(parse_node_t *, dest, parse_node_t *, expr) {
+static void lpc_tree_expr(parse_node_t *  dest, parse_node_t *  expr) {
     dest->v.expr = new_node_no_line();
     lpc_tree_form(expr, dest->v.expr);
 }
 
-static void lpc_tree_string P2(parse_node_t *, dest, char *, str) {
+static void lpc_tree_string(parse_node_t *  dest, char *  str) {
     CREATE_STRING(dest->v.expr, str);
 }
 
-static void lpc_tree_list P2(parse_node_t *, dest, parse_node_t *, expr) {
+static void lpc_tree_list(parse_node_t *  dest, parse_node_t *  expr) {
     parse_node_t *pn;
     int num = 0;
     
@@ -290,7 +290,7 @@ static void lpc_tree_list P2(parse_node_t *, dest, parse_node_t *, expr) {
 #define ARG_5 dest->r.expr->r.expr->r.expr->r.expr->r.expr
 
 void 
-lpc_tree_form P2(parse_node_t *, expr, parse_node_t *, dest) {
+lpc_tree_form(parse_node_t *  expr, parse_node_t *  dest) {
     if (!expr) {
 	dest->kind = NODE_NUMBER;
 	dest->type = TYPE_ANY;
@@ -437,7 +437,7 @@ lpc_tree_form P2(parse_node_t *, expr, parse_node_t *, dest) {
 #endif
 
 short
-generate P1(parse_node_t *, node) {
+generate(parse_node_t *  node) {
     short where = CURRENT_PROGRAM_SIZE;
 
     if (num_parse_error) return 0;
@@ -454,7 +454,7 @@ generate P1(parse_node_t *, node) {
     return where;
 }
 
-static void optimizer_start_function P1(int, n) {
+static void optimizer_start_function(int  n) {
     if (n) {
 	last_local_refs = CALLOCATE(n, parse_node_t *, TAG_COMPILER, "c_start_function");
 	optimizer_num_locals = n;
@@ -464,7 +464,7 @@ static void optimizer_start_function P1(int, n) {
     } else last_local_refs = 0;
 }
 
-static void optimizer_end_function PROT((void)) {
+static void optimizer_end_function (void) {
     int i;
     if (last_local_refs) {
 	for (i = 0; i < optimizer_num_locals; i++) 
@@ -477,7 +477,7 @@ static void optimizer_end_function PROT((void)) {
 }
 
 #ifdef LPC_TO_C
-short generate_function P3(function_t *, cfp, parse_node_t *, node, int, num) {
+short generate_function(function_t *  cfp, parse_node_t *  node, int  num) {
     short ret;
     
     if (pragmas & PRAGMA_OPTIMIZE) {
@@ -497,7 +497,7 @@ short generate_function P3(function_t *, cfp, parse_node_t *, node, int, num) {
     return ret;
 }
 #else
-short generate_function P3(function_t *, f, parse_node_t *, node, int, num) {
+short generate_function(function_t *  f, parse_node_t *  node, int  num) {
     short ret;
     if (pragmas & PRAGMA_OPTIMIZE) {
 	optimizer_start_function(num);
@@ -511,7 +511,7 @@ short generate_function P3(function_t *, f, parse_node_t *, node, int, num) {
 #endif
 
 int
-node_always_true P1(parse_node_t *, node) {
+node_always_true(parse_node_t *  node) {
     if (!node) return 1;
     if (node->kind == NODE_NUMBER)
 	return node->v.number;
@@ -519,7 +519,7 @@ node_always_true P1(parse_node_t *, node) {
 }
 
 int
-generate_conditional_branch P1(parse_node_t *, node) {
+generate_conditional_branch(parse_node_t *  node) {
     int branch;
 
     if (!node)
@@ -564,7 +564,7 @@ generate_conditional_branch P1(parse_node_t *, node) {
 
 #ifdef DEBUG
 void
-dump_expr_list P1(parse_node_t *, expr) {
+dump_expr_list(parse_node_t *  expr) {
     if (!expr) return;
     do {
       dump_tree(expr->v.expr);
@@ -572,14 +572,14 @@ dump_expr_list P1(parse_node_t *, expr) {
 }
 
 static void
-dump_lvalue_list P1(parse_node_t *, expr) {
+dump_lvalue_list(parse_node_t *  expr) {
     printf("(lvalue_list ");
     while ((expr = expr->r.expr))
       dump_tree(expr->l.expr);
 }
 
 void
-dump_tree P1(parse_node_t *, expr) {
+dump_tree(parse_node_t *  expr) {
     if (!expr) return;
 
     switch (expr->kind) {

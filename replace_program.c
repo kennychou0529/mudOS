@@ -13,10 +13,10 @@
 
 replace_ob_t *obj_list_replace = 0;
 
-static program_t *search_inherited PROT((char *, program_t *, int *));
-static replace_ob_t *retrieve_replace_program_entry PROT((void));
+static program_t *search_inherited (char *, program_t *, int *);
+static replace_ob_t *retrieve_replace_program_entry (void);
 
-int replace_program_pending P1(object_t *, ob)
+int replace_program_pending(object_t *  ob)
 {
     replace_ob_t *r_ob;
 
@@ -28,7 +28,7 @@ int replace_program_pending P1(object_t *, ob)
     return 0;
 }
 
-void replace_programs PROT((void))
+void replace_programs (void)
 {
     replace_ob_t *r_ob, *r_next;
     int i, num_fewer, offset;
@@ -111,7 +111,7 @@ void replace_programs PROT((void))
 }
 
 #ifdef F_REPLACE_PROGRAM
-static program_t *search_inherited P3(char *, str, program_t *, prg, int *, offpnt)
+static program_t *search_inherited(char *  str, program_t *  prg, int *  offpnt)
 {
     program_t *tmp;
     int i;
@@ -142,7 +142,7 @@ static program_t *search_inherited P3(char *, str, program_t *, prg, int *, offp
     return (program_t *) 0;
 }
 
-static replace_ob_t *retrieve_replace_program_entry PROT((void))
+static replace_ob_t *retrieve_replace_program_entry (void)
 {
     replace_ob_t *r_ob;
 
@@ -155,7 +155,7 @@ static replace_ob_t *retrieve_replace_program_entry PROT((void))
 }
 
 void
-f_replace_program PROT((void))
+f_replace_program (void)
 {
     replace_ob_t *tmp;
     int name_len;

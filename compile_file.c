@@ -15,7 +15,7 @@
 #include "master.h"
 
 void
-link_jump_table P2(program_t *, prog, void **, jump_table)
+link_jump_table(program_t *  prog, void **  jump_table)
 {
     int num = prog->num_functions_defined;
     function_t *funcs = prog->function_table;
@@ -52,7 +52,7 @@ init_lpc_to_c()
 
 /* F_GENERATE_SOURCE will only be def'd if LPC->C is */
 #ifdef F_GENERATE_SOURCE
-static void generate_identifier P2(char *, buf, char *, name)
+static void generate_identifier(char *  buf, char *  name)
 {
    while (*name) {
 	if ((*name >= 'a' && *name <= 'z') || (*name >= 'A' && *name <= 'Z'))
@@ -111,7 +111,7 @@ static void create_command P7(char *, buf, char *, format,
     }
 }
 
-static void compile_and_link P2(char *, file, char *, ident) {
+static void compile_and_link(char *  file, char *  ident) {
     char *p, command[1024];
     char tmp[1024];
     void *handle;
@@ -191,7 +191,7 @@ clean:\n\
 \t-rm -f mudlib.a\n\
 \n";
 
-int generate_source P2(svalue_t *, arg1, char *, out_fname)
+int generate_source(svalue_t *  arg1, char *  out_fname)
 {
     FILE *makefile;
 

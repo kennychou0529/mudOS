@@ -7,7 +7,7 @@
 #include "replace_program.h"
 
 INLINE void
-dealloc_funp P1(funptr_t *, fp)
+dealloc_funp(funptr_t *  fp)
 {
     program_t *prog = 0;
 
@@ -39,7 +39,7 @@ dealloc_funp P1(funptr_t *, fp)
 }
 
 INLINE void
-free_funp P1(funptr_t *, fp)
+free_funp(funptr_t *  fp)
 {
     fp->hdr.ref--;
     if (fp->hdr.ref > 0) {
@@ -49,7 +49,7 @@ free_funp P1(funptr_t *, fp)
 }
 
 INLINE void
-push_refed_funp P1(funptr_t *, fp)
+push_refed_funp(funptr_t *  fp)
 {
     STACK_INC;
     sp->type = T_FUNCTION;
@@ -57,7 +57,7 @@ push_refed_funp P1(funptr_t *, fp)
 }
 
 INLINE void
-push_funp P1(funptr_t *, fp)
+push_funp(funptr_t *  fp)
 {
     STACK_INC;
     sp->type = T_FUNCTION;
@@ -72,7 +72,7 @@ push_funp P1(funptr_t *, fp)
  * if we simply pushed the args from vec at this point.  (Note that the
  * old function pointers are broken in this regard)
  */
-int merge_arg_lists P3(int, num_arg, array_t *, arr, int, start) {
+int merge_arg_lists(int  num_arg, array_t *  arr, int  start) {
     int num_arr_arg = arr->size - start;
     svalue_t *sptr;
     
@@ -97,7 +97,7 @@ int merge_arg_lists P3(int, num_arg, array_t *, arr, int, start) {
 }
 
 INLINE funptr_t *
-make_efun_funp P2(int, opcode, svalue_t *, args)
+make_efun_funp(int  opcode, svalue_t *  args)
 {
     funptr_t *fp;
     
@@ -120,7 +120,7 @@ make_efun_funp P2(int, opcode, svalue_t *, args)
 }
 
 INLINE funptr_t *
-make_lfun_funp P2(int, index, svalue_t *, args)
+make_lfun_funp(int  index, svalue_t *  args)
 {
     funptr_t *fp;
     int newindex;
@@ -155,7 +155,7 @@ make_lfun_funp P2(int, index, svalue_t *, args)
 }
 
 INLINE funptr_t *
-make_simul_funp P2(int, index, svalue_t *, args)
+make_simul_funp(int  index, svalue_t *  args)
 {
     funptr_t *fp;
     
@@ -178,7 +178,7 @@ make_simul_funp P2(int, index, svalue_t *, args)
 }
 
 INLINE funptr_t *
-make_functional_funp P5(short, num_arg, short, num_local, short, len, svalue_t *, args, int, flag)
+make_functional_funp(short  num_arg, short  num_local, short  len, svalue_t *  args, int short0)
 {
     funptr_t *fp;
 
@@ -215,11 +215,11 @@ make_functional_funp P5(short, num_arg, short, num_local, short, len, svalue_t *
     return fp;
 }
 
-typedef void (*func_t) PROT((void));
+typedef void (*func_t) (void);
 extern func_t efun_table[];
 
 svalue_t *
-call_function_pointer P2(funptr_t *, funp, int, num_arg)
+call_function_pointer(funptr_t *  funp, int  num_arg)
 {
     static func_t *oefun_table = efun_table - BASE;
     
@@ -347,7 +347,7 @@ call_function_pointer P2(funptr_t *, funp, int, num_arg)
 }
 
 svalue_t *
-safe_call_function_pointer P2(funptr_t *, funp, int, num_arg)
+safe_call_function_pointer(funptr_t *  funp, int  num_arg)
 {
     error_context_t econ;
     svalue_t *ret;

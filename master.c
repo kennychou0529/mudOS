@@ -12,7 +12,7 @@ function_lookup_info_t *master_applies = 0;
  * hasn't loaded yet.  In that case, we return (svalue_t *)-1, and the
  * calling routine should let the check succeed.
  */
-svalue_t *apply_master_ob P2(int, fun, int, num_arg)
+svalue_t *apply_master_ob(int  fun, int  num_arg)
 {
     if (!master_ob) {
 	pop_n_elems(num_arg);
@@ -39,7 +39,7 @@ svalue_t *apply_master_ob P2(int, fun, int, num_arg)
 }
 
 /* Hmm, need something like a safe_call_direct() to do this one */
-svalue_t *safe_apply_master_ob P2(int, fun, int, num_arg)
+svalue_t *safe_apply_master_ob(int  fun, int  num_arg)
 {
     if (!master_ob) {
 	pop_n_elems(num_arg);
@@ -71,7 +71,7 @@ void init_master() {
     set_master(new_ob);
 }
 
-static void get_master_applies P1(object_t *, ob) {
+static void get_master_applies(object_t *  ob) {
     int i;
     
     /* master_applies will be allocated if we're recompiling master_ob */
@@ -93,7 +93,7 @@ static void get_master_applies P1(object_t *, ob) {
     }
 }
 
-void set_master P1(object_t *, ob) {
+void set_master(object_t *  ob) {
 #if defined(PACKAGE_UIDS) || defined(PACKAGE_MUDLIB_STATS)
     int first_load = (!master_ob);
 #endif

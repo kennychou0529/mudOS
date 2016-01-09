@@ -13,8 +13,8 @@
 #define LEN sizeof(svalue_t)
 #define MAX_LEN 1000
 
-INLINE_STATIC void doSwap PROT((char *, char *, int));
-static void qSort PROT((void *, int, int, int, int, int (*) ()));
+INLINE_STATIC void doSwap (char *, char *, int);
+static void qSort (void *, int, int, int, int, int (*) ());
 
 INLINE_STATIC void doSwap P3(register char *, one, register char *, two,
                              register int, size)
@@ -33,7 +33,7 @@ INLINE_STATIC void doSwap P3(register char *, one, register char *, two,
 static void qSort(v, left, right, size, rightmost, compar)
     void *v;
     int left, right, size, rightmost;
-    int (*compar) PROT((void *, void *));
+    int (*compar) (void *, void *);
 {
     int i, last, szleft;
 
@@ -56,7 +56,7 @@ static void qSort(v, left, right, size, rightmost, compar)
 void quickSort(a, nmemb, size, compar)
     void *a;
     int nmemb, size;
-    int (*compar) PROT((void *, void *));
+    int (*compar) (void *, void *);
 {
     if (nmemb < 2) {
 	return;

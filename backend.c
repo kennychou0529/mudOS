@@ -13,7 +13,7 @@
 
 #ifdef WIN32
 #include <process.h>
-void CDECL alarm_loop PROT((void *));
+void CDECL alarm_loop (void *);
 #endif
 
 error_context_t *current_error_context = 0;
@@ -26,11 +26,11 @@ int current_time;
 int heart_beat_flag = 0;
 
 object_t *current_heart_beat;
-static void look_for_objects_to_swap PROT((void));
-static void call_heart_beat PROT((void));
+static void look_for_objects_to_swap (void);
+static void call_heart_beat (void);
 
 #if 0
-static void report_holes PROT((void));
+static void report_holes (void);
 #endif
 
 /*
@@ -70,7 +70,7 @@ static void report_holes() {
 }
 #endif
 
-void logon P1(object_t *, ob)
+void logon(object_t *  ob)
 {
     if (ob->flags & O_DESTRUCTED) {
         return;
@@ -367,7 +367,7 @@ static int num_hb_calls = 0;	/* starts */
 static float perc_hb_probes = 100.0;	/* decaying avge of how many complete */
 
 #ifdef WIN32
-void CDECL alarm_loop P1(void *, ignore)
+void CDECL alarm_loop(void *  ignore)
 {
     while (1) {
 	Sleep(HEARTBEAT_INTERVAL / 1000);
@@ -472,7 +472,7 @@ static void call_heart_beat()
 }				/* call_heart_beat() */
 
 int
-query_heart_beat P1(object_t *, ob)
+query_heart_beat(object_t *  ob)
 {
     int index;
     
@@ -490,7 +490,7 @@ query_heart_beat P1(object_t *, ob)
  * various pointers in call_heart_beat could be stuffed, so we must
  * check current_heart_beat and adjust pointers.  */
 
-int set_heart_beat P2(object_t *, ob, int, to)
+int set_heart_beat(object_t *  ob, int  to)
 {
     int index;
     
@@ -556,7 +556,7 @@ int set_heart_beat P2(object_t *, ob, int, to)
     return 1;
 }
 
-int heart_beat_status P2(outbuffer_t *, ob, int, verbose)
+int heart_beat_status(outbuffer_t *  ob, int  verbose)
 {
     char buf[20];
 
@@ -581,7 +581,7 @@ int heart_beat_status P2(outbuffer_t *, ob, int, verbose)
  *
  * The master object is asked to do the actual loading.
  */
-void preload_objects P1(int, eflag)
+void preload_objects(int  eflag)
 {
     VOLATILE array_t *prefiles;
     svalue_t *ret;
@@ -667,7 +667,7 @@ void update_load_av()
 static double compile_av = 0.0;
 
 void
-update_compile_av P1(int, lines)
+update_compile_av(int  lines)
 {
     static int last_time;
     int n;

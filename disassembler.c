@@ -13,14 +13,14 @@
 #include "program.h"
 
 #ifdef F_DUMP_PROG
-void dump_prog PROT((program_t *, char *, int));
-static void disassemble PROT((FILE *, char *, int, int, program_t *));
-static char *disassem_string PROT((char *));
-static int CDECL short_compare PROT((CONST void *, CONST void *));
-static void dump_line_numbers PROT((FILE *, program_t *));
+void dump_prog (program_t *, char *, int);
+static void disassemble (FILE *, char *, int, int, program_t *);
+static char *disassem_string (char *);
+static int CDECL short_compare (CONST void *, CONST void *);
+static void dump_line_numbers (FILE *, program_t *);
 
 void
-f_dump_prog PROT((void))
+f_dump_prog (void)
 {
     program_t *prog;
     char *where;
@@ -57,7 +57,7 @@ f_dump_prog PROT((void))
  * 2 - dump line number table
  */
 void
-dump_prog P3(program_t *, prog, char *, fn, int, flags)
+dump_prog(program_t *  prog, char *  fn, int  flags)
 {
     char *fname;
     FILE *f;
@@ -181,7 +181,7 @@ dump_prog P3(program_t *, prog, char *, fn, int, flags)
     fclose(f);
 }
 
-static char *disassem_string P1(char *, str)
+static char *disassem_string(char *  str)
 {
     static char buf[30];
     char *b;
@@ -214,7 +214,7 @@ static char *disassem_string P1(char *, str)
 #define CLSS     prog->classes
 
 static int CDECL
-short_compare P2(CONST void *, a, CONST void *, b)
+short_compare(CONST void *  a, CONST void *  b)
 {
     int x = *(unsigned short *)a;
     int y = *(unsigned short *)b;
@@ -225,7 +225,7 @@ short_compare P2(CONST void *, a, CONST void *, b)
 static char *pushes[] = { "string", "number", "global", "local" };
 
 static void
-disassemble P5(FILE *, f, char *, code, int, start, int, end, program_t *, prog)
+disassemble(FILE *  f, char *  code, int  start, int  end, program_t * FILE *0)
 {
     extern int num_simul_efun;
 
@@ -647,7 +647,7 @@ disassemble P5(FILE *, f, char *, code, int, start, int, end, program_t *, prog)
 #define INCLUDE_DEPTH 10
 
 static void
-dump_line_numbers P2(FILE *, f, program_t *, prog) {
+dump_line_numbers(FILE *  f, program_t *  prog) {
     unsigned short *fi;
     unsigned char *li_start;
     unsigned char *li_end;

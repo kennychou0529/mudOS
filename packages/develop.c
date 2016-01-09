@@ -15,7 +15,7 @@ static object_t *ob;
 
 #ifdef F_DEBUG_INFO
 void
-f_debug_info PROT((void))
+f_debug_info (void)
 {
     svalue_t *arg;
     outbuffer_t out;
@@ -130,7 +130,7 @@ f_debug_info PROT((void))
 
 #ifdef F_REFS
 void
-f_refs PROT((void))
+f_refs (void)
 {
     int r;
 
@@ -164,7 +164,7 @@ f_refs PROT((void))
 #endif
 
 #ifdef F_DESTRUCTED_OBJECTS
-void f_destructed_objects PROT((void))
+void f_destructed_objects (void)
 {
     int i;
     array_t *ret;
@@ -192,7 +192,7 @@ void f_destructed_objects PROT((void))
 #if (defined(DEBUGMALLOC) && defined(DEBUGMALLOC_EXTENSIONS))
 #ifdef F_DEBUGMALLOC
 void
-f_debugmalloc PROT((void))
+f_debugmalloc (void)
 {
     char *res;
     
@@ -205,7 +205,7 @@ f_debugmalloc PROT((void))
 
 #ifdef F_SET_MALLOC_MASK
 void
-f_set_malloc_mask PROT((void))
+f_set_malloc_mask (void)
 {
     set_malloc_mask((sp--)->u.number);
 }
@@ -213,7 +213,7 @@ f_set_malloc_mask PROT((void))
 
 #ifdef F_CHECK_MEMORY
 void
-f_check_memory PROT((void))
+f_check_memory (void)
 {
     check_all_blocks((sp--)->u.number);
 }
@@ -223,7 +223,7 @@ f_check_memory PROT((void))
 
 #ifdef F_TRACE
 void
-f_trace PROT((void))
+f_trace (void)
 {
     int ot = -1;
 
@@ -237,7 +237,7 @@ f_trace PROT((void))
 
 #ifdef F_TRACEPREFIX
 void
-f_traceprefix PROT((void))
+f_traceprefix (void)
 {
     char *old = 0;
 

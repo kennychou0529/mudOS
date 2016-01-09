@@ -21,14 +21,14 @@ object_t *previous_ob;
 int tot_alloc_object, tot_alloc_object_size;
 
 char *save_mapping PROT ((mapping_t *m));
-INLINE_STATIC int restore_array PROT((char **str, svalue_t *));
-INLINE_STATIC int restore_class PROT((char **str, svalue_t *));
+INLINE_STATIC int restore_array (char **str, svalue_t *);
+INLINE_STATIC int restore_class (char **str, svalue_t *);
 
 #ifdef F_SET_HIDE
 int num_hidden = 0;
 
 INLINE int
-valid_hide P1(object_t *, obj)
+valid_hide(object_t *  obj)
 {
     svalue_t *ret;
 
@@ -44,7 +44,7 @@ valid_hide P1(object_t *, obj)
 int save_svalue_depth = 0, max_depth;
 int *sizes = 0;
 
-INLINE int svalue_save_size P1(svalue_t *, v)
+INLINE int svalue_save_size(svalue_t *  v)
 {
     switch(v->type) {
     case T_STRING:
@@ -126,7 +126,7 @@ INLINE int svalue_save_size P1(svalue_t *, v)
     }
 }
 
-INLINE void save_svalue P2(svalue_t *, v, char **, buf)
+INLINE void save_svalue(svalue_t *  v, char **  buf)
 {
     switch(v->type) {
     case T_STRING:
@@ -231,7 +231,7 @@ INLINE void save_svalue P2(svalue_t *, v, char **, buf)
 }
 
 INLINE_STATIC int
-restore_internal_size P3(char **, str, int, is_mapping, int, depth)
+restore_internal_size(char **  str, int  is_mapping, int  depth)
 {
     register char *cp = *str;
     int size = 0;
@@ -341,7 +341,7 @@ restore_internal_size P3(char **, str, int, is_mapping, int, depth)
 
 
 INLINE_STATIC int
-restore_size P2(char **, str, int, is_mapping)
+restore_size(char **  str, int  is_mapping)
 {
     register char *cp = *str;
     int size = 0;
@@ -424,7 +424,7 @@ restore_size P2(char **, str, int, is_mapping)
 }
 
 INLINE_STATIC int
-restore_interior_string P2(char **, val, svalue_t *, sv)
+restore_interior_string(char **  val, svalue_t *  sv)
 {
     register char *cp = *val;
     char *start = cp;
@@ -485,7 +485,7 @@ restore_interior_string P2(char **, val, svalue_t *, sv)
     return 0;
 }
 
-static int parse_numeric P3(char **, cpp, unsigned char, c, svalue_t *, dest) 
+static int parse_numeric(char **  cpp, unsigned char  c, svalue_t *  dest) 
 {
     char *cp = *cpp;
     int res, neg;
@@ -574,7 +574,7 @@ static int parse_numeric P3(char **, cpp, unsigned char, c, svalue_t *, dest)
     }
 }
 
-INLINE_STATIC void add_map_stats P2(mapping_t *, m, int, count)
+INLINE_STATIC void add_map_stats(mapping_t *  m, int  count)
 {
     total_mapping_nodes += count;
     total_mapping_size += count * sizeof(mapping_node_t);
@@ -585,7 +585,7 @@ INLINE_STATIC void add_map_stats P2(mapping_t *, m, int, count)
 }
 
 static int
-restore_mapping P2(char **,str, svalue_t *, sv)
+restore_mapping(char ** str, svalue_t *  sv)
 {
     int size, i, mask, oi, count = 0;
     char c;
@@ -792,7 +792,7 @@ restore_mapping P2(char **,str, svalue_t *, sv)
 
 
 INLINE_STATIC int
-restore_class P2(char **, str, svalue_t *, ret)
+restore_class(char **  str, svalue_t *  ret)
 {   
     int size;
     char c;
@@ -879,7 +879,7 @@ restore_class P2(char **, str, svalue_t *, ret)
 }
 
 INLINE_STATIC int
-restore_array P2(char **, str, svalue_t *, ret)
+restore_array(char **  str, svalue_t *  ret)
 {   
     int size;
     char c;
@@ -966,7 +966,7 @@ restore_array P2(char **, str, svalue_t *, ret)
 }
 
 INLINE_STATIC int
-restore_string P2(char *, val, svalue_t *, sv)
+restore_string(char *  val, svalue_t *  sv)
 {
     register char *cp = val;
     char *start = cp;
@@ -1029,7 +1029,7 @@ restore_string P2(char *, val, svalue_t *, sv)
 /* for this case, the variable in question has been set to zero already,
    and we don't have to worry about preserving it */
 INLINE int
-restore_svalue P2(char *, cp, svalue_t *, v)
+restore_svalue(char *  cp, svalue_t *  v)
 {
     int ret;
     char c;
@@ -1075,7 +1075,7 @@ restore_svalue P2(char *, cp, svalue_t *, v)
 /* for this case, we're being careful and want to leave the value alone on
    an error */
 INLINE_STATIC int
-safe_restore_svalue P2(char *, cp, svalue_t *, v)
+safe_restore_svalue(char *  cp, svalue_t *  v)
 {
     int ret;
     svalue_t val;
@@ -1270,7 +1270,7 @@ static int save_object_recurse P5(program_t *, prog, svalue_t **,
 int sel = -1;
 
 int
-save_object P3(object_t *, ob, char *, file, int, save_zeros)
+save_object(object_t *  ob, char *  file, int  save_zeros)
 {
     char *name, *p;
     static char save_name[256], tmp_name[256];
@@ -1360,7 +1360,7 @@ save_object P3(object_t *, ob, char *, file, int, save_zeros)
  * would write it.
  */
 char *
-save_variable P1(svalue_t *, var)
+save_variable(svalue_t *  var)
 {
     int theSize;
     char *new_str, *p;
@@ -1375,7 +1375,7 @@ save_variable P1(svalue_t *, var)
     return new_str;
 }
 
-static void cns_just_count P2(int *, idx, program_t *, prog) {
+static void cns_just_count(int *  idx, program_t *  prog) {
     int i;
     
     for (i = 0; i < prog->num_inherited; i++)
@@ -1383,7 +1383,7 @@ static void cns_just_count P2(int *, idx, program_t *, prog) {
     *idx += prog->num_variables_defined;
 }
 
-static void cns_recurse P3(object_t *, ob, int *, idx, program_t *, prog) {
+static void cns_recurse(object_t *  ob, int *  idx, program_t *  prog) {
     int i;
     
     for (i = 0; i < prog->num_inherited; i++) {
@@ -1401,12 +1401,12 @@ static void cns_recurse P3(object_t *, ob, int *, idx, program_t *, prog) {
     *idx += prog->num_variables_defined;
 }
 
-static void clear_non_statics P1(object_t *, ob) {
+static void clear_non_statics(object_t *  ob) {
     int idx = 0;
     cns_recurse(ob, &idx, ob->prog);
 }
 
-int restore_object P3(object_t *, ob, char *, file, int, noclear)
+int restore_object(object_t *  ob, char *  file, int  noclear)
 {
     char *name, *theBuff;
     int len, i;
@@ -1476,7 +1476,7 @@ int restore_object P3(object_t *, ob, char *, file, int, noclear)
     return 1;
 }
 
-void restore_variable P2(svalue_t *, var, char *, str)
+void restore_variable(svalue_t *  var, char *  str)
 {
     int rc;
 
@@ -1496,7 +1496,7 @@ void restore_variable P2(svalue_t *, var, char *, str)
     }
 }
 
-void tell_npc P2(object_t *, ob, char *, str)
+void tell_npc(object_t *  ob, char *  str)
 {
     copy_and_push_string(str);
     apply(APPLY_CATCH_TELL, ob, 1, ORIGIN_DRIVER);
@@ -1512,7 +1512,7 @@ void tell_npc P2(object_t *, ob, char *, str)
  * goes to catch_tell unless the target of tell_object is interactive
  * and is the current_object in which case it is written via add_message().
  */
-void tell_object P3(object_t *, ob, char *, str, int, len)
+void tell_object(object_t *  ob, char *  str, int  len)
 {
     if (!ob || (ob->flags & O_DESTRUCTED)) {
 	add_message(0, str, len);
@@ -1527,7 +1527,7 @@ void tell_object P3(object_t *, ob, char *, str, int, len)
 	tell_npc(ob, str);
 }
 
-void dealloc_object P2(object_t *, ob, char *, from)
+void dealloc_object(object_t *  ob, char *  from)
 {
 #ifdef DEBUG
     object_t *tmp, *prev_all = 0;
@@ -1582,7 +1582,7 @@ void dealloc_object P2(object_t *, ob, char *, from)
     FREE((char *) ob);
 }
 
-void free_object P2(object_t *, ob, char *, from)
+void free_object(object_t *  ob, char *  from)
 {
     ob->ref--;
 
@@ -1597,7 +1597,7 @@ void free_object P2(object_t *, ob, char *, from)
  * are needed, we allocate a space that is smaller than 'object_t'. This
  * unused (last) part must of course (and will not) be referenced.
  */
-object_t *get_empty_object P1(int, num_var)
+object_t *get_empty_object(int  num_var)
 {
     static object_t NULL_object;
     object_t *ob;
@@ -1621,7 +1621,7 @@ object_t *get_empty_object P1(int, num_var)
     return ob;
 }
 
-void reset_object P1(object_t *, ob)
+void reset_object(object_t *  ob)
 {
     /* Be sure to update time first ! */
     ob->next_reset = current_time + TIME_TO_RESET / 2 +
@@ -1636,7 +1636,7 @@ void reset_object P1(object_t *, ob)
     ob->flags |= O_RESET_STATE;
 }
 
-void call_create P2(object_t *, ob, int, num_arg)
+void call_create(object_t *  ob, int  num_arg)
 {
     /* Be sure to update time first ! */
     ob->next_reset = current_time + TIME_TO_RESET / 2 +
@@ -1655,7 +1655,7 @@ void call_create P2(object_t *, ob, int, num_arg)
 }
 
 #ifdef F_SET_HIDE
-INLINE int object_visible P1(object_t *, ob)
+INLINE int object_visible(object_t *  ob)
 {
     if (ob->flags & O_HIDDEN) {
 	if (current_object->flags & O_HIDDEN)
@@ -1667,7 +1667,7 @@ INLINE int object_visible P1(object_t *, ob)
 }
 #endif
 
-void reload_object P1(object_t *, obj)
+void reload_object(object_t *  obj)
 {
     int i;
 
@@ -1730,7 +1730,7 @@ void reload_object P1(object_t *, obj)
     call_create(obj, 0);
 }
 
-void get_objects P4(object_t ***, list, int *, size, get_objectsfn_t, callback, void *, data)
+void get_objects(object_t ***  list, int *  size, get_objectsfn_t  callback, void *  data)
 {
     object_t *ob;
 #ifdef F_SET_HIDE
@@ -1766,7 +1766,7 @@ static object_t *command_giver_stack[CFG_MAX_CALL_DEPTH];
 object_t **cgsp = command_giver_stack;
 
 #ifdef DEBUGMALLOC_EXTENSIONS
-void mark_command_giver_stack PROT((void))
+void mark_command_giver_stack (void)
 {
     object_t **ob;
 
@@ -1780,7 +1780,7 @@ void mark_command_giver_stack PROT((void))
 #endif
 
 /* set a new command giver, saving the old one */
-void save_command_giver P1(object_t *, ob)
+void save_command_giver(object_t *  ob)
 {
     DEBUG_CHECK(cgsp == &command_giver_stack[CFG_MAX_CALL_DEPTH], "command_giver stack overflow");
     *(++cgsp) = command_giver;
@@ -1791,7 +1791,7 @@ void save_command_giver P1(object_t *, ob)
 }
 
 /* restore the saved command giver */
-void restore_command_giver PROT((void))
+void restore_command_giver (void)
 {
     if (command_giver)
 	free_object(command_giver, "command_giver_error_handler");
@@ -1800,7 +1800,7 @@ void restore_command_giver PROT((void))
 }
 
 /* set a new command giver */
-void set_command_giver P1(object_t *, ob)
+void set_command_giver(object_t *  ob)
 {
     if (command_giver)
 	free_object(command_giver, "set_command_giver");

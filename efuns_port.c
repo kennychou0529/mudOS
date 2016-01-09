@@ -26,7 +26,7 @@
 #define SALT_LEN	8
 
 void
-f_crypt PROT((void))
+f_crypt (void)
 {
     char *res, *p, salt[SALT_LEN + 1];
     char *choice =
@@ -54,7 +54,7 @@ f_crypt PROT((void))
 
 #ifdef F_OLDCRYPT
 void
-f_oldcrypt PROT((void)) {
+f_oldcrypt (void) {
     char *res, salt[3];
     char *choice =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ./";
@@ -80,7 +80,7 @@ f_oldcrypt PROT((void)) {
 /* FIXME: most of the #ifdefs here should be based on configure checks
    instead.  Same for rusage() */
 void
-f_localtime PROT((void))
+f_localtime (void)
 {
     struct tm *tm;
     array_t *vec;
@@ -162,7 +162,7 @@ f_localtime PROT((void))
 
 #ifdef F_RUSAGE
 #ifdef WIN32
-void f_rusage PROT((void))
+void f_rusage (void)
 {
     error("rusage() not supported under Windows.\n");
 }
@@ -170,7 +170,7 @@ void f_rusage PROT((void))
 	
 #ifdef RUSAGE
 void
-f_rusage PROT((void))
+f_rusage (void)
 {
     struct rusage rus;
     mapping_t *m;
@@ -215,7 +215,7 @@ f_rusage PROT((void))
 
 #ifdef GET_PROCESS_STATS
 void
-f_rusage PROT((void))
+f_rusage (void)
 {
     struct process_stats ps;
     mapping_t *m;
@@ -261,7 +261,7 @@ f_rusage PROT((void))
 */
 
 void
-f_rusage PROT((void))
+f_rusage (void)
 {
     mapping_t *m;
     struct tms t;
@@ -278,7 +278,7 @@ f_rusage PROT((void))
 #ifdef LATTICE
 
 void
-f_rusage PROT((void))
+f_rusage (void)
 {
     mapping_t *m;
     int i;
@@ -309,7 +309,7 @@ f_rusage PROT((void))
    at some time prior to this calling of this efun.
 */
 void
-f_malloc_check PROT((void))
+f_malloc_check (void)
 {
     push_number(NXMallocCheck());
 }
@@ -320,7 +320,7 @@ f_malloc_check PROT((void))
    malloc.
 */
 void
-f_malloc_debug PROT((void))
+f_malloc_debug (void)
 {
     int level;
 

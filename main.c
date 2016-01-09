@@ -41,10 +41,10 @@ void init_addr_server();
 #endif				/* NO_IP_DEMON */
 
 #ifdef SIGNAL_FUNC_TAKES_INT
-#define SIGPROT PROT((int))
-#define PSIG(z) z P1(int, sig)
+#define SIGPROT (int)
+#define PSIG(z) z(int  sig)
 #else
-#define SIGPROT PROT((void))
+#define SIGPROT (void)
 #define PSIG(z) z()
 #endif
 
@@ -74,7 +74,7 @@ static void CDECL sig_hup SIGPROT,
 int debug_level = 0;
 #endif
 
-int main P2(int, argc, char **, argv)
+int main(int  argc, char **  argv)
 {
     time_t tm;
     int i, new_mudlib = 0, got_defaults = 0;
@@ -433,9 +433,9 @@ int main P2(int, argc, char **, argv)
 }
 
 #ifdef DEBUGMALLOC
-char *int_string_copy P2(char *, str, char *, desc)
+char *int_string_copy(char *  str, char *  desc)
 #else
-char *int_string_copy P1(char *, str)
+char *int_string_copy(char *  str)
 #endif
 {
     char *p;
@@ -456,9 +456,9 @@ char *int_string_copy P1(char *, str)
 }
 
 #ifdef DEBUGMALLOC
-char *int_string_unlink P2(char *, str, char *, desc)
+char *int_string_unlink(char *  str, char *  desc)
 #else
-char *int_string_unlink P1(char *, str)
+char *int_string_unlink(char *  str)
 #endif
 {
     malloc_block_t *mbt, *newmbt;
@@ -526,7 +526,7 @@ void debug_message P1V(char *, fmt)
 
 int slow_shut_down_to_do = 0;
 
-char *xalloc P1(int, size)
+char *xalloc(int  size)
 {
     char *p;
     static int going_to_exit;

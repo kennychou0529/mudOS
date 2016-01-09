@@ -32,18 +32,18 @@ static time_t config_id;
 
 char driver_name[512];
 
-static void patch_out PROT((program_t *, short *, int));
-static void patch_in PROT((program_t *, short *, int));
-static int str_case_cmp PROT((char *, char *));
-static int check_times PROT((time_t, char *));
-static int do_stat PROT((char *, struct stat *, char *));
+static void patch_out (program_t *, short *, int);
+static void patch_in (program_t *, short *, int);
+static int str_case_cmp (char *, char *);
+static int check_times (time_t, char *);
+static int do_stat (char *, struct stat *, char *);
 
 /*
  * stats fname or CONFIG_FILE_DIR/fname (for finding config files) and/or
  * BIN_DIR/fname (for finding config files and/or driver), whichever exists.
  */
 static int
-do_stat P3(char *, fname, struct stat *, st, char *, pathname)
+do_stat(char *  fname, struct stat *  st, char *  pathname)
 {
     int i;
     char buf[256];
@@ -80,7 +80,7 @@ do_stat P3(char *, fname, struct stat *, st, char *, pathname)
     return -1;
 }				/* do_stat() */
 
-void save_binary P3(program_t *, prog, mem_block_t *, includes, mem_block_t *, patches)
+void save_binary(program_t *  prog, mem_block_t *  includes, mem_block_t *  patches)
 {
     char file_name_buf[200];
     char *file_name = file_name_buf;
@@ -242,9 +242,9 @@ void save_binary P3(program_t *, prog, mem_block_t *, includes, mem_block_t *, p
 #endif
 
 #ifdef LPC_TO_C
-program_t *int_load_binary P2(char *, name, lpc_object_t *, lpc_obj)
+program_t *int_load_binary(char *  name, lpc_object_t *  lpc_obj)
 #else
-program_t *int_load_binary P1(char *, name)
+program_t *int_load_binary(char *  name)
 #endif
 {
     char file_name_buf[400];
@@ -484,7 +484,7 @@ program_t *int_load_binary P1(char *, name)
     return prog;
 }				/* load_binary() */
 
-void init_binaries P2(int, argc, char **, argv)
+void init_binaries(int  argc, char **  argv)
 {
     struct stat st;
     int arg_id, i;
@@ -518,7 +518,7 @@ void init_binaries P2(int, argc, char **, argv)
  * Test against modification times.  -1 if file doesn't exist,
  * 0 if out of date, and 1 if it's ok.
  */
-static int check_times P2(time_t, mtime, char *, nm)
+static int check_times(time_t  mtime, char *  nm)
 {
     struct stat st;
 
@@ -541,7 +541,7 @@ static int check_times P2(time_t, mtime, char *, nm)
  * I set things up so these routines can be used with other things
  * that might need patching.
  */
-static void patch_out P3(program_t *, prog, short *, patches, int, len)
+static void patch_out(program_t *  prog, short *  patches, int  len)
 {
     int i;
     char *p;
@@ -574,7 +574,7 @@ static void patch_out P3(program_t *, prog, short *, patches, int, len)
     }
 }				/* patch_out() */
 
-static int str_case_cmp P2(char *, a, char *, b)
+static int str_case_cmp(char *  a, char *  b)
 {
     char *s1, *s2;
 
@@ -584,7 +584,7 @@ static int str_case_cmp P2(char *, a, char *, b)
     return s1 - s2;
 }				/* str_case_cmp() */
 
-static void patch_in P3(program_t *, prog, short *, patches, int, len)
+static void patch_in(program_t *  prog, short *  patches, int  len)
 {
     int i;
     char *p;
@@ -626,7 +626,7 @@ static void patch_in P3(program_t *, prog, short *, patches, int, len)
 /*
  * open file for writing, creating intermediate directories if needed.
  */
-FILE *crdir_fopen P1(char *, file_name)
+FILE *crdir_fopen(char *  file_name)
 {
     char *p;
     struct stat st;

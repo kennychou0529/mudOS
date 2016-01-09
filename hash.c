@@ -61,7 +61,7 @@ hashstr P3(char *, s,		/* string to hash */
  */
 
 INLINE int
-whashstr P2(char *, s, int, maxn)
+whashstr(char *  s, int  maxn)
 {
     register unsigned char oh, h;
     register unsigned char *p;

@@ -34,12 +34,12 @@
 
 int call_origin = 0;
 
-int data_size PROT((object_t * ob));
-void reload_object PROT((object_t * obj));
+int data_size (object_t * ob);
+void reload_object (object_t * obj);
 
 #ifdef F_ALL_INVENTORY
 void
-f_all_inventory PROT((void))
+f_all_inventory (void)
 {
     array_t *vec = all_inventory(sp->u.ob, 0);
     free_object(sp->u.ob, "f_all_inventory");
@@ -50,7 +50,7 @@ f_all_inventory PROT((void))
 
 #ifdef F_ALLOCATE
 void
-f_allocate PROT((void))
+f_allocate (void)
 {
     if (st_num_arg == 2) {
 	(sp-1)->u.arr = allocate_array2((sp-1)->u.number, sp);
@@ -64,7 +64,7 @@ f_allocate PROT((void))
 
 #ifdef F_ALLOCATE_BUFFER
 void
-f_allocate_buffer PROT((void))
+f_allocate_buffer (void)
 {
     buffer_t *buf;
 
@@ -80,7 +80,7 @@ f_allocate_buffer PROT((void))
 
 #ifdef F_ALLOCATE_MAPPING
 void
-f_allocate_mapping PROT((void))
+f_allocate_mapping (void)
 {
     array_t *arr;
     
@@ -109,7 +109,7 @@ f_allocate_mapping PROT((void))
 
 #ifdef F_BIND
 void
-f_bind PROT((void))
+f_bind (void)
 {
     object_t *ob = sp->u.ob;
     funptr_t *old_fp = (sp-1)->u.fp;
@@ -161,7 +161,7 @@ f_bind PROT((void))
 #endif
 
 #ifdef F_CACHE_STATS
-static void print_cache_stats P1(outbuffer_t *, ob)
+static void print_cache_stats(outbuffer_t *  ob)
 {
     outbuf_add(ob, "Function cache information\n");
     outbuf_add(ob, "-------------------------------\n");
@@ -178,7 +178,7 @@ static void print_cache_stats P1(outbuffer_t *, ob)
 	     100 * ((double) apply_low_collisions / apply_low_call_others));
 }
 
-void f_cache_stats PROT((void))
+void f_cache_stats (void)
 {
     outbuffer_t ob;
 
@@ -191,7 +191,7 @@ void f_cache_stats PROT((void))
 #ifdef F__CALL_OTHER
  /* enhanced call_other written 930314 by Luke Mewburn <zak@rmit.edu.au> */
 void
-f__call_other PROT((void))
+f__call_other (void)
 {
     svalue_t *arg;
     char *funcname;
@@ -258,7 +258,7 @@ f__call_other PROT((void))
 
 #ifdef F_CALL_OUT
 void
-f_call_out PROT((void))
+f_call_out (void)
 {
     svalue_t *arg = sp - st_num_arg + 1;
     int num = st_num_arg - 2;
@@ -293,14 +293,14 @@ f_call_out PROT((void))
 
 #ifdef F_CALL_OUT_INFO
 void
-f_call_out_info PROT((void))
+f_call_out_info (void)
 {
     push_refed_array(get_all_call_outs());
 }
 #endif
 
 #if defined(F_CALL_STACK) || defined(F_ORIGIN)
-static char *origin_name P1(int, orig) {
+static char *origin_name(int  orig) {
     /* FIXME: this should use ffs() if available (BSD) */
     int i = 0;
     static char *origins[] = {
@@ -320,7 +320,7 @@ static char *origin_name P1(int, orig) {
 
 #ifdef F_CALL_STACK
 void
-f_call_stack PROT((void))
+f_call_stack (void)
 {
     int i, n = csp - &control_stack[0] + 1;
     array_t *ret;
@@ -386,7 +386,7 @@ f_call_stack PROT((void))
 
 #ifdef F_CAPITALIZE
 void
-f_capitalize PROT((void))
+f_capitalize (void)
 {
     if (uislower(sp->u.string[0])) {
 	unlink_string_svalue(sp);
@@ -397,7 +397,7 @@ f_capitalize PROT((void))
 
 #ifdef F_CHILDREN
 void
-f_children PROT((void))
+f_children (void)
 {
     array_t *vec;
 
@@ -409,7 +409,7 @@ f_children PROT((void))
 
 #ifdef F_CLASSP
 void
-f_classp PROT((void))
+f_classp (void)
 {
     if (sp->type == T_CLASS) {
 	free_class(sp->u.arr);
@@ -423,7 +423,7 @@ f_classp PROT((void))
 
 #ifdef F_CLEAR_BIT
 void
-f_clear_bit PROT((void))
+f_clear_bit (void)
 {
     char *str;
     int len, ind, bit;
@@ -449,7 +449,7 @@ f_clear_bit PROT((void))
 
 #ifdef F_CLONEP
 void
-f_clonep PROT((void))
+f_clonep (void)
 {
     if ((sp->type == T_OBJECT) && (sp->u.ob->flags & O_CLONE)) {
         free_object(sp->u.ob, "f_clonep");
@@ -463,7 +463,7 @@ f_clonep PROT((void))
 
 #ifdef F__NEW
 void
-f__new PROT((void))
+f__new (void)
 {
     svalue_t *arg = sp - st_num_arg + 1;
     object_t *ob;
@@ -478,7 +478,7 @@ f__new PROT((void))
 
 #ifdef F_CP
 void
-f_cp PROT((void))
+f_cp (void)
 {
     int i;
 
@@ -491,7 +491,7 @@ f_cp PROT((void))
 
 #ifdef F_CRC32
 void
-f_crc32 PROT((void))
+f_crc32 (void)
 {
     int len;
     unsigned char *buf;
@@ -520,7 +520,7 @@ f_crc32 PROT((void))
 
 #ifdef F_CTIME
 void
-f_ctime PROT((void))
+f_ctime (void)
 {
     char *cp, *nl, *p;
     int l;
@@ -541,7 +541,7 @@ f_ctime PROT((void))
 
 #ifdef F_DEEP_INHERIT_LIST
 void
-f_deep_inherit_list PROT((void))
+f_deep_inherit_list (void)
 {
     array_t *vec;
 
@@ -559,7 +559,7 @@ f_deep_inherit_list PROT((void))
 
 #ifdef F_SET_DEBUG_LEVEL
 void
-f_set_debug_level PROT((void))
+f_set_debug_level (void)
 {
     if (sp->type == T_STRING) {
 	debug_level_set(sp->u.string);
@@ -569,15 +569,15 @@ f_set_debug_level PROT((void))
 }
 
 void
-f_clear_debug_level PROT((void)) {
+f_clear_debug_level (void) {
     debug_level_clear(sp->u.string);
 }
 
 void     
-f_debug_levels PROT((void)) {
+f_debug_levels (void) {
     /* not in debug.h since debug.h is included in many places that don't
        know about mapping_t */
-    mapping_t *debug_levels PROT((void));
+    mapping_t *debug_levels (void);
     
     push_refed_mapping(debug_levels());
 }
@@ -587,7 +587,7 @@ f_debug_levels PROT((void)) {
 
 #ifdef F_DEEP_INVENTORY
 void
-f_deep_inventory PROT((void))
+f_deep_inventory (void)
 {
     array_t *vec;
 
@@ -599,7 +599,7 @@ f_deep_inventory PROT((void))
 
 #ifdef F_DESTRUCT
 void
-f_destruct PROT((void))
+f_destruct (void)
 {
     destruct_object(sp->u.ob);
     sp--; /* Ok since the object was removed from the stack */
@@ -608,7 +608,7 @@ f_destruct PROT((void))
 
 #ifdef F_DUMPALLOBJ
 void
-f_dumpallobj PROT((void))
+f_dumpallobj (void)
 {
     if (st_num_arg) {
         dumpstat(sp->u.string);
@@ -621,7 +621,7 @@ f_dumpallobj PROT((void))
 
 #ifdef F_ED
 void
-f_ed PROT((void))
+f_ed (void)
 {
     if (!command_giver || !command_giver->interactive) {
 	pop_n_elems(st_num_arg);
@@ -665,7 +665,7 @@ f_ed PROT((void))
 #endif
 
 #ifdef F_ED_CMD
-void f_ed_cmd PROT((void))
+void f_ed_cmd (void)
 {
     char *res;
     
@@ -689,7 +689,7 @@ void f_ed_cmd PROT((void))
 #endif
 
 #ifdef F_ED_START
-void f_ed_start PROT((void))
+void f_ed_start (void)
 {
     char *res;
     char *fname;
@@ -729,7 +729,7 @@ void f_ed_start PROT((void))
 
 #ifdef F_ENABLE_WIZARD
 void
-f_enable_wizard PROT((void))
+f_enable_wizard (void)
 {
     if (current_object->interactive)
 	current_object->flags |= O_IS_WIZARD;
@@ -738,7 +738,7 @@ f_enable_wizard PROT((void))
 
 #ifdef F_ERROR
 void
-f_error PROT((void))
+f_error (void)
 {
     int l = SVALUE_STRLEN(sp);
     char err_buf[2048];
@@ -758,7 +758,7 @@ f_error PROT((void))
 
 #ifdef F_DISABLE_WIZARD
 void
-f_disable_wizard PROT((void))
+f_disable_wizard (void)
 {
     if (current_object->interactive)
 	current_object->flags &= ~O_IS_WIZARD;
@@ -767,7 +767,7 @@ f_disable_wizard PROT((void))
 
 #ifdef F_ENVIRONMENT
 void
-f_environment PROT((void))
+f_environment (void)
 {
     object_t *ob;
     
@@ -787,7 +787,7 @@ f_environment PROT((void))
 
 #ifdef F_EXEC
 void
-f_exec PROT((void))
+f_exec (void)
 {
     int i;
 
@@ -804,7 +804,7 @@ f_exec PROT((void))
 
 #ifdef F_EXPLODE
 void
-f_explode PROT((void))
+f_explode (void)
 {
     array_t *vec;
 
@@ -818,7 +818,7 @@ f_explode PROT((void))
 
 #ifdef F_FILE_NAME
 void
-f_file_name PROT((void))
+f_file_name (void)
 {
     char *res;
 
@@ -831,7 +831,7 @@ f_file_name PROT((void))
 
 #ifdef F_FILE_SIZE
 void
-f_file_size PROT((void))
+f_file_size (void)
 {
     int i = file_size(sp->u.string);
     free_string_svalue(sp);
@@ -841,7 +841,7 @@ f_file_size PROT((void))
 
 #ifdef F_FILTER
 void
-f_filter PROT((void))
+f_filter (void)
 {
     svalue_t *arg = sp - st_num_arg + 1;
 
@@ -853,7 +853,7 @@ f_filter PROT((void))
 
 #ifdef F_FIND_CALL_OUT
 void
-f_find_call_out PROT((void))
+f_find_call_out (void)
 {
     int i;
 #ifdef CALLOUT_HANDLES
@@ -872,7 +872,7 @@ f_find_call_out PROT((void))
 
 #ifdef F_FIND_OBJECT
 void
-f_find_object PROT((void))
+f_find_object (void)
 {
     object_t *ob;
     
@@ -892,7 +892,7 @@ f_find_object PROT((void))
 #ifdef F_FUNCTION_PROFILE
 /* f_function_profile: John Garnett, 1993/05/31, 0.9.17.3 */
 void
-f_function_profile PROT((void))
+f_function_profile (void)
 {
     array_t *vec;
     mapping_t *map;
@@ -924,7 +924,7 @@ f_function_profile PROT((void))
 
 #ifdef F_FUNCTION_EXISTS
 void
-f_function_exists PROT((void))
+f_function_exists (void)
 {
     char *str, *res;
     int l;
@@ -961,7 +961,7 @@ f_function_exists PROT((void))
 #endif
 
 #ifdef F_GENERATE_SOURCE
-void f_generate_source PROT((void))
+void f_generate_source (void)
 {
     int i;
 
@@ -977,7 +977,7 @@ void f_generate_source PROT((void))
 
 #ifdef F_GET_CHAR
 void
-f_get_char PROT((void))
+f_get_char (void)
 {
     svalue_t *arg;
     int i, tmp;
@@ -1002,7 +1002,7 @@ f_get_char PROT((void))
 
 #ifdef F_GET_CONFIG
 void
-f_get_config PROT((void))
+f_get_config (void)
 {
     if (!get_config_item(sp, sp))
 	error("Bad argument to get_config()\n");
@@ -1011,7 +1011,7 @@ f_get_config PROT((void))
 
 #ifdef F_GET_DIR
 void
-f_get_dir PROT((void))
+f_get_dir (void)
 {
     array_t *vec;
 
@@ -1024,7 +1024,7 @@ f_get_dir PROT((void))
 
 #ifdef F_IMPLODE
 void
-f_implode PROT((void))
+f_implode (void)
 {
     array_t *arr;
     int flag;
@@ -1065,7 +1065,7 @@ f_implode PROT((void))
 
 #ifdef F_IN_EDIT
 void
-f_in_edit PROT((void))
+f_in_edit (void)
 {
     char *fn;
     ed_buffer_t *eb = 0;
@@ -1090,7 +1090,7 @@ f_in_edit PROT((void))
 
 #ifdef F_IN_INPUT
 void
-f_in_input PROT((void))
+f_in_input (void)
 {
     int i;
 
@@ -1102,7 +1102,7 @@ f_in_input PROT((void))
 
 #ifdef F_INHERITS
 int
-inherits P2(program_t *, prog, program_t *, thep)
+inherits(program_t *  prog, program_t *  thep)
 {
     int j, k = prog->num_inherited;
     program_t *pg;
@@ -1119,7 +1119,7 @@ inherits P2(program_t *, prog, program_t *, thep)
 }
 
 void
-f_inherits PROT((void))
+f_inherits (void)
 {
     object_t *ob, *base;
     int i;
@@ -1142,7 +1142,7 @@ f_inherits PROT((void))
 
 #ifdef F_SHALLOW_INHERIT_LIST
 void
-f_shallow_inherit_list PROT((void))
+f_shallow_inherit_list (void)
 {
     array_t *vec;
 
@@ -1158,7 +1158,7 @@ f_shallow_inherit_list PROT((void))
 
 #ifdef F_INPUT_TO
 void
-f_input_to PROT((void))
+f_input_to (void)
 {
     svalue_t *arg;
     int i, tmp;
@@ -1182,7 +1182,7 @@ f_input_to PROT((void))
 
 #ifdef F_INTERACTIVE
 void
-f_interactive PROT((void))
+f_interactive (void)
 {
     int i;
 
@@ -1194,7 +1194,7 @@ f_interactive PROT((void))
 
 #ifdef F_INTP
 void
-f_intp PROT((void))
+f_intp (void)
 {
     if (sp->type == T_NUMBER) sp->u.number = 1;
     else {
@@ -1206,7 +1206,7 @@ f_intp PROT((void))
 
 #ifdef F_FUNCTIONP
 void
-f_functionp PROT((void))
+f_functionp (void)
 {
     int i;
     
@@ -1226,7 +1226,7 @@ f_functionp PROT((void))
 
 #ifdef F_KEYS
 void
-f_keys PROT((void))
+f_keys (void)
 {
     array_t *vec;
 
@@ -1238,7 +1238,7 @@ f_keys PROT((void))
 
 #ifdef F_VALUES
 void
-f_values PROT((void))
+f_values (void)
 {
     array_t *vec;
 
@@ -1250,7 +1250,7 @@ f_values PROT((void))
 
 #ifdef F_LINK
 void
-f_link PROT((void))
+f_link (void)
 {
     svalue_t *ret, *arg;
     int i;
@@ -1271,7 +1271,7 @@ f_link PROT((void))
 
 #ifdef F_LOWER_CASE
 void
-f_lower_case PROT((void))
+f_lower_case (void)
 {
     char *str;
 
@@ -1294,7 +1294,7 @@ f_lower_case PROT((void))
 #endif
 
 #ifdef F_LPC_INFO
-void f_lpc_info PROT((void))
+void f_lpc_info (void)
 {
     outbuffer_t out;
 
@@ -1326,7 +1326,7 @@ void f_lpc_info PROT((void))
 #endif
 
 #ifdef F_MALLOC_STATUS
-void f_malloc_status PROT((void))
+void f_malloc_status (void)
 {
     outbuffer_t ob;
 
@@ -1360,7 +1360,7 @@ void f_malloc_status PROT((void))
 
 #ifdef F_MAP_DELETE
 void
-f_map_delete PROT((void))
+f_map_delete (void)
 {
     mapping_delete((sp - 1)->u.map, sp);
     pop_stack();
@@ -1372,7 +1372,7 @@ f_map_delete PROT((void))
 
 #ifdef F_MAPP
 void
-f_mapp PROT((void))
+f_mapp (void)
 {
     if (sp->type == T_MAPPING) {
         free_mapping(sp->u.map);
@@ -1386,7 +1386,7 @@ f_mapp PROT((void))
 
 #ifdef F_MAP
 void
-f_map PROT((void))
+f_map (void)
 {
     svalue_t *arg = sp - st_num_arg + 1;
 
@@ -1398,7 +1398,7 @@ f_map PROT((void))
 
 #ifdef F_MASTER
 void
-f_master PROT((void))
+f_master (void)
 {
     if (!master_ob)
 	push_number(0);
@@ -1421,7 +1421,7 @@ efun.
 */
 #ifdef F_MATCH_PATH
 void
-f_match_path PROT((void))
+f_match_path (void)
 {
     svalue_t *value;
     register char *src, *dst;
@@ -1463,7 +1463,7 @@ f_match_path PROT((void))
 
 #ifdef F_MEMBER_ARRAY
 void
-f_member_array PROT((void))
+f_member_array (void)
 {
     array_t *v;
     int i;
@@ -1555,7 +1555,7 @@ f_member_array PROT((void))
 
 #ifdef F_MESSAGE
 void
-f_message PROT((void))
+f_message (void)
 {
     array_t *use, *avoid;
     int num_arg = st_num_arg;
@@ -1617,7 +1617,7 @@ f_message PROT((void))
 
 #ifdef F_MKDIR
 void
-f_mkdir PROT((void))
+f_mkdir (void)
 {
     char *path;
 
@@ -1635,7 +1635,7 @@ f_mkdir PROT((void))
 
 #ifdef F_MOVE_OBJECT
 void
-f_move_object PROT((void))
+f_move_object (void)
 {
     object_t *o1, *o2;
 
@@ -1656,7 +1656,7 @@ f_move_object PROT((void))
 #endif
 
 #ifdef F_MUD_STATUS
-void f_mud_status PROT((void))
+void f_mud_status (void)
 {
     int tot, res, verbose = 0;
     outbuffer_t ob;
@@ -1755,7 +1755,7 @@ void f_mud_status PROT((void))
 
 #ifdef F_OBJECTP
 void
-f_objectp PROT((void))
+f_objectp (void)
 {
     if (sp->type == T_OBJECT && !(sp->u.ob->flags & O_DESTRUCTED)) {
         free_object(sp->u.ob, "f_objectp");
@@ -1769,7 +1769,7 @@ f_objectp PROT((void))
 
 #ifdef F_OPCPROF
 void
-f_opcprof PROT((void))
+f_opcprof (void)
 {
     if (st_num_arg == 1) {
         opcdump(sp->u.string);
@@ -1781,7 +1781,7 @@ f_opcprof PROT((void))
 
 #ifdef F_ORIGIN
 void
-f_origin PROT((void))
+f_origin (void)
 {
     push_constant_string(origin_name(caller_type));
 }
@@ -1789,7 +1789,7 @@ f_origin PROT((void))
 
 #ifdef F_POINTERP
 void
-f_pointerp PROT((void))
+f_pointerp (void)
 {
     if (sp->type == T_ARRAY) {
         free_array(sp->u.arr);
@@ -1803,7 +1803,7 @@ f_pointerp PROT((void))
 
 #ifdef F_PRESENT
 void
-f_present PROT((void))
+f_present (void)
 {
     int num_arg = st_num_arg;
     svalue_t *arg = sp - num_arg + 1;
@@ -1823,7 +1823,7 @@ f_present PROT((void))
 
 #ifdef F_PREVIOUS_OBJECT
 void
-f_previous_object PROT((void))
+f_previous_object (void)
 {
     control_stack_t *p;
     int i;
@@ -1886,7 +1886,7 @@ f_previous_object PROT((void))
 
 #ifdef F_PRINTF
 void
-f_printf PROT((void))
+f_printf (void)
 {
     int num_arg = st_num_arg;
     char *ret;
@@ -1906,7 +1906,7 @@ f_printf PROT((void))
 
 #ifdef F_PROCESS_STRING
 void
-f_process_string PROT((void))
+f_process_string (void)
 {
     char *str;
 
@@ -1920,7 +1920,7 @@ f_process_string PROT((void))
 
 #ifdef F_PROCESS_VALUE
 void
-f_process_value PROT((void))
+f_process_value (void)
 {
     svalue_t *ret;
 
@@ -1933,7 +1933,7 @@ f_process_value PROT((void))
 
 #ifdef F_QUERY_ED_MODE
 void
-f_query_ed_mode PROT((void))
+f_query_ed_mode (void)
 {
     /* n = prompt for line 'n'
        0 = normal ed prompt
@@ -1948,7 +1948,7 @@ f_query_ed_mode PROT((void))
 
 #ifdef F_QUERY_HOST_NAME
 void
-f_query_host_name PROT((void))
+f_query_host_name (void)
 {
     char *tmp;
 
@@ -1961,7 +1961,7 @@ f_query_host_name PROT((void))
 
 #ifdef F_QUERY_IDLE
 void
-f_query_idle PROT((void))
+f_query_idle (void)
 {
     int i;
 
@@ -1973,7 +1973,7 @@ f_query_idle PROT((void))
 
 #ifdef F_QUERY_IP_NAME
 void
-f_query_ip_name PROT((void))
+f_query_ip_name (void)
 {
     char *tmp;
 
@@ -1986,7 +1986,7 @@ f_query_ip_name PROT((void))
 
 #ifdef F_QUERY_IP_NUMBER
 void
-f_query_ip_number PROT((void))
+f_query_ip_number (void)
 {
     char *tmp;
 
@@ -1999,7 +1999,7 @@ f_query_ip_number PROT((void))
 
 #ifdef F_QUERY_LOAD_AVERAGE
 void
-f_query_load_average PROT((void))
+f_query_load_average (void)
 {
     copy_and_push_string(query_load_av());
 }
@@ -2007,7 +2007,7 @@ f_query_load_average PROT((void))
 
 #ifdef F_QUERY_PRIVS
 void
-f_query_privs PROT((void))
+f_query_privs (void)
 {
     object_t *ob;
     
@@ -2026,7 +2026,7 @@ f_query_privs PROT((void))
 
 #ifdef F_QUERY_SNOOPING
 void
-f_query_snooping PROT((void))
+f_query_snooping (void)
 {
     object_t *ob;
     
@@ -2039,7 +2039,7 @@ f_query_snooping PROT((void))
 
 #ifdef F_QUERY_SNOOP
 void
-f_query_snoop PROT((void))
+f_query_snoop (void)
 {
     object_t *ob;
     
@@ -2052,7 +2052,7 @@ f_query_snoop PROT((void))
 
 #ifdef F_RANDOM
 void
-f_random PROT((void))
+f_random (void)
 {
     if (sp->u.number <= 0) {
 	sp->u.number = 0;
@@ -2064,7 +2064,7 @@ f_random PROT((void))
 
 #ifdef F_READ_BYTES
 void
-f_read_bytes PROT((void))
+f_read_bytes (void)
 {
     char *str;
     int start = 0, len = 0, rlen = 0, num_arg = st_num_arg;
@@ -2088,7 +2088,7 @@ f_read_bytes PROT((void))
 
 #ifdef F_READ_BUFFER
 void
-f_read_buffer PROT((void))
+f_read_buffer (void)
 {
     char *str;
     int start = 0, len = 0, rlen = 0, num_arg = st_num_arg;
@@ -2127,7 +2127,7 @@ f_read_buffer PROT((void))
 
 #ifdef F_READ_FILE
 void
-f_read_file PROT((void))
+f_read_file (void)
 {
     char *str;
     int start,len;
@@ -2148,7 +2148,7 @@ f_read_file PROT((void))
 
 #ifdef F_RECEIVE
 void
-f_receive PROT((void))
+f_receive (void)
 {
     if (sp->type == T_STRING) {
 	if (current_object->interactive) {
@@ -2175,7 +2175,7 @@ f_receive PROT((void))
 
 #ifdef F_REG_ASSOC
 void
-f_reg_assoc PROT((void)) {
+f_reg_assoc (void) {
     svalue_t *arg;
     array_t *vec;
 
@@ -2198,7 +2198,7 @@ f_reg_assoc PROT((void)) {
 
 #ifdef F_REGEXP
 void
-f_regexp PROT((void))
+f_regexp (void)
 {
     array_t *v;
     int flag;
@@ -2225,7 +2225,7 @@ f_regexp PROT((void))
 
 #ifdef F_REMOVE_CALL_OUT
 void
-f_remove_call_out PROT((void))
+f_remove_call_out (void)
 {
     int i;
 
@@ -2251,7 +2251,7 @@ f_remove_call_out PROT((void))
 
 #ifdef F_RENAME
 void
-f_rename PROT((void))
+f_rename (void)
 {
     int i;
 
@@ -2311,7 +2311,7 @@ The 4th/5th args are optional (to retain backward compatibility).
 */
 
 void
-f_replace_string PROT((void))
+f_replace_string (void)
 {
     int plen, rlen, dlen, slen, first, last, cur, j;
     
@@ -2563,9 +2563,9 @@ f_replace_string PROT((void))
 
 #ifdef F_RESOLVE
 void
-f_resolve PROT((void))
+f_resolve (void)
 {
-    int i, query_addr_number PROT((char *, svalue_t *));
+    int i, query_addr_number (char *, svalue_t *);
 
     i = query_addr_number((sp - 1)->u.string, sp);
     pop_stack();
@@ -2576,7 +2576,7 @@ f_resolve PROT((void))
 
 #ifdef F_RESTORE_OBJECT
 void
-f_restore_object PROT((void))
+f_restore_object (void)
 {
     int flag;
 
@@ -2589,7 +2589,7 @@ f_restore_object PROT((void))
 
 #ifdef F_RESTORE_VARIABLE
 void
-f_restore_variable PROT((void)) {
+f_restore_variable (void) {
     svalue_t v;
 
     unlink_string_svalue(sp);
@@ -2603,7 +2603,7 @@ f_restore_variable PROT((void)) {
 
 #ifdef F_RM
 void
-f_rm PROT((void))
+f_rm (void)
 {
     int i;
 
@@ -2615,7 +2615,7 @@ f_rm PROT((void))
 
 #ifdef F_RMDIR
 void
-f_rmdir PROT((void))
+f_rmdir (void)
 {
     char *path;
 
@@ -2633,7 +2633,7 @@ f_rmdir PROT((void))
 
 #ifdef F_SAVE_OBJECT
 void
-f_save_object PROT((void))
+f_save_object (void)
 {
     int flag;
 
@@ -2646,7 +2646,7 @@ f_save_object PROT((void))
 
 #ifdef F_SAVE_VARIABLE
 void
-f_save_variable PROT((void)) {
+f_save_variable (void) {
     char *p;
 
     p = save_variable(sp);
@@ -2657,7 +2657,7 @@ f_save_variable PROT((void)) {
 
 #ifdef F_SAY
 void
-f_say PROT((void))
+f_say (void)
 {
     array_t *avoid;
     static array_t vtmp =
@@ -2694,7 +2694,7 @@ f_say PROT((void))
    object and a set_eval_limit() simul_efun to restrict access.
 */
 void
-f_set_eval_limit PROT((void))
+f_set_eval_limit (void)
 {
     switch (sp->u.number) {
     case 0:
@@ -2715,7 +2715,7 @@ f_set_eval_limit PROT((void))
 
 #ifdef F_SET_BIT
 void
-f_set_bit PROT((void))
+f_set_bit (void)
 {
     char *str;
     int len, old_len, ind, bit;
@@ -2753,7 +2753,7 @@ f_set_bit PROT((void))
 
 #ifdef F_SET_HEART_BEAT
 void
-f_set_heart_beat PROT((void))
+f_set_heart_beat (void)
 {
     set_heart_beat(current_object, (sp--)->u.number);
 }
@@ -2761,7 +2761,7 @@ f_set_heart_beat PROT((void))
 
 #ifdef F_QUERY_HEART_BEAT
 void
-f_query_heart_beat PROT((void))
+f_query_heart_beat (void)
 {
     object_t *ob;
     
@@ -2772,7 +2772,7 @@ f_query_heart_beat PROT((void))
 
 #ifdef F_SET_HIDE
 void
-f_set_hide PROT((void))
+f_set_hide (void)
 {
     if (!valid_hide(current_object)) {
 	sp--;
@@ -2794,7 +2794,7 @@ f_set_hide PROT((void))
 
 #ifdef F_SET_LIGHT
 void
-f_set_light PROT((void))
+f_set_light (void)
 {
     object_t *o1;
 
@@ -2810,7 +2810,7 @@ f_set_light PROT((void))
 
 #ifdef F_SET_PRIVS
 void
-f_set_privs PROT((void))
+f_set_privs (void)
 {
     object_t *ob;
 
@@ -2831,7 +2831,7 @@ f_set_privs PROT((void))
 
 #ifdef F_SHADOW
 void
-f_shadow PROT((void))
+f_shadow (void)
 {
     object_t *ob;
 
@@ -2874,7 +2874,7 @@ f_shadow PROT((void))
 
 #ifdef F_SHOUT
 void
-f_shout PROT((void))
+f_shout (void)
 {
     shout_string(sp->u.string);
     free_string_svalue(sp--);
@@ -2883,7 +2883,7 @@ f_shout PROT((void))
 
 #ifdef F_SHUTDOWN
 void
-f_shutdown PROT((void))
+f_shutdown (void)
 {
     if (st_num_arg) {
 	shutdownMudOS(sp->u.number);
@@ -2896,7 +2896,7 @@ f_shutdown PROT((void))
 
 #ifdef F_SIZEOF
 void
-f_sizeof PROT((void))
+f_sizeof (void)
 {
     int i;
 
@@ -2934,7 +2934,7 @@ f_sizeof PROT((void))
 
 #ifdef F_SNOOP
 void
-f_snoop PROT((void))
+f_snoop (void)
 {
     /*
      * This one takes a variable number of arguments. It returns 0 or an
@@ -2961,7 +2961,7 @@ f_snoop PROT((void))
 
 #ifdef F_SPRINTF
 void
-f_sprintf PROT((void))
+f_sprintf (void)
 {
     char *s;
     int num_arg = st_num_arg;
@@ -2984,7 +2984,7 @@ f_sprintf PROT((void))
 
 #ifdef F_STAT
 void
-f_stat PROT((void))
+f_stat (void)
 {
     struct stat buf;
     char *path;
@@ -3034,7 +3034,7 @@ f_stat PROT((void))
  */
 
 void
-f_strsrch PROT((void))
+f_strsrch (void)
 {
     register char *big, *little, *pos;
     static char buf[2];         /* should be initialized to 0 */
@@ -3099,7 +3099,7 @@ f_strsrch PROT((void))
 
 #ifdef F_STRCMP
 void
-f_strcmp PROT((void))
+f_strcmp (void)
 {
     int i;
 
@@ -3112,7 +3112,7 @@ f_strcmp PROT((void))
 
 #ifdef F_STRINGP
 void
-f_stringp PROT((void))
+f_stringp (void)
 {
     if (sp->type == T_STRING) {
         free_string_svalue(sp);
@@ -3127,7 +3127,7 @@ f_stringp PROT((void))
 
 #ifdef F_BUFFERP
 void
-f_bufferp PROT((void))
+f_bufferp (void)
 {
     if (sp->type == T_BUFFER) {
         free_buffer(sp->u.buf);
@@ -3141,7 +3141,7 @@ f_bufferp PROT((void))
 
 #ifdef F_SWAP
 void
-f_swap PROT((void))
+f_swap (void)
 {
     object_t *ob = sp->u.ob;
     control_stack_t *p;
@@ -3162,7 +3162,7 @@ f_swap PROT((void))
 
 #ifdef F_TELL_OBJECT
 void
-f_tell_object PROT((void))
+f_tell_object (void)
 {
     tell_object((sp - 1)->u.ob, sp->u.string, SVALUE_STRLEN(sp));
     free_string_svalue(sp--);
@@ -3172,7 +3172,7 @@ f_tell_object PROT((void))
 
 #ifdef F_TELL_ROOM
 void
-f_tell_room PROT((void))
+f_tell_room (void)
 {
     array_t *avoid;
     static array_t vtmp =
@@ -3221,7 +3221,7 @@ f_tell_room PROT((void))
 
 #ifdef F_TEST_BIT
 void
-f_test_bit PROT((void))
+f_test_bit (void)
 {
     int ind = (sp--)->u.number;
 
@@ -3243,7 +3243,7 @@ f_test_bit PROT((void))
 
 #ifdef F_NEXT_BIT
 void
-f_next_bit PROT((void))
+f_next_bit (void)
 {
     int start = (sp--)->u.number;
     int len = SVALUE_STRLEN(sp);
@@ -3305,7 +3305,7 @@ f_next_bit PROT((void))
 
 #ifdef F__THIS_OBJECT
 void
-f__this_object PROT((void))
+f__this_object (void)
 {
     push_object(current_object);
 }
@@ -3313,7 +3313,7 @@ f__this_object PROT((void))
 
 #ifdef F_THIS_PLAYER
 void
-f_this_player PROT((void))
+f_this_player (void)
 {
     if (sp->u.number) {
 	if (current_interactive)
@@ -3329,7 +3329,7 @@ f_this_player PROT((void))
 
 #ifdef F_SET_THIS_PLAYER
 void
-f_set_this_player PROT((void))
+f_set_this_player (void)
 {
     if (sp->type == T_NUMBER)
 	set_command_giver(0);
@@ -3341,7 +3341,7 @@ f_set_this_player PROT((void))
 
 #ifdef F_THROW
 void
-f_throw PROT((void))
+f_throw (void)
 {
     free_svalue(&catch_value, "f_throw");
     catch_value = *sp--;
@@ -3351,7 +3351,7 @@ f_throw PROT((void))
 
 #ifdef F_TIME
 void
-f_time PROT((void))
+f_time (void)
 {
     push_number(current_time);
 }
@@ -3359,7 +3359,7 @@ f_time PROT((void))
 
 #ifdef F__TO_FLOAT
 void
-f__to_float PROT((void))
+f__to_float (void)
 {
     double temp = 0;
 
@@ -3379,7 +3379,7 @@ f__to_float PROT((void))
 
 #ifdef F__TO_INT
 void
-f__to_int PROT((void))
+f__to_int (void)
 {
     switch(sp->type) {
         case T_REAL:
@@ -3441,7 +3441,7 @@ f__to_int PROT((void))
 
 #ifdef F_TYPEOF
 void
-f_typeof PROT((void))
+f_typeof (void)
 {
     char *t = type_name(sp->type);
 
@@ -3452,7 +3452,7 @@ f_typeof PROT((void))
 
 #ifdef F_UNDEFINEDP
 void
-f_undefinedp PROT((void))
+f_undefinedp (void)
 {
     if (sp->type == T_NUMBER) {
         if (!sp->u.number && (sp->subtype == T_UNDEFINED)) {
@@ -3467,7 +3467,7 @@ f_undefinedp PROT((void))
 
 #ifdef F_UPTIME
 void
-f_uptime PROT((void))
+f_uptime (void)
 {
     push_number(current_time - boot_time);
 }
@@ -3475,7 +3475,7 @@ f_uptime PROT((void))
 
 #ifdef F_USERP
 void
-f_userp PROT((void))
+f_userp (void)
 {
     int i;
 
@@ -3487,7 +3487,7 @@ f_userp PROT((void))
 
 #ifdef F_USERS
 void
-f_users PROT((void))
+f_users (void)
 {
     push_refed_array(users());
 }
@@ -3495,7 +3495,7 @@ f_users PROT((void))
 
 #ifdef F_WIZARDP
 void
-f_wizardp PROT((void))
+f_wizardp (void)
 {
     int i;
 
@@ -3507,7 +3507,7 @@ f_wizardp PROT((void))
 
 #ifdef F_VIRTUALP
 void
-f_virtualp PROT((void))
+f_virtualp (void)
 {
     int i;
 
@@ -3519,7 +3519,7 @@ f_virtualp PROT((void))
 
 #ifdef F_WRITE
 void
-f_write PROT((void))
+f_write (void)
 {
     do_write(sp);
     pop_stack();
@@ -3528,7 +3528,7 @@ f_write PROT((void))
 
 #ifdef F_WRITE_BYTES
 void
-f_write_bytes PROT((void))
+f_write_bytes (void)
 {
     int i;
 
@@ -3580,7 +3580,7 @@ f_write_bytes PROT((void))
 
 #ifdef F_WRITE_BUFFER
 void
-f_write_buffer PROT((void))
+f_write_buffer (void)
 {
     int i;
 
@@ -3630,7 +3630,7 @@ f_write_buffer PROT((void))
 
 #ifdef F_WRITE_FILE
 void
-f_write_file PROT((void))
+f_write_file (void)
 {
     int flags = 0;
 
@@ -3646,7 +3646,7 @@ f_write_file PROT((void))
 
 #ifdef F_DUMP_FILE_DESCRIPTORS
 void
-f_dump_file_descriptors PROT((void))
+f_dump_file_descriptors (void)
 {
     outbuffer_t out;
 
@@ -3657,7 +3657,7 @@ f_dump_file_descriptors PROT((void))
 #endif
 
 #ifdef F_RECLAIM_OBJECTS
-void f_reclaim_objects PROT((void))
+void f_reclaim_objects (void)
 {
     push_number(reclaim_objects());
 }
@@ -3665,7 +3665,7 @@ void f_reclaim_objects PROT((void))
 
 #ifdef F_MEMORY_INFO
 void
-f_memory_info PROT((void))
+f_memory_info (void)
 {
     int mem, swapped;
     object_t *ob;
@@ -3714,7 +3714,7 @@ f_memory_info PROT((void))
 
 #ifdef F_RELOAD_OBJECT
 void
-f_reload_object PROT((void))
+f_reload_object (void)
 {
     reload_object(sp->u.ob);
     free_object((sp--)->u.ob, "f_reload_object");
@@ -3723,7 +3723,7 @@ f_reload_object PROT((void))
 
 #ifdef F_QUERY_SHADOWING
 void
-f_query_shadowing PROT((void))
+f_query_shadowing (void)
 {
     object_t *ob;
     
@@ -3740,7 +3740,7 @@ f_query_shadowing PROT((void))
 
 #ifdef F_SET_RESET
 void
-f_set_reset PROT((void))
+f_set_reset (void)
 {
     if (st_num_arg == 2) {
         (sp - 1)->u.ob->next_reset = current_time + sp->u.number;
@@ -3756,7 +3756,7 @@ f_set_reset PROT((void))
 
 #ifdef F_FLOATP
 void
-f_floatp PROT((void))
+f_floatp (void)
 {
     if (sp->type == T_REAL) {
         sp->type = T_NUMBER;
@@ -3771,7 +3771,7 @@ f_floatp PROT((void))
 
 #ifdef F_FLUSH_MESSAGES
 void
-f_flush_messages PROT((void)) {
+f_flush_messages (void) {
     if (st_num_arg == 1) {
 	if (sp->u.ob->interactive)
 	    flush_message(sp->u.ob->interactive);
@@ -3789,7 +3789,7 @@ f_flush_messages PROT((void)) {
 
 #ifdef F_FIRST_INVENTORY
 void
-f_first_inventory PROT((void))
+f_first_inventory (void)
 {
     object_t *ob;
     
@@ -3802,7 +3802,7 @@ f_first_inventory PROT((void))
 
 #ifdef F_NEXT_INVENTORY
 void
-f_next_inventory PROT((void))
+f_next_inventory (void)
 {
     object_t *ob;
     

@@ -81,7 +81,7 @@ static incstate *inctop = 0;
 #define CHAR_QUOTE 1
 #define STRING_QUOTE 2
 
-static void add_define PROT((char *, int, char *));
+static void add_define (char *, int, char *);
 
 #ifdef WIN32
 #include <io.h>
@@ -105,37 +105,37 @@ int compile(char *command) {
    return 0;
 }
 #else
-int compile P1(char *, str) {
+int compile(char *  str) {
     return system(str);
 }
 #endif
 
 #if defined(WIN32) || defined(LATTICE)
-int dos_style_link P2(char *, x, char *, y) {
+int dos_style_link(char *  x, char *  y) {
     char link_cmd[100];
     sprintf(link_cmd, "copy %s %s", x, y);
     return system(link_cmd);
 }
 #endif
 
-void yyerror P1(char *, str)
+void yyerror(char *  str)
 {
     fprintf(stderr, "%s:%d: %s\n", current_file, current_line, str);
     exit(1);
 }
 
-void mf_fatal P1(char *, str)
+void mf_fatal(char *  str)
 {
     yyerror(str);
 }
 
-void yywarn P1(char *, str)
+void yywarn(char *  str)
 {
     /* ignore errors :)  local_options generates redefinition warnings,
        which we don't want to see */
 }
 
-void yyerrorp P1(char *, str)
+void yyerrorp(char *  str)
 {
     char buff[200];
     sprintf(buff, str, ppchar);
@@ -143,7 +143,7 @@ void yyerrorp P1(char *, str)
     exit(1);
 }
 
-static void add_input P1(char *, p)
+static void add_input(char *  p)
 {
     int l = strlen(p);
 
@@ -531,7 +531,7 @@ static int skip_to(token, atoken)
 
 #include "preprocess.c"
 
-static int maybe_open_input_file P1(char *, fn) {
+static int maybe_open_input_file(char *  fn) {
     if ((yyin = fopen(fn, "r")) == NULL) {
 	return 0;
     }
@@ -542,14 +542,14 @@ static int maybe_open_input_file P1(char *, fn) {
     return 1;
 }
 
-static void open_input_file P1(char *, fn) {
+static void open_input_file(char *  fn) {
     if (!maybe_open_input_file(fn)) {
 	perror(fn);
 	exit(-1);
     }
 }
 
-static void open_output_file P1(char *, fn) {
+static void open_output_file(char *  fn) {
     if ((yyout = fopen(fn, "w")) == NULL) {
 	perror(fn);
 	exit(-1);
@@ -561,7 +561,7 @@ static void close_output_file() {
     yyout = 0;
 }
 
-static char *protect P1(char *, p) {
+static char *protect(char *  p) {
     static char buf[1024];
     char *bufp = buf;
 
@@ -623,7 +623,7 @@ static void deltrail() {
 }
 
 static void
-handle_include P1(char *, name)
+handle_include(char *  name)
 {
     char *p;
     static char buf[1024];
@@ -668,7 +668,7 @@ handle_include P1(char *, name)
 }
 
 static void
-handle_pragma P1(char *, name)
+handle_pragma(char *  name)
 {
     if (!strcmp(name, "auto_note_compiler_case_start"))
         pragmas |= PRAGMA_NOTE_CASE_START;
@@ -910,7 +910,7 @@ void make_efun_tables()
     }
 
     fprintf(files[0],"\n#include \"efun_protos.h\"\n\n");
-    fprintf(files[0],"\ntypedef void (*func_t) PROT((void));\n\n");
+    fprintf(files[0],"\ntypedef void (*func_t) (void);\n\n");
     fprintf(files[0],"func_t efun_table[] = {\n");
 
     fprintf(files[1],"\ntypedef struct opc_s { char *name; int count; } opc_t;\n\n");
@@ -926,7 +926,7 @@ void make_efun_tables()
 	fprintf(files[0],"\tf_%s,\n", efun1_names[i]);
 	fprintf(files[1],"{\"%s\", 0},\n", efun1_names[i]);
 	fprintf(files[2],"#define %-30s %d\n", efun1_codes[i], i+op_code+1);
-	fprintf(files[3],"void f_%s PROT((void));\n", efun1_names[i]);
+	fprintf(files[3],"void f_%s (void);\n", efun1_names[i]);
     }
 
     fprintf(files[2],"\n/* efuns */\n#define ONEARG_MAX %d\n\n", efun1_code + op_code+1);
@@ -934,7 +934,7 @@ void make_efun_tables()
 	fprintf(files[0],"\tf_%s,\n", efun_names[i]);
 	fprintf(files[1],"{\"%s\", 0},\n", efun_names[i]);
 	fprintf(files[2],"#define %-30s %d\n", efun_codes[i], i+op_code+efun1_code+1);
-	fprintf(files[3],"void f_%s PROT((void));\n", efun_names[i]);
+	fprintf(files[3],"void f_%s (void);\n", efun_names[i]);
     }
     fprintf(files[0], "};\n");
     fprintf(files[1], "};\n");
@@ -1020,7 +1020,7 @@ static void handle_local_defines(int check) {
     }
 }
 
-static void write_options_incl P1(int, local) {
+static void write_options_incl(int  local) {
     open_output_file(OPTIONS_INCL);
     if (local) {
 	fprintf(yyout, "#include \"%s\"\n", LOCAL_OPTIONS);
@@ -1055,7 +1055,7 @@ static void handle_options(int full) {
     create_option_defines();
 }
 
-static void handle_build_func_spec P1(char *, command) {
+static void handle_build_func_spec(char *  command) {
     char buf[1024];
     int i;
 
@@ -1079,7 +1079,7 @@ static void handle_build_func_spec P1(char *, command) {
     close_output_file();
 }
 
-static void handle_process P1(char *, file) {
+static void handle_process(char *  file) {
     char buf[1024];
     int l;
 
@@ -1233,7 +1233,7 @@ static int check_include2 P4(char *, tag, char *, file,
     return 0;
 }
 
-static int check_include P2(char *, tag, char *, file) {
+static int check_include(char *  tag, char *  file) {
     char buf[1024];
     FILE *ct;
 
@@ -1254,7 +1254,7 @@ static int check_include P2(char *, tag, char *, file) {
     return 0;
 }
 
-static int check_library P1(char *, lib) {
+static int check_library(char *  lib) {
     char buf[1024];
     FILE *ct;
 
@@ -1296,7 +1296,7 @@ static int check_ret_type P4(char *, tag, char *, pre,
 #endif
 
 /* This should check a.out existence, not exit value */
-static int check_prog P4(char *, tag, char *, pre, char *, code, int, andrun) {
+static int check_prog(char *  tag, char *  pre, char *  code, int  andrun) {
     char buf[1024];
     FILE *ct;
 
@@ -1316,7 +1316,7 @@ static int check_prog P4(char *, tag, char *, pre, char *, code, int, andrun) {
     return 0;
 }
 
-static int check_code P2(char *, pre, char *, code) {
+static int check_code(char *  pre, char *  code) {
     char buf[1024];
     FILE *ct;
     int rc;
@@ -1361,7 +1361,7 @@ memmove(&buf[8],&buf[6],9);\n\
 if(strcmp(buf,\"0456789A9ABCDEF\")) exit(-1);\n\
 return 0;\n";
 
-static int check_memmove P2(char *, tag, char *, str) {
+static int check_memmove(char *  tag, char *  str) {
     return check_prog(tag, str, memmove_prog, 1);
 }
 
@@ -1661,7 +1661,7 @@ static void handle_configure() {
 #endif
 }
 
-int main P2(int, argc, char **, argv) {
+int main(int  argc, char **  argv) {
     int idx = 1;
 
     while (idx < argc) {

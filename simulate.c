@@ -49,19 +49,19 @@ object_t *command_giver;	/* Where the current command came from. */
 object_t *current_interactive;	/* The user who caused this execution */
 
 #ifdef PRIVS
-static void init_privs_for_object PROT((object_t *));
+static void init_privs_for_object (object_t *);
 #endif
 #ifdef PACKAGE_UIDS
-static int give_uid_to_object PROT((object_t *));
+static int give_uid_to_object (object_t *);
 #endif
-static int init_object PROT((object_t *));
-static object_t *load_virtual_object PROT((char *, int));
-static char *make_new_name PROT((char *));
+static int init_object (object_t *);
+static object_t *load_virtual_object (char *, int);
+static char *make_new_name (char *);
 #ifndef NO_ENVIRONMENT
-static void send_say PROT((object_t *, char *, array_t *));
+static void send_say (object_t *, char *, array_t *);
 #endif
 
-INLINE void check_legal_string P1(char *, s)
+INLINE void check_legal_string(char *  s)
 {
     if (strlen(s) > LARGEST_PRINTABLE_STRING) {
 	error("Printable strings limited to length of %d.\n",
@@ -85,7 +85,7 @@ INLINE void check_legal_string P1(char *, s)
  * p = strput(p, end, ...);
  * p = strput(p, end, ...);
  */
-char *strput P3(char *, x, char *, limit, char *, y) {
+char *strput(char *  x, char *  limit, char *  y) {
     while ((*x++ = *y++)) {
 	if (x == limit) {
 	    *(x-1) = 0;
@@ -95,7 +95,7 @@ char *strput P3(char *, x, char *, limit, char *, y) {
     return x - 1;
 }
 
-char *strput_int P3(char *, x, char *, limit, int, num) {
+char *strput_int(char *  x, char *  limit, int  num) {
     char buf[20];
     sprintf(buf, "%d", num);
     return strput(x, limit, buf);
@@ -103,7 +103,7 @@ char *strput_int P3(char *, x, char *, limit, int, num) {
 
 #ifdef PRIVS
 static void
-init_privs_for_object P1(object_t *, ob)
+init_privs_for_object(object_t *  ob)
 {
     svalue_t *value;
 
@@ -133,7 +133,7 @@ init_privs_for_object P1(object_t *, ob)
  * Give the correct uid and euid to a created object.
  */
 #ifdef PACKAGE_UIDS
-static int give_uid_to_object P1(object_t *, ob)
+static int give_uid_to_object(object_t *  ob)
 {
     svalue_t *ret;
     char *creator_name;
@@ -211,7 +211,7 @@ static int give_uid_to_object P1(object_t *, ob)
 }
 #endif
 
-static int init_object P1(object_t *, ob)
+static int init_object(object_t *  ob)
 {
 #ifdef PACKAGE_MUDLIB_STATS
     init_stats_for_object(ob);
@@ -235,7 +235,7 @@ static int init_object P1(object_t *, ob)
 }
 
 
-static object_t *load_virtual_object P2(char *, name, int, clone)
+static object_t *load_virtual_object(char *  name, int  clone)
 {
     int argc = 2;
     char *new_name;
@@ -314,7 +314,7 @@ static object_t *load_virtual_object P2(char *, name, int, clone)
     return new_ob;
 }
 
-int strip_name P3(char *, src, char *, dest, int, size) {
+int strip_name(char *  src, char *  dest, int  size) {
     char last_c = 0;
     char *p = dest;
     char *end = dest + size - 1;
@@ -366,9 +366,9 @@ int strip_name P3(char *, src, char *, dest, int, size) {
  *
  */
 #ifdef LPC_TO_C
-object_t *int_load_object P2(char *, lname, lpc_object_t *, lpc_obj)
+object_t *int_load_object(char *  lname, lpc_object_t *  lpc_obj)
 #else
-object_t *int_load_object P1(char *, lname)
+object_t *int_load_object(char *  lname)
 #endif
 {
     int f;
@@ -576,7 +576,7 @@ object_t *int_load_object P1(char *, lname)
     return ob;
 }
 
-static char *make_new_name P1(char *, str)
+static char *make_new_name(char *  str)
 {
     static int i;
     char *p = DXALLOC(strlen(str) + 10, TAG_OBJ_NAME, "make_new_name");
@@ -591,7 +591,7 @@ static char *make_new_name P1(char *, str)
  * Save the command_giver, because reset() in the new object might change
  * it.
  */
-object_t *clone_object P2(char *, str1, int, num_arg)
+object_t *clone_object(char *  str1, int  num_arg)
 {
     object_t *ob, *new_ob;
 
@@ -655,7 +655,7 @@ object_t *clone_object P2(char *, str1, int, num_arg)
 }
 
 #ifndef NO_ENVIRONMENT
-object_t *environment P1(svalue_t *, arg)
+object_t *environment(svalue_t *  arg)
 {
     object_t *ob = current_object;
 
@@ -678,9 +678,9 @@ object_t *environment P1(svalue_t *, arg)
 
 
 #ifdef F_PRESENT
-static object_t *object_present2 PROT((char *, object_t *));
+static object_t *object_present2 (char *, object_t *);
 
-object_t *object_present P2(svalue_t *, v, object_t *, ob)
+object_t *object_present(svalue_t *  v, object_t *  ob)
 {
     svalue_t *ret;
     object_t *ret_ob;
@@ -732,7 +732,7 @@ object_t *object_present P2(svalue_t *, v, object_t *, ob)
     return 0;
 }
 
-static object_t *object_present2 P2(char *, str, object_t *, ob)
+static object_t *object_present2(char *  str, object_t *  ob)
 {
     svalue_t *ret;
     char *p;
@@ -783,7 +783,7 @@ static void fix_object_names() {
  * Remove an object. It is first moved into the destruct list, and
  * not really destructed until later. (see destruct2()).
  */
-void destruct_object P1(object_t *, ob)
+void destruct_object(object_t *  ob)
 {
     object_t **pp;
     int removed;
@@ -1014,7 +1014,7 @@ void destruct_object P1(object_t *, ob)
 /*
  * This one is called when no program is executing from the main loop.
  */
-void destruct2 P1(object_t *, ob)
+void destruct2(object_t *  ob)
 {
 #ifndef NO_ADD_ACTION
     sentence_t *s;
@@ -1086,7 +1086,7 @@ void destruct2 P1(object_t *, ob)
  */
 
 #ifndef NO_ENVIRONMENT
-static void send_say P3(object_t *, ob, char *, text, array_t *, avoid)
+static void send_say(object_t *  ob, char *  text, array_t *  avoid)
 {
     int valid, j;
 
@@ -1105,7 +1105,7 @@ static void send_say P3(object_t *, ob, char *, text, array_t *, avoid)
     tell_object(ob, text, strlen(text));
 }
 
-void say P2(svalue_t *, v, array_t *, avoid)
+void say(svalue_t *  v, array_t *  avoid)
 {
     object_t *ob, *origin;
     char *buff;
@@ -1153,7 +1153,7 @@ void say P2(svalue_t *, v, array_t *, avoid)
  * Revised, bobf@metronet.com 9/6/93
  */
 #ifdef F_TELL_ROOM
-void tell_room P3(object_t *, room, svalue_t *, v, array_t *, avoid)
+void tell_room(object_t *  room, svalue_t *  v, array_t *  avoid)
 {
     object_t *ob;
     char *buff;
@@ -1212,7 +1212,7 @@ void tell_room P3(object_t *, room, svalue_t *, v, array_t *, avoid)
 #endif
 #endif
 
-void shout_string P1(char *, str)
+void shout_string(char *  str)
 {
     object_t *ob;
 
@@ -1234,7 +1234,7 @@ void shout_string P1(char *, str)
  * Set up a function in this object to be called with the next
  * user input string.
  */
-int input_to P4(svalue_t *, fun, int, flag, int, num_arg, svalue_t *, args)
+int input_to(svalue_t *  fun, int  flag, int  num_arg, svalue_t *  args)
 {
     sentence_t *s;
     svalue_t *x;
@@ -1281,7 +1281,7 @@ int input_to P4(svalue_t *, fun, int, flag, int, num_arg, svalue_t *, args)
  * user input character.
  */
 #ifdef F_GET_CHAR
-int get_char P4(svalue_t *, fun, int, flag, int, num_arg, svalue_t *, args)
+int get_char(svalue_t *  fun, int  flag, int  num_arg, svalue_t *  args)
 {
     sentence_t *s;
     svalue_t *x;
@@ -1323,7 +1323,7 @@ int get_char P4(svalue_t *, fun, int, flag, int, num_arg, svalue_t *, args)
 }
 #endif
 
-void print_svalue P1(svalue_t *, arg)
+void print_svalue(svalue_t *  arg)
 {
     char tbuf[2048];
     int len;
@@ -1374,7 +1374,7 @@ void print_svalue P1(svalue_t *, arg)
     return;
 }
 
-void do_write P1(svalue_t *, arg)
+void do_write(svalue_t *  arg)
 {
     object_t *ob = command_giver;
 
@@ -1400,7 +1400,7 @@ void do_write P1(svalue_t *, arg)
  * returned.
  */
 
-object_t *find_object P1(char *, str)
+object_t *find_object(char *  str)
 {
     object_t *ob;
     char tmpbuf[MAX_OBJECT_NAME_SIZE];
@@ -1429,7 +1429,7 @@ object_t *find_object P1(char *, str)
 }
 
 /* Look for a loaded object. Return 0 if non found. */
-object_t *find_object2 P1(char *, str)
+object_t *find_object2(char *  str)
 {
     register object_t *ob;
     char p[MAX_OBJECT_NAME_SIZE];
@@ -1456,7 +1456,7 @@ object_t *find_object2 P1(char *, str)
  * The main work is to update all command definitions, depending on what is
  * living or not. Note that all objects in the same inventory are affected.
  */
-void move_object P2(object_t *, item, object_t *, dest)
+void move_object(object_t *  item, object_t *  dest)
 {
     object_t **pp, *ob;
 
@@ -1522,7 +1522,7 @@ void move_object P2(object_t *, item, object_t *, dest)
  * Update this.
  */
 
-void add_light P2(object_t *, p, int, n)
+void add_light(object_t *  p, int  n)
 {
     if (n == 0)
 	return;
@@ -1573,7 +1573,7 @@ void mark_free_sentences() {
 }
 #endif
 
-void free_sentence P1(sentence_t *, p)
+void free_sentence(sentence_t *  p)
 {
     if (p->flags & V_FUNCTION) {
       if (p->function.f)
@@ -1671,7 +1671,7 @@ void throw_error()
     error("Throw with no catch.\n");
 }
 
-static void debug_message_with_location P1(char *, err) {
+static void debug_message_with_location(char *  err) {
     if (current_object && current_prog) {
 	debug_message("%sprogram: /%s, object: /%s, file: %s\n",
 		      err,
@@ -1688,7 +1688,7 @@ static void debug_message_with_location P1(char *, err) {
     }
 }
 
-static void add_message_with_location P1(char *, err) {
+static void add_message_with_location(char *  err) {
     if (current_object && current_prog) {
 	add_vmessage(command_giver, "%sprogram: /%s, object: /%s, file: %s\n",
 		     err,
@@ -1706,7 +1706,7 @@ static void add_message_with_location P1(char *, err) {
 }
 
 #ifdef MUDLIB_ERROR_HANDLER
-static void mudlib_error_handler P2(char *, err, int, catch) {
+static void mudlib_error_handler(char *  err, int  catch) {
     mapping_t *m;
     char *file;
     int line;
@@ -1741,7 +1741,7 @@ static void mudlib_error_handler P2(char *, err, int, catch) {
 }
 #endif
 
-void error_handler P1(char *, err)
+void error_handler(char *  err)
 {
     char *object_name;
 
@@ -1858,7 +1858,7 @@ void error_handler P1(char *, err)
     fatal("LONGJMP failed or no error context for error.\n");
 }
 
-void error_needs_free P1(char *, s)
+void error_needs_free(char *  s)
 {
     char err_buf[2048];
     strncpy(err_buf + 1, s, 2047);
@@ -1890,7 +1890,7 @@ void error P1V(char *, fmt)
 int MudOS_is_being_shut_down;
 
 #ifdef SIGNAL_FUNC_TAKES_INT
-void startshutdownMudOS P1(int, sig)
+void startshutdownMudOS(int  sig)
 #else
 void startshutdownMudOS()
 #endif
@@ -1903,7 +1903,7 @@ void startshutdownMudOS()
  * We don't call it directly from HUP, because it is dangerous when being
  * in an interrupt.
  */
-void shutdownMudOS P1(int, exit_code)
+void shutdownMudOS(int  exit_code)
 {
     int i;
 
@@ -1944,7 +1944,7 @@ void shutdownMudOS P1(int, exit_code)
  * Call this one when there is only little memory left. It will start
  * Armageddon.
  */
-void slow_shut_down P1(int, minutes)
+void slow_shut_down(int  minutes)
 {
     /*
      * Swap out objects, and free some memory.
@@ -1972,7 +1972,7 @@ void slow_shut_down P1(int, minutes)
     }
 }
 
-void do_message P5(svalue_t *, class, svalue_t *, msg, array_t *, scope, array_t *, exclude, int, recurse)
+void do_message(svalue_t *  class, svalue_t *  msg, array_t *  scope, array_t *  exclude, int svalue_t *0)
 {
     int i, j, valid;
     object_t *ob;
@@ -2018,7 +2018,7 @@ void do_message P5(svalue_t *, class, svalue_t *, msg, array_t *, scope, array_t
 }
 
 #if !defined(NO_RESETS) && defined(LAZY_RESETS)
-void try_reset P1(object_t *, ob)
+void try_reset(object_t *  ob)
 {
     if ((ob->next_reset < current_time) && !(ob->flags & O_RESET_STATE)) {
 	debug(d_flag, ("(lazy) RESET /%s\n", ob->name));
@@ -2032,7 +2032,7 @@ void try_reset P1(object_t *, ob)
 
 #ifndef NO_ENVIRONMENT
 #ifdef F_FIRST_INVENTORY
-object_t *first_inventory P1(svalue_t *, arg)
+object_t *first_inventory(svalue_t *  arg)
 {
     object_t *ob;
 

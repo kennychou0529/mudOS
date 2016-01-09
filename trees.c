@@ -225,7 +225,7 @@ parse_node_t *make_range_node P4(int, code, parse_node_t *, expr,
     return newnode;
 }
 
-parse_node_t *insert_pop_value P1(parse_node_t *, expr) {
+parse_node_t *insert_pop_value(parse_node_t *  expr) {
     parse_node_t *replacement;
 
     if (!expr)
@@ -368,7 +368,7 @@ parse_node_t *insert_pop_value P1(parse_node_t *, expr) {
     return replacement;
 }
 
-parse_node_t *pop_value P1(parse_node_t *, pn) {
+parse_node_t *pop_value(parse_node_t *  pn) {
     if (pn) {
 	parse_node_t *ret = insert_pop_value(pn);
 
@@ -385,7 +385,7 @@ parse_node_t *pop_value P1(parse_node_t *, pn) {
     return 0;
 }
 
-int is_boolean P1(parse_node_t *, pn) {
+int is_boolean(parse_node_t *  pn) {
     switch (pn->kind) {
     case NODE_UNARY_OP:
 	if (pn->v.number == F_NOT)
@@ -402,7 +402,7 @@ int is_boolean P1(parse_node_t *, pn) {
     return 0;
 }
 
-parse_node_t *optimize_loop_test P1(parse_node_t *, pn) {
+parse_node_t *optimize_loop_test(parse_node_t *  pn) {
     parse_node_t *ret;
 
     if (!pn) return 0;

@@ -19,7 +19,7 @@
 
 #ifdef F_DB_EXISTS
 void
-f_db_exists PROT((void))
+f_db_exists (void)
 {
     int res = db_exists( (sp-1)->u.string, sp->u.string );
     pop_n_elems(2);
@@ -29,7 +29,7 @@ f_db_exists PROT((void))
 
 #ifdef F_DB_QUERY
 void
-f_db_query PROT((void))
+f_db_query (void)
 {
     svalue_t res;
 
@@ -66,7 +66,7 @@ f_db_query PROT((void))
 
 #ifdef F_DB_STORE
 void
-f_db_store PROT((void))
+f_db_store (void)
 {
   int res;
 
@@ -82,7 +82,7 @@ f_db_store PROT((void))
 
 #ifdef F_DB_DELETE
 void
-f_db_delete PROT((void))
+f_db_delete (void)
 {
   int res;
 
@@ -94,7 +94,7 @@ f_db_delete PROT((void))
 
 #ifdef F_DB_KEYS
 void
-f_db_keys PROT((void))
+f_db_keys (void)
 {
   array_t *res;
 
@@ -149,7 +149,7 @@ char *keystr;
 
 
 svalue_t *
-db_query P3( svalue_t *, ret, char *, db, char *, keystr )
+db_query( svalue_t *  ret, char *  db, char *  keystr )
 {
     int res;
     GDBM_FILE dbf;
