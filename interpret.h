@@ -183,7 +183,7 @@ typedef struct {
 #endif
 
 #define CHECK_STACK_OVERFLOW(x) if (sp + (x) >= end_of_stack) SAFE( too_deep_error = 1; error("stack overflow"); )
-#define STACK_INC SAFE( CHECK_STACK_OVERFLOW(1); sp++; )
+#define STACK_INC SAFE( CHECK_STACK_OVERFLOW(1); sp++; )	/* 检查溢出，再将栈顶指针递增 */
 
 #define push_svalue(x) SAFE( \
 			    STACK_INC;\

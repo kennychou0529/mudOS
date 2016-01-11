@@ -15,7 +15,7 @@ typedef struct stats_s {
 }       stats_t;
 
 static stats_t stats;
-
+/* 统计申请内存相关的函数的调用次数 */
 void wrappedmalloc_init()
 {
     stats.free_calls = 0;

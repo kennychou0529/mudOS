@@ -104,7 +104,7 @@
 
 #if defined (WRAPPEDMALLOC) && !defined(IN_MALLOC_WRAPPER)
 
-#  define MALLOC(x)               wrappedmalloc(x)
+#  define MALLOC(x)               wrappedmalloc(x)	/* 这个不会被调用 */
 #  define FREE(x)                 wrappedfree(x)
 #  define REALLOC(x, y)           wrappedrealloc(x, y)
 #  define CALLOC(x, y)            wrappedcalloc(x, y)
@@ -115,7 +115,7 @@
 
 #else
 
-#  if defined(DEBUGMALLOC) && !defined(IN_MALLOC_WRAPPER)
+#  if defined(DEBUGMALLOC) && !defined(IN_MALLOC_WRAPPER)	/* IN_MALLOC_WRAPPER是bsdmalloc */
 
 #    define MALLOC(x)               debugmalloc(x, 0, (char *)0)
 #    define DMALLOC(x, t, d)        debugmalloc(x, t, d)
@@ -128,7 +128,7 @@
 
 #  else
 
-#    include "my_malloc.h"
+#    include "my_malloc.h"			/* 如果没有指定一个malloc，那就自己实现？ */
 
 #  endif
 #endif

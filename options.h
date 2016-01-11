@@ -9,7 +9,7 @@
  * YOU PROBABLY DO NOT WANT TO MODIFY THIS FILE.
  *
  * Do 'cp options.h local_options' and edit that instead.  local_options,
- * if it exists, overrides this file.
+ * if it exists, overrides this file.	不要直接编辑此文件，而是拷贝为local_options
  *
  * The advantage is that when you upgrade to a newer MudOS driver, you can
  * simply copy your local_options file into the src directory.  The build
@@ -39,7 +39,7 @@
  */
 
 /****************************************************************************
- *                              MALLOC                                      *
+ *                              MALLOC 选择一个malloc的实现方式             *
  *                             --------                                     *
  * For performance reasons, LP drivers have a variety of memory allocation  *
  * packages.  If you don't care, use the default one on your system:        *
@@ -65,7 +65,7 @@
  *   * Faster than SMALLOC but more memory overhead.
  *   * Requires sbrk().
  */
-#define SYSMALLOC
+#define SYSMALLOC		/* 系统内置的malloc */
 #undef SMALLOC
 #undef BSDMALLOC
 
@@ -81,7 +81,7 @@
  *     as the stats provided by WRAPPEDMALLOC).
  *   * Incurs a fair amount of overhead (both memory and CPU)
  */
-#undef WRAPPEDMALLOC
+#undef WRAPPEDMALLOC		/* 这两个不要了？？ */
 #undef DEBUGMALLOC
 
 /* The following add certain bells and whistles to malloc: */

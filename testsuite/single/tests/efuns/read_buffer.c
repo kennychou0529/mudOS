@@ -9,7 +9,7 @@
 #ifndef __NO_BUFFER_TYPE__
 buffer b;
 #endif
-int i;
+int i;		/* 这是什么鬼 */
 
 void do_tests() {
     string s;

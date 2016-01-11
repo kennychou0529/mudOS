@@ -2,7 +2,7 @@
 #define MY_MALLOC_H
 
 /*
- * to use sysmalloc or malloc replacements
+ * to use sysmalloc or malloc replacements	这是系统自带的malloc
  */
 #if defined(SYSMALLOC) || \
     (defined(SMALLOC) && defined(SBRK_OK)) || \
@@ -14,7 +14,7 @@
 
 #endif
 
-/* smalloc - choice between replacement or wrapper */
+/* smalloc - choice between replacement or wrapper	这是smalloc的申请方式 */
 #if defined(SMALLOC) && !defined(SYSMALLOC)
 #  ifdef SBRK_OK
 #    define smalloc_malloc        malloc
@@ -29,7 +29,7 @@
 #  endif
 #endif
 
-/* bsdmalloc - always a replacement */
+/* bsdmalloc - always a replacement		bsd的申请内存方式 */	
 #if defined(BSDMALLOC) && !defined(SYSMALLOC)
 #  define bsdmalloc_malloc      malloc
 #  define bsdmalloc_free        free

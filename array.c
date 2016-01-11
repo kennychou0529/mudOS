@@ -117,7 +117,7 @@ array_t *allocate_array(int  n)
 
     return p;
 }
-
+/* 申请数组，并且初始化n个元素为同一svalue */
 array_t *allocate_array2(int  n, svalue_t *  svp) {
     int i;
     array_t *ret;
@@ -425,8 +425,7 @@ char *implode_string(array_t *  arr, char *  del, int  del_len)
     return q;
 }
 
-void implode_array P4(funptr_t *, fp, array_t *, arr, 
-		      svalue_t *, dest, int, first_on_stack) {
+void implode_array(funptr_t *  fp, array_t *  arr, svalue_t *  dest, int  first_on_stack) {
     int i = 0, n;
     svalue_t *v;
 

@@ -422,7 +422,7 @@ show_mstats(outbuffer_t *  ob, char *  s)
 #endif
 
 /* calloc was originally in its own source file */
-#ifdef calloc
+#ifdef calloc	/* 如果定义了calloc的话，赶紧清掉，以免妨碍调用iso C库函数，此函数会自动将内存初始化为0 */
 /* linux */
 #undef calloc
 #endif

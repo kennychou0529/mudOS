@@ -36,17 +36,17 @@ typedef struct {
 #ifdef DEBUG
     int extra_ref;
 #endif
-    struct object_s *owner;
-    struct array_s *args;
+    struct object_s *owner;		/* 函数所有者 */
+    struct array_s *args;		/* 参数装这里 */
 } funptr_hdr_t;
 
-typedef struct funptr_s {
-    funptr_hdr_t hdr;
-    union {
-	efun_ptr_t efun;
-	local_ptr_t local;
-	simul_ptr_t simul;
-	functional_t functional;
+typedef struct funptr_s {	/* 函数指针 */
+    funptr_hdr_t hdr;	
+    union {		/* 属于以下四种之一 */
+		efun_ptr_t efun;
+		local_ptr_t local;
+		simul_ptr_t simul;	/* 虚函数 */
+		functional_t functional;
     } f;
 } funptr_t;
 

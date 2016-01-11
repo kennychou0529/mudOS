@@ -282,13 +282,13 @@ int validate_shadowing(object_t *  ob)
 #endif
 
 /*
- * Push a number on the value stack.
+ * Push a number on the value stack.	直接将整型push到全局的value栈
  */
 INLINE void
 push_number(int  n)
 {
     STACK_INC;
-    sp->type = T_NUMBER;
+    sp->type = T_NUMBER;	/* 栈元素的3个属性 */
     sp->subtype = 0;
     sp->u.number = n;
 }
@@ -1520,7 +1520,7 @@ void break_point()
 }
 #endif
 
-program_t fake_prog = { "<function>" };
+program_t fake_prog = { "<function>" };	/* 只写了个文件名，其他置空 */
 unsigned char fake_program = F_RETURN;
 
 /*
@@ -1533,8 +1533,8 @@ unsigned char fake_program = F_RETURN;
  */
 void setup_fake_frame(funptr_t *  fun) {
     if (csp == &control_stack[CFG_MAX_CALL_DEPTH-1]) {
-	too_deep_error = 1;
-	error("Too deep recursion.\n");
+		too_deep_error = 1;
+		error("Too deep recursion.\n");
     }
     csp++;
     csp->caller_type = caller_type;
@@ -3594,6 +3594,7 @@ eval_instruction(char *  p)
 		call_simul_efun(index, num_args);
 	    }
 	    break;
+
 	case F_SWITCH:
 	    f_switch();
 	    break;

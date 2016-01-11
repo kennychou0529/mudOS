@@ -23,7 +23,7 @@ typedef struct md_node_s {
 
 void check_all_blocks PROT((int));
 #else
-#define MD_OVERHEAD (sizeof(md_node_t))
+#define MD_OVERHEAD (sizeof(md_node_t))		/* 基本的内存费用 */
 #endif
 
 #define MD_TABLE_BITS 14

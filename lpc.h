@@ -48,13 +48,13 @@ typedef struct ref_s {
     svalue_t sv;
 } ref_t;
 
-/* values for type field of svalue struct */
+/* values for type field of svalue struct 以位来区别value的类型 */
 #define T_INVALID	0x0
 #define T_LVALUE	0x1
 
 #define T_NUMBER	0x2
 #define T_STRING	0x4
-#define T_REAL          0x80
+#define T_REAL      0x80
 
 #define T_ARRAY  	0x8
 #define T_OBJECT	0x10
@@ -69,7 +69,7 @@ typedef struct ref_s {
 #define T_LVALUE_RANGE  0x800
 #define T_ERROR_HANDLER 0x1000
 #define T_FREED         0x2000
-#define T_REF		0x4000
+#define T_REF			0x4000
 
 #ifdef NO_BUFFER_TYPE
 #define T_REFED (T_ARRAY|T_OBJECT|T_MAPPING|T_FUNCTION|T_CLASS|T_REF)

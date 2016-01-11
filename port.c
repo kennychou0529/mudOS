@@ -65,7 +65,7 @@ int random_number(int  n)
  * some chosen year. The old behaviour of time(), is to return the number
  * of seconds since 1970.
  */
-
+/* 获取时间的包装函数 */
 int get_current_time()
 {
     return (int) time(0l);	/* Just use the old time() for now */
