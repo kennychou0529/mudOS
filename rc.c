@@ -14,16 +14,16 @@
 
 #define MAX_LINE_LENGTH 120
 
-char *config_str[NUM_CONFIG_STRS];		/* 配置信息 */
-int config_int[NUM_CONFIG_INTS];
+char *config_str[NUM_CONFIG_STRS];		/* 什么鬼？ */
+int config_int[NUM_CONFIG_INTS];		/* size=24  */
 
-static char *buff;
+static char *buff;						/* 配置文件中的缓冲区 */
 static int buff_size;
 
 static void read_config_file (FILE *);
 static int scan_config_line (char *, void *, int);
 static void config_init (void); /* don't ask */
-
+/* 初始化内存的 */
 static void config_init() {
     int i;
 
@@ -35,36 +35,36 @@ static void config_init() {
     }
 
 }
-
+/* 读取配置文件 */
 static void read_config_file(FILE *  file)
 {
     char str[MAX_LINE_LENGTH * 4];
     int size = 2, len, tmp;
     char *p;
 
-    buff_size = MAX_LINE_LENGTH * (NUM_CONFIG_INTS + 1) * (NUM_CONFIG_STRS + 1);
-    p = buff = CALLOCATE(buff_size, char, TAG_CONFIG, "read_config_file: 1");
+    buff_size = MAX_LINE_LENGTH * (NUM_CONFIG_INTS + 1) * (NUM_CONFIG_STRS + 1);/* 缓冲区大小 */
+    p = buff = CALLOCATE(buff_size, char, TAG_CONFIG, "read_config_file: 1");	/* 申请缓冲区记录所有配置 */
     *p++ = '\n';
 
     while (1) {
-        if (fgets(str, MAX_LINE_LENGTH * 4, file) == NULL)
-            break;
-        if (!str)
+        if (fgets(str, MAX_LINE_LENGTH * 4, file) == NULL)	/* 每次读一行配置 */
+            break;		/* 读时出错 */
+        if (!str)		/* 读取工作结束 */
             break;
         len = strlen(str); /* ACK! */
-        if (len > MAX_LINE_LENGTH) {
+        if (len > MAX_LINE_LENGTH) {	/* 虽然限制了最长120个字符，但还是接受了4*120的长度。不允许超过120 */
             fprintf(stderr, "*Error in config file: line too long:\n%s...\n", str);
             exit(-1);
         }
-        if (str[0] != '#' && str[0] != '\n') {
+        if (str[0] != '#' && str[0] != '\n') {	/* 不是注释行 */
             size += len + 1;
-            if (size > buff_size) {
+            if (size > buff_size) {				/* 配置文件太多了，存不进缓冲区了 */
                 tmp = p - buff;
-                buff = RESIZE(buff, buff_size *= 2, char,
+                buff = RESIZE(buff, buff_size *= 2, char,	/* 扩大一倍的大小就行了 */
                               TAG_CONFIG, "read_config_file: 2");
                 p = buff + tmp;
             }
-            strncpy(p, str, len);
+            strncpy(p, str, len);	/* 现在能添加进去了 */
             p += len;
             *p++ = '\n';
         }
@@ -77,11 +77,11 @@ static void read_config_file(FILE *  file)
  * If the required flag is 0, it will only give a warning if the line is
  * missing from the config file.  Otherwise, it will give an error and exit
  * if the line isn't there.
- */
-/* required:
-      1  : Must have
-      0  : optional
-      -1 : warn if missing */
+  检查dest中fmt指定的配置项,并存在dest中返回   */
+/* required标志
+      1  : Must have		必选
+      0  : optional			配置文件是可选的
+      -1 : warn if missing	如果没有就警告   */
 static int scan_config_line(char *  fmt, void *  dest, int  required)
 {
     char *tmp, *end;
@@ -90,16 +90,16 @@ static int scan_config_line(char *  fmt, void *  dest, int  required)
     /* zero the destination.  It is either a pointer to an int or a char
        buffer, so this will work */
     *((int *)dest) = 0;
-    tmp = buff;
+    tmp = buff;		/* 在缓冲区中扫描 */
     while (tmp) {
         while ((tmp = (char *) strchr(tmp, '\n'))) {
             if (*(++tmp) == fmt[0]) break;
         }
         /* don't allow sscanf() to scan to next line for blank entries */
         end = (tmp ? strchr(tmp, '\n') : 0);
-        if (end) *end = '\0';
-        if (tmp && sscanf(tmp, fmt, dest) == 1) {
-            if (end) *end = '\n';
+        if (end) *end = '\0';		/* 在用sscanf之前，将\n换成结束符\0 */
+        if (tmp && sscanf(tmp, fmt, dest) == 1) {	/* 选项进入到dest中了 */
+            if (end) *end = '\n';	/* 不允许换行符的存在 */
             break;
         }
         if (end) *end = '\n';
@@ -139,7 +139,7 @@ static char *process_config_string(char *str) {
     return alloc_cstring(p, "process_config_string()");
 }
 #endif
-/*  */
+/* 设置配置参数，包括端口什么的 */
 void set_defaults(char *  filename)
 {
     FILE *def;
@@ -171,9 +171,9 @@ void set_defaults(char *  filename)
         fprintf(stderr, "*Error: couldn't find or open config file: '%s'\n", filename);
         exit(-1);
     }
-    read_config_file(def);
+    read_config_file(def);		/* 读取配置文件()，并存到缓冲区 */
+    scan_config_line("global include file : %[^\n]", tmp, 0);	/* 取出指定配置项 */
 
-    scan_config_line("global include file : %[^\n]", tmp, 0);
     p = CONFIG_STR(__GLOBAL_INCLUDE_FILE__) = alloc_cstring(tmp, "config file: gif");
 
     /* check if the global include file is quoted */
@@ -246,11 +246,11 @@ void set_defaults(char *  filename)
     } else {
         FD6_KIND = PORT_UNDEFINED;
     }
-
+	/* 很重要的端口号 */
     if (scan_config_line("port number : %d\n", &CONFIG_INT(__MUD_PORT__), 0)) {
         external_port[0].port = PORTNO;
         external_port[0].kind = PORT_TELNET;
-        port_start = 1;
+        port_start = 1;		/* 注意会修改这玩意 */
     }
 
     scan_config_line("address server port : %d\n",
@@ -310,21 +310,21 @@ void set_defaults(char *  filename)
     scan_config_line("object table size : %d\n",
                      &CONFIG_INT(__OBJECT_HASH_TABLE_SIZE__), 1);
 
-    /* check for ports */
+    /* check for ports 如果有配置端口号，则检查下端口  */
     if (port_start == 1) {
         if (scan_config_line("external_port_1 : %[^\n]", tmp, 0)) {
             int port = CONFIG_INT(__MUD_PORT__);
             fprintf(stderr, "Warning: external_port_1 already defined to be 'telnet %i' by the line\n    'port number : %i'; ignoring the line 'external_port_1 : %s'\n", port, port, tmp);
         }
     }
-    for (i = port_start; i < 5; i++) {
+    for (i = port_start; i < 5; i++) {	/* external_port_可以支持4个，分别是telnet binary ascii MUD */
         external_port[i].kind = 0;
         external_port[i].fd = -1;
         sprintf(kind, "external_port_%i : %%[^\n]", i + 1);
-        if (scan_config_line(kind, tmp, 0)) {
+        if (scan_config_line(kind, tmp, 0)) {	/* 如果有设置多个的话 */
             if (sscanf(tmp, "%s %d", kind, &port) == 2) {
                 external_port[i].port = port;
-                if (!strcmp(kind, "telnet"))
+                if (!strcmp(kind, "telnet"))	/* telnet binary ascii MUD 这几种中的一种 */
                     external_port[i].kind = PORT_TELNET;
                 else if (!strcmp(kind, "binary")) {
 #ifdef NO_BUFFER_TYPE
@@ -336,7 +336,7 @@ void set_defaults(char *  filename)
                     external_port[i].kind = PORT_ASCII;
                 else if (!strcmp(kind, "MUD"))
                     external_port[i].kind = PORT_MUD;
-                else
+                else	/* 出错了 */
                 {
                     fprintf(stderr, "Unknown kind of external port: %s\n",
                             kind);
@@ -359,15 +359,15 @@ void set_defaults(char *  filename)
     }
 #endif
 
-    FREE(buff);
+    FREE(buff);			/* 配置完就可以free掉了 */
     fclose(def);
 
     /*
-     * from options.h
+     * from options.h	自己配置的选项,在options.h中
      */
-    config_int[__EVALUATOR_STACK_SIZE__ - BASE_CONFIG_INT] = CFG_EVALUATOR_STACK_SIZE;
-    config_int[__MAX_LOCAL_VARIABLES__ - BASE_CONFIG_INT] = CFG_MAX_LOCAL_VARIABLES;
-    config_int[__MAX_CALL_DEPTH__ - BASE_CONFIG_INT] = CFG_MAX_CALL_DEPTH;
+    config_int[__EVALUATOR_STACK_SIZE__ - BASE_CONFIG_INT] 	 = CFG_EVALUATOR_STACK_SIZE;
+    config_int[__MAX_LOCAL_VARIABLES__ - BASE_CONFIG_INT]  	 = CFG_MAX_LOCAL_VARIABLES;
+    config_int[__MAX_CALL_DEPTH__ - BASE_CONFIG_INT]	   	 = CFG_MAX_CALL_DEPTH;
     config_int[__LIVING_HASH_TABLE_SIZE__ - BASE_CONFIG_INT] = CFG_LIVING_HASH_SIZE;
 }
 

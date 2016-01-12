@@ -279,7 +279,7 @@ void ipc_remove()
 
     debug_message("closed external ports\n");
 }
-
+/* 初始化地址服务器 */
 void init_addr_server(char *  hostname, int  addr_server_port)
 {
     struct sockaddr_in server;
@@ -288,8 +288,8 @@ void init_addr_server(char *  hostname, int  addr_server_port)
     int optval;
     long addr;
 
-    if (addr_server_fd >= 0)
-	return;
+    if (addr_server_fd >= 0)	/* -1才继续往下 */
+		return;
 
     if (!hostname) return;
 

@@ -22,7 +22,7 @@ int outbuf_extend PROT((outbuffer_t *, int));
 #ifdef DEBUGMALLOC
 /* tags */
 #define TAG_TEMPORARY       (1 << 8)
-#define TAG_PERMANENT       (2 << 8)
+#define TAG_PERMANENT       (2 << 8)	/* 即512 */
 #define TAG_COMPILER        (3 << 8)
 #define TAG_DATA            (4 << 8)
 #define TAG_MISC            (5 << 8)
@@ -43,7 +43,7 @@ int outbuf_extend PROT((outbuffer_t *, int));
 #define TAG_CONFIG          (TAG_PERMANENT + 23)
 #define TAG_SIMULS          (TAG_PERMANENT + 24)
 #define TAG_SENTENCE        (TAG_PERMANENT + 25)
-#define TAG_STR_TBL         (TAG_PERMANENT + 26)
+#define TAG_STR_TBL         (TAG_PERMANENT + 26)	/* 512+26 */
 #define TAG_SWAP            (TAG_PERMANENT + 27)
 #define TAG_UID             (TAG_PERMANENT + 28)
 #define TAG_OBJ_NAME        (TAG_PERMANENT + 29)

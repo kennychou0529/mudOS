@@ -2104,7 +2104,7 @@ void add_predefines()
     sprintf(save_buf, "%d", external_port[0].port);
     add_predefine("__PORT__", -1, save_buf);
     for (i = 0; i < 2 * NUM_OPTION_DEFS; i += 2) {
-	add_predefine(option_defs[i], -1, option_defs[i+1]);
+		add_predefine(option_defs[i], -1, option_defs[i+1]);
     }
     add_quoted_predefine("__ARCH__", ARCH);
     add_quoted_predefine("__COMPILER__", COMPILER);
@@ -2127,16 +2127,16 @@ void add_predefines()
     add_predefine("HAS_DEBUG_LEVEL", -1, "");
 #endif
     for (tmpf = lpc_predefs; tmpf; tmpf = tmpf->next) {
-	char namebuf[NSIZE];
-	char mtext[MLEN];
+		char namebuf[NSIZE];
+		char mtext[MLEN];
 
-	*mtext = '\0';
-	sscanf(tmpf->flag, "%[^=]=%[ -~=]", namebuf, mtext);
-	if (strlen(namebuf) >= NSIZE)
-	    fatal("NSIZE exceeded");
-	if (strlen(mtext) >= MLEN)
-	    fatal("MLEN exceeded");
-	add_predefine(namebuf, -1, mtext);
+		*mtext = '\0';
+		sscanf(tmpf->flag, "%[^=]=%[ -~=]", namebuf, mtext);
+		if (strlen(namebuf) >= NSIZE)
+			fatal("NSIZE exceeded");
+		if (strlen(mtext) >= MLEN)
+			fatal("MLEN exceeded");
+		add_predefine(namebuf, -1, mtext);
     }
 }
 
@@ -3400,7 +3400,7 @@ void init_identifiers() {
 
     /* clean all three tables */
     for (i=0; i<IDENT_HASH_SIZE * 3; i++) {
-	ident_hash_table[i]=0;
+		ident_hash_table[i]=0;
     }
     /* add the reserved words */
     for (i=0; i<NELEM(reswords); i++) {

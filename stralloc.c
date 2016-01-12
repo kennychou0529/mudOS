@@ -77,7 +77,7 @@ INLINE_STATIC block_t *sfindblock (char *, int);
  */
 
 static block_t **base_table = (block_t **) 0;
-static int htable_size;
+static int htable_size;		/* 初始为16 */
 static int htable_size_minus_one;
 
 INLINE_STATIC block_t *alloc_new_string (char *, int);
@@ -87,18 +87,18 @@ void init_strings()
     int x, y;
 
     /* ensure that htable size is a power of 2 */
-    y = HTABLE_SIZE;
-    for (htable_size = 1; htable_size < y; htable_size *= 2)
-	;
-    htable_size_minus_one = htable_size - 1;
-    base_table = CALLOCATE(htable_size, block_t *, 
-			   TAG_STR_TBL, "init_strings");
+    y = HTABLE_SIZE;	/* 19 */
+    for (htable_size = 1; htable_size < y; htable_size *= 2)	/* 即2^4=16啦 */
+		;
+    htable_size_minus_one = htable_size - 1;	/* 即15啦 */
+    base_table = CALLOCATE(htable_size, block_t *, TAG_STR_TBL, "init_strings");	/* 申请了16个内存块？ */
+
 #ifdef STRING_STATS
-    overhead_bytes += (sizeof(block_t *) * htable_size);
+    overhead_bytes += (sizeof(block_t *) * htable_size);	/* 记录内存花费 */
 #endif
 
     for (x = 0; x < htable_size; x++) {
-	base_table[x] = 0;
+		base_table[x] = 0;		/* 这不是二级指针么？怎么可以这样初始化 */
     }
 }
 
@@ -368,7 +368,7 @@ char *extend_string(char *  str, int  len) {
     
     return (char *)(mbt + 1);
 }
-
+/* 申请内存并复制字符串 */
 #ifdef DEBUGMALLOC
 char *int_alloc_cstring(char *  str, char *  tag)
 #else

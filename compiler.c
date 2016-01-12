@@ -1955,7 +1955,7 @@ void yywarn(char *  str) {
 }
 
 /*
- * Compile an LPC file.
+ * Compile an LPC file.	编译一个LPC文件
  */
 program_t *
 compile_file(int  f, char *  name) {

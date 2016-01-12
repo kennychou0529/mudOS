@@ -36,15 +36,14 @@ void init_otable()
     int x, y;
 
     /* ensure that otable_size is a power of 2 */
-    y = OTABLE_SIZE;
-    for (otable_size = 1; otable_size < y; otable_size *= 2)
+    y = OTABLE_SIZE;		/* 20 */
+    for (otable_size = 1; otable_size < y; otable_size *= 2)	/* 跟stralloc.c中那个一样 */
 	;
     otable_size_minus_one = otable_size - 1;
-    obj_table = CALLOCATE(otable_size, object_t *, 
-			  TAG_OBJ_TBL, "init_otable");
+    obj_table = CALLOCATE(otable_size, object_t *, TAG_OBJ_TBL, "init_otable");
 
     for (x = 0; x < otable_size; x++)
-	obj_table[x] = 0;
+		obj_table[x] = 0;
 }
 
 /*
@@ -53,9 +52,9 @@ void init_otable()
 
 static int obj_searches = 0, obj_probes = 0, objs_found = 0;
 
-/* A global.  *shhhh* don't tell. */
+/* A global.  *shhhh* don't tell. 全局的临时变量啊？ */
 static int h;
-
+/* 在哈希表中找某个obj */
 static object_t *find_obj_n(char *  s)
 {
     object_t *curr, *prev;
@@ -64,21 +63,21 @@ static object_t *find_obj_n(char *  s)
     curr = obj_table[h];
     prev = 0;
 
-    obj_searches++;
+    obj_searches++;		/* 统计obj搜索次数的吧 */
 
     while (curr) {
-	obj_probes++;
-	if (!strcmp(curr->name, s)) {	/* found it */
-	    if (prev) {		/* not at head of list */
-		prev->next_hash = curr->next_hash;
-		curr->next_hash = obj_table[h];
-		obj_table[h] = curr;
-	    }
-	    objs_found++;
-	    return (curr);	/* pointer to object */
-	}
-	prev = curr;
-	curr = curr->next_hash;
+		obj_probes++;
+		if (!strcmp(curr->name, s)) {	/* found it */
+			if (prev) {		/* not at head of list */
+				prev->next_hash = curr->next_hash;
+				curr->next_hash = obj_table[h];
+				obj_table[h] = curr;
+			}
+			objs_found++;
+			return (curr);	/* pointer to object */
+		}
+		prev = curr;
+		curr = curr->next_hash;
     }
 
     return (0);			/* not found */
@@ -134,7 +133,7 @@ void enter_object_hash_at_end(object_t *  ob)
 
     op = &obj_table[h];
     while (*op)
-	op = &((*op)->next_hash);
+		op = &((*op)->next_hash);
     *op = ob;
     objs_in_table++;
     return;
@@ -187,14 +186,14 @@ void remove_precompiled_hashes(char *  name) {
  */
 
 static int user_obj_lookups = 0, user_obj_found = 0;
-
+/* 在对象哈希表中查找某个对象 */
 object_t *lookup_object_hash(char *  s)
 {
     object_t *ob = find_obj_n(s);
 
     user_obj_lookups++;
     if (ob)
-	user_obj_found++;
+		user_obj_found++;
     return (ob);
 }
 

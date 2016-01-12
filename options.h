@@ -800,7 +800,7 @@
 /* Miscellaneous config options that should probably be in the runtime
  * config file.
  */
-/* MAX_LOCAL: maximum number of local variables allowed per LPC function */
+/* MAX_LOCAL: maximum number of local variables allowed per LPC function这还限制局部变量的数量 */
 #define CFG_MAX_LOCAL_VARIABLES		25
 
 #define CFG_EVALUATOR_STACK_SIZE 	1000

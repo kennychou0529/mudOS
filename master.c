@@ -47,7 +47,7 @@ svalue_t *safe_apply_master_ob(int  fun, int  num_arg)
     }
     return safe_apply(applies_table[fun], master_ob, num_arg, ORIGIN_DRIVER);
 }
-
+/* 初始化mudlib中的master */
 void init_master() {
     char buf[512];
 #ifdef LPC_TO_C
@@ -64,9 +64,9 @@ void init_master() {
 
     new_ob = load_object(buf, compiled_version);
     if (new_ob == 0) {
-	fprintf(stderr, "The master file %s was not loaded.\n",
-		MASTER_FILE);
-	exit(-1);
+		fprintf(stderr, "The master file %s was not loaded.\n",
+			MASTER_FILE);
+		exit(-1);
     }
     set_master(new_ob);
 }

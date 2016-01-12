@@ -26,7 +26,7 @@
 
 #define __ADDR_SERVER_IP__          CFG_STR(1)
 
-#define __MUD_LIB_DIR__             CFG_STR(2)
+#define __MUD_LIB_DIR__             CFG_STR(2)		/* 2+0 */
 #define __BIN_DIR__                 CFG_STR(3)
 
 #define __LOG_DIR__                 CFG_STR(4)
@@ -48,8 +48,8 @@
  * These config settings return an int (ie number)
  */
 
-#define BASE_CONFIG_INT (BASE_CONFIG_STR + 15)
-#define CFG_INT(x)  ((x) + BASE_CONFIG_INT)
+#define BASE_CONFIG_INT (BASE_CONFIG_STR + 15)	/* 0+15 */
+#define CFG_INT(x)  ((x) + BASE_CONFIG_INT)		/* x+15 */
 
 #define __MUD_PORT__                CFG_INT(0)
 #define __ADDR_SERVER_PORT__        CFG_INT(1)
@@ -75,8 +75,8 @@
 
 #define __RESERVED_MEM_SIZE__       CFG_INT(18)
 
-#define __SHARED_STRING_HASH_TABLE_SIZE__ CFG_INT(19)
-#define __OBJECT_HASH_TABLE_SIZE__        CFG_INT(20)
+#define __SHARED_STRING_HASH_TABLE_SIZE__ CFG_INT(19)	/* 19+15 */
+#define __OBJECT_HASH_TABLE_SIZE__        CFG_INT(20)	/* 20+15 */
 #define __LIVING_HASH_TABLE_SIZE__        CFG_INT(21)
 
 #define __FD6_PORT__		    CFG_INT(22)

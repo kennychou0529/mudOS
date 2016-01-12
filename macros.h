@@ -128,7 +128,7 @@
 
 #  else
 
-#    include "my_malloc.h"			/* 如果没有指定一个malloc，那就自己实现？ */
+#    include "my_malloc.h"			/* 系统自带的malloc在里面 */
 
 #  endif
 #endif
@@ -138,7 +138,7 @@
 #endif
 
 #define ALLOCATE(type, tag, desc) ((type *)DXALLOC(sizeof(type), tag, desc))
-#define CALLOCATE(num, type, tag, desc) ((type *)DXALLOC(sizeof(type[1]) * (num), tag, desc))
+#define CALLOCATE(num, type, tag, desc) ((type *)DXALLOC(sizeof(type[1]) * (num), tag, desc))	/* 申请内存 */
 #define RESIZE(ptr, num, type, tag, desc) ((type *)DREALLOC((void *)ptr, sizeof(type) * (num), tag, desc))
 
 #ifdef DEBUG

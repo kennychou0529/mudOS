@@ -105,13 +105,13 @@ void MDmalloc(md_node_t *  node, int  size, int  tag, char *  desc)
 #endif
         return;
     }
-    total_malloced += size;				/* 统计什么呢？ */
+    total_malloced += size;				/* 统计所申请的内存大小 */
     if (total_malloced > hiwater) {		/* hiwater就像是申请过的最多内存字节数量 */	
         hiwater = total_malloced;
     }
     h = MD_HASH(node);		/* 哈希成一个整型 */
     node->size = size;
-    node->next = table[h];
+    node->next = table[h];	/* 挂链法 */
 #ifdef CHECK_MEMORY			/* 可以不用鸟 */
     LEFT_MAGIC(node) = MD_MAGIC;
     STORE_RIGHT_MAGIC(node);
@@ -133,7 +133,7 @@ void MDmalloc(md_node_t *  node, int  size, int  tag, char *  desc)
                       node->tag, node->desc, (unsigned int) PTR(node), node->size);
     }
 #endif
-    table[h] = node;		/* 哈希之后直接存在这个表中 */
+    table[h] = node;		/* 哈希之后记录这个表中 */
 }
 
 #ifdef DEBUGMALLOC_EXTENSIONS

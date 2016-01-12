@@ -57,15 +57,15 @@ INLINE void *debugrealloc(void *  ptr, int  size, int  tag, char *  desc)
     }
     return (void *) 0;
 }
-/* 这才是真正申请内存 */
+/* 真正申请内存 */
 INLINE void *debugmalloc(int  size, int  tag, char *  desc)
 {
     void *tmp;
 
-    if (size <= 0)
-		fatal("illegal size in debugmalloc()");
+    if (size <= 0)		fatal("illegal size in debugmalloc()");
+
     stats.alloc_calls++;						/* 调用一次统计 */
-    tmp = (void *) MALLOC(size + MD_OVERHEAD);	/* MALLOC在malloc.h中定义，可以认为是系统自带的malloc函数。申请一个node和size的大小 */
+    tmp = (void *) MALLOC(size + MD_OVERHEAD);	/* MALLOC在malloc.h和my_malloc.h中定义，可以认为是系统自带的malloc函数。申请一个node和size的大小 */
     MDmalloc(tmp, size, tag, desc);				/* 将节点tmp存到table中 */
     NOISY3("malloc: %i (%x), %s\n", size, (md_node_t *)tmp + 1, desc);	/* 直接调用printf */
     return (md_node_t *) tmp + 1;				/* 内存的顺序是：先一个node，再连着size个字节，现在返回size个字节的起始 */

@@ -92,13 +92,13 @@ typedef struct malloc_block_s {
 #define DEC_COUNTED_REF(x) (!(MSTR_REF(x) == 0 || --MSTR_REF(x) > 0))
 
 typedef struct block_s {
-    struct block_s *next;	/* next block in the hash chain */
+    struct block_s *next;	/* next block in the hash chain 下一个哈希链中的块 */
 #if defined(DEBUGMALLOC_EXTENSIONS) || (SIZEOF_PTR == 8)
     int extra_ref;
 #endif
     /* these two must be last */
-    unsigned short size;	/* length of the string */
-    unsigned short refs;	/* reference count    */
+    unsigned short size;	/* length of the string 内存块大小 */
+    unsigned short refs;	/* reference count      引用次数  */
 } block_t;
 
 #define NEXT(x) (x)->next

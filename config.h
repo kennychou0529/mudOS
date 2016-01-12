@@ -13,12 +13,12 @@
  * file (config.example)
  */
 
-#define CONFIG_STR(x)           config_str[(x) - BASE_CONFIG_STR]
-#define CONFIG_INT(x)           config_int[(x) - BASE_CONFIG_INT]
+#define CONFIG_STR(x)           config_str[(x) - BASE_CONFIG_STR]	/* 第二个其实就是0 */
+#define CONFIG_INT(x)           config_int[(x) - BASE_CONFIG_INT]	/* x-15 */
 
 #define MUD_NAME                CONFIG_STR(__MUD_NAME__)
 #define ADDR_SERVER_IP          CONFIG_STR(__ADDR_SERVER_IP__)
-#define MUD_LIB                 CONFIG_STR(__MUD_LIB_DIR__)
+#define MUD_LIB                 CONFIG_STR(__MUD_LIB_DIR__)			/* 2-0 */
 #define BIN_DIR                 CONFIG_STR(__BIN_DIR__)
 #define LOG_DIR                 CONFIG_STR(__LOG_DIR__)
 #define INCLUDE_DIRS            CONFIG_STR(__INCLUDE_DIRS__)
@@ -33,7 +33,7 @@
 #define MUD_IP                  CONFIG_STR(__MUD_IP__)
 
 /*
- * runtime config ints
+ * runtime config ints	直接往下一跳看到的数字就是左边的值
  */
 
 #define PORTNO                  CONFIG_INT(__MUD_PORT__)
@@ -50,8 +50,8 @@
 #define READ_FILE_MAX_SIZE      CONFIG_INT(__MAX_READ_FILE_SIZE__)
 #define MAX_BYTE_TRANSFER       CONFIG_INT(__MAX_BYTE_TRANSFER__)
 #define RESERVED_SIZE           CONFIG_INT(__RESERVED_MEM_SIZE__)
-#define HTABLE_SIZE             CONFIG_INT(__SHARED_STRING_HASH_TABLE_SIZE__)
-#define OTABLE_SIZE             CONFIG_INT(__OBJECT_HASH_TABLE_SIZE__)
+#define HTABLE_SIZE             CONFIG_INT(__SHARED_STRING_HASH_TABLE_SIZE__)	/* CONFIG_INT(19+15)=34-15=19 */
+#define OTABLE_SIZE             CONFIG_INT(__OBJECT_HASH_TABLE_SIZE__)			/* 35-15=20咯 */
 #define INHERIT_CHAIN_SIZE      CONFIG_INT(__INHERIT_CHAIN_SIZE__)
 #define FD6_PORT		CONFIG_INT(__FD6_PORT__)
 #define FD6_KIND		CONFIG_INT(__FD6_KIND__)
