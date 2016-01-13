@@ -85,7 +85,7 @@ char *variable_name(program_t *  prog, int  idx) {
         i--;
     return variable_name(prog->inherit[i].prog, idx - prog->inherit[i].variable_index_offset);
 }
-
+/* 找到并返回函数的入口指针？ */
 function_t *find_func_entry(program_t *  prog, int  index) {
     register int low, mid, high;
 
@@ -111,6 +111,6 @@ function_t *find_func_entry(program_t *  prog, int  index) {
 
     index -= prog->last_inherited;
 
-    return prog->function_table + index;
+    return prog->function_table + index;	
 }
 

@@ -581,10 +581,10 @@ int heart_beat_status(outbuffer_t *  ob, int  verbose)
  * the ref count has to be incremented to protect against deallocation.
  *
  * The master object is asked to do the actual loading.
- */
+ 预load一些文件     */
 void preload_objects(int  eflag)
 {
-    VOLATILE array_t *prefiles;
+    VOLATILE array_t *prefiles;		/* 预载文件可能很多 */
     svalue_t *ret;
     VOLATILE int ix;
     error_context_t econ;

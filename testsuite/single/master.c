@@ -41,25 +41,25 @@ connect()
 		write(err);
 		destruct(this_object());
 	}
-	return login_ob;
+	return login_ob;	/* 返回一个用户对象，即每个用户作为一个对象 */
 }
 
-// compile_object: This is used for loading MudOS "virtual" objects.
+// compile_object: This is used for loading MudOS "virtual" objects. 载入虚拟对象
 // It should return the object the mudlib wishes to associate with the
 // filename named by 'file'.  It should return 0 if no object is to be
-// associated.
+// associated. 如果没有关联，应该返回0.
 
 mixed
 compile_object(string file)
 {
 //	return (mixed)VIRTUAL_D->compile_object(file);
-	return 0;
+	return 0; /* 一般来说，一直返回0 */
 }
 
 // This is called when there is a driver segmentation fault or a bus error,
 // etc.  As it's static it can't be called by anything but the driver (and
 // master).
-
+// 系统崩溃的时候会调用此函数
 staticf void
 crash(string, object, object)
 {
@@ -105,7 +105,7 @@ update_file(string file)
 }
 
 // Function name:       epilog
-// Return:              List of files to preload
+// Return:              List of files to preload 预加载的文件
 
 string *
 epilog(int)
@@ -116,9 +116,9 @@ epilog(int)
 	return items;
 }
 
-// preload an object
-
-void
+// preload an object 
+//系统按照epilog函数返回的数组载入全局对象后调用次函数，用来判断对象是否成功创建
+void 
 preload(string file)
 {
 	int t1;
@@ -140,7 +140,7 @@ preload(string file)
 
 // Write an error message into a log file. The error occured in the object
 // 'file', giving the error message 'message'.
-
+// 编译程序发生任何错误系统都会调用此函数，用于发现是哪个对象出了什么错误。用于记录编译程序时出现的错误信息。
 void
 log_error(string, string message)
 {
@@ -210,7 +210,7 @@ make_path_absolute(string file)
 	file = resolve_path((string)this_player()->query_cwd(), file);
 	return file;
 }
-
+// 取得 root 使用者识别名称需要获取系统的uid时调用此函数。
 string
 get_root_uid()
 {
@@ -222,7 +222,7 @@ get_bb_uid()
 {
    return BACKBONE_UID;
 }
-
+// 系统创建任何对象时都会调用此函数，用来获得系统初始化对象的uid值。
 string
 creator_file(string str)
 {
@@ -244,7 +244,7 @@ author_file(string str)
 string privs_file(string f) {
     return f;
 }
-
+// 主控物件处理错误的函数，此函数让 mudlib 代替系统处理错误情形。用来处理系统运行时出现的错误信息。
 staticf void error_handler(mapping map, int flag) {
   object ob;
   string str;

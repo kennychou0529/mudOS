@@ -2,7 +2,17 @@
 #include "simul_efun.h"
 #include "lex.h"
 #include "otable.h"
-
+/*
+    simul_efun.c:防真函数加载精灵，这是MUD启动时第一个要载入的东西。 
+所谓efun是指系统函数，也就是mudos中定义的函数。 
+    这些函数不必做任何说明可以在MUD的任何程序里直接调用，而且由于他
+们是预先定义的，也就是mudos早已经知道他们是做什么的，所以比其它在
+MUDLIB里定义的函数执行效率要高。但他们的缺点是修改非常不方便， 对任
+何一个efun函数的修改必须重新编译mudos才能生效。因此， 在MUDLIB中又
+有了仿真函数的定义，也就是simul_efun，这些函数的作用跟efun完全一样，
+不同的是他们定义在UDLIB中，可以随时修改，但必须重新启动游戏才能生效。
+就不用去启动mudos了？
+*/
 /*
  * This file rewritten by Beek because it was inefficient and slow.  We
  * now keep track of two mappings:
@@ -27,7 +37,7 @@ typedef struct {
 simul_entry *simul_names = 0;
 function_lookup_info_t *simuls = 0;
 int num_simul_efun = 0;
-object_t *simul_efun_ob;
+object_t *simul_efun_ob;		/* obj在这里 */
 
 static void find_or_add_simul_efun (function_t *, int);
 static void remove_simuls (void);
@@ -45,7 +55,7 @@ void mark_simuls() {
  * If there is a simul_efun file, then take care of it and extract all
  * information we need.
  */
-void init_simul_efun(char *  file)
+void init_simul_efun(char *  file)		/* 初始化simul_efun  */
 {
     char buf[512];
 #ifdef LPC_TO_C
@@ -57,14 +67,14 @@ void init_simul_efun(char *  file)
         fprintf(stderr, "No simul_efun\n");
         return;
     }
-    if (!strip_name(file, buf, sizeof buf))	/* 抽出文件名？ */
+    if (!strip_name(file, buf, sizeof buf))	/* 抽出正确的路径+文件名 */
         error("Ilegal simul_efun file name '%s'\n", file);
 
 #ifdef LPC_TO_C
-    compiled_version = (lpc_object_t *)lookup_object_hash(buf);
+    compiled_version = (lpc_object_t *)lookup_object_hash(buf);	/* cv的obj已经load进来了 */
 #endif
 
-    if (file[strlen(file) - 2] != '.')	/* 没有后缀,添加一个 */
+    if (file[strlen(file) - 2] != '.')	/* 没有后缀,添加一个。这是strip的后果 */
         strcat(buf, ".c");
 
     new_ob = load_object(buf, compiled_version);	/* 文件名+版本号 就可以load一个obj了 */
@@ -72,9 +82,9 @@ void init_simul_efun(char *  file)
         fprintf(stderr, "The simul_efun file %s was not loaded.\n", buf);
         exit(-1);
     }
-    set_simul_efun(new_ob);
+    set_simul_efun(new_ob);		/* 将这个新的obj设置位simul_efun */
 }
-
+/* 清空所有的函数？ */
 static void remove_simuls() {
     int i;
     ident_hash_elem_t *ihe;
@@ -101,7 +111,7 @@ void get_simul_efuns(program_t *  prog)
     int num_new = prog->num_functions_defined + prog->last_inherited;
 
     if (num_simul_efun) {
-        remove_simuls();
+        remove_simuls();	/* 删掉所有的simul函数 */
         if (!num_new) {
             FREE(simul_names);
             FREE(simuls);
@@ -119,7 +129,7 @@ void get_simul_efuns(program_t *  prog)
             simuls = CALLOCATE(num_new, function_lookup_info_t, TAG_SIMULS, "get_simul_efuns: 2");
         }
     }
-    for (i=0; i < num_new; i++) {
+    for (i=0; i < num_new; i++) {		/* 逐个添加simul_efun */
         if (prog->function_flags[i] &
                 (FUNC_NO_CODE|DECL_PROTECTED|DECL_PRIVATE|DECL_HIDDEN))
             continue;
@@ -128,7 +138,7 @@ void get_simul_efuns(program_t *  prog)
     }
 
     if (num_simul_efun) {
-        /* shrink to fit */
+        /* shrink to fit 调整内存大小 */
         simul_names = RESIZE(simul_names, num_simul_efun, simul_entry,
                              TAG_SIMULS, "get_simul_efuns");
         simuls = RESIZE(simuls, num_simul_efun, function_lookup_info_t,
@@ -194,7 +204,7 @@ find_or_add_simul_efun(function_t *  funp, int  runtime_index) {
 }
 
 void
-set_simul_efun(object_t *  ob) {
+set_simul_efun(object_t *  ob) {	/* 设置新的efun的obj */
     get_simul_efuns(ob->prog);
 
     simul_efun_ob = ob;

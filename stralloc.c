@@ -176,19 +176,19 @@ alloc_new_string(char *  string, int  h)
     return (b);
 }
 
-char *
-     make_shared_string(char *  str)
+char *		
+make_shared_string(char *  str)  /* 使得str可以被共享？ */
 {
     block_t *b;
     int h;
 
     b = hfindblock(str, h);	/* hfindblock macro sets h = StrHash(s) */
     if (!b) {
-	b = alloc_new_string(str, h);
-    } else {
-	if (REFS(b))
-	    REFS(b)++;
-	ADD_STRING(SIZE(b));
+		b = alloc_new_string(str, h);
+	} else {
+		if (REFS(b))
+			REFS(b)++;
+		ADD_STRING(SIZE(b));
     }
     NDBG(b);
     return (STRING(b));

@@ -208,6 +208,7 @@ __stkargs unsigned int alarm(unsigned int seconds)
 **   Set the <handler> for <signo>.
 **   The signals SIGHUP, SIGUSR1 and SIGALRM are treated manually to
 **   allow the system-signals call the handlers via external exceptions.
+	自定义的函数，用于包装系统的signal
 */
 
 __stkargs __sigfunc new_signal(int signo, __sigfunc handler)
@@ -217,58 +218,58 @@ __stkargs __sigfunc new_signal(int signo, __sigfunc handler)
     this_task = (struct Task *) FindTask(NULL);
 
     switch (signo) {
-    case SIGALRM:{
-	    ULONG sigalrm;
+		case SIGALRM:{
+			ULONG sigalrm;
 
-	    sigalrm = sys_signal_alarm;
-	    if ((__sigfunc) handler == SIG_IGN) {	/* remove SIGALRM
-							 * handler */
-		SetExcept(0L, sigalrm);	/* Only sigalrm !! */
-		sys_signal_alarm = 0;
-		handler_alarm = NULL;
-		cleanup_timer(&treq);
-	    } else {		/* install handler */
-		if (!setup_timer(UNIT_VBLANK, &treq)) {
-		    printf("Could not setup_timer\n");
-		    break;	/* What else ?? */
+			sigalrm = sys_signal_alarm;
+			if ((__sigfunc) handler == SIG_IGN) {	/* remove SIGALRM
+								 * handler */
+			SetExcept(0L, sigalrm);	/* Only sigalrm !! */
+			sys_signal_alarm = 0;
+			handler_alarm = NULL;
+			cleanup_timer(&treq);
+			} else {		/* install handler */
+			if (!setup_timer(UNIT_VBLANK, &treq)) {
+				printf("Could not setup_timer\n");
+				break;	/* What else ?? */
+			}
+			sigalrm = 1L << (treq->tr_node.io_Message.mn_ReplyPort->mp_SigBit);
+
+			this_task->tc_ExceptCode = (APTR) catch_exception;
+			sys_signal_alarm = sigalrm;
+			handler_alarm = (void (*) ()) handler;
+			SetExcept(sigalrm, sigalrm);
+			/* If we start treq, handler will be called */
+			}
+			break;
 		}
-		sigalrm = 1L << (treq->tr_node.io_Message.mn_ReplyPort->mp_SigBit);
+		case SIGHUP:{
+			ULONG sighup;
 
-		this_task->tc_ExceptCode = (APTR) catch_exception;
-		sys_signal_alarm = sigalrm;
-		handler_alarm = (void (*) ()) handler;
-		SetExcept(sigalrm, sigalrm);
-		/* If we start treq, handler will be called */
-	    }
-	    break;
-	}
-    case SIGHUP:{
-	    ULONG sighup;
+			sighup = (((__sigfunc) handler == SIG_IGN) || ((__sigfunc) handler == SIG_DFL))
+			? 0 : EXT_SIGHUP;
 
-	    sighup = (((__sigfunc) handler == SIG_IGN) || ((__sigfunc) handler == SIG_DFL))
-		? 0 : EXT_SIGHUP;
+			this_task->tc_ExceptCode = (APTR) catch_exception;
+			sys_signal_hup = sighup;
+			handler_hup = (void (*) ()) handler;
+			SetExcept(sighup, EXT_SIGHUP);
+			break;
+		}
+		case SIGUSR1:{
+			ULONG sigusr;
 
-	    this_task->tc_ExceptCode = (APTR) catch_exception;
-	    sys_signal_hup = sighup;
-	    handler_hup = (void (*) ()) handler;
-	    SetExcept(sighup, EXT_SIGHUP);
-	    break;
-	}
-    case SIGUSR1:{
-	    ULONG sigusr;
+			sigusr = (((__sigfunc) handler == SIG_IGN) || ((__sigfunc) handler == SIG_DFL))
+			? 0 : EXT_SIGUSR;
 
-	    sigusr = (((__sigfunc) handler == SIG_IGN) || ((__sigfunc) handler == SIG_DFL))
-		? 0 : EXT_SIGUSR;
-
-	    this_task->tc_ExceptCode = (APTR) catch_exception;
-	    sys_signal_usr = sigusr;
-	    handler_usr = (void (*) ()) handler;
-	    SetExcept(sigusr, EXT_SIGUSR);
-	    break;
-	}
-    default:
-	signal(signo, handler);
-	break;
+			this_task->tc_ExceptCode = (APTR) catch_exception;
+			sys_signal_usr = sigusr;
+			handler_usr = (void (*) ()) handler;
+			SetExcept(sigusr, EXT_SIGUSR);
+			break;
+		}
+		default:		/* 只处理上面3个，其他的默认 */
+			signal(signo, handler);
+			break;
     }
     return handler;
 }

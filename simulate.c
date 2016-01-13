@@ -313,17 +313,17 @@ static object_t *load_virtual_object(char *  name, int  clone)
 #endif
     return new_ob;
 }
-
+/* 在src中去掉无效的/，并取出路径+文件名到dest中，dest的大小位size */
 int strip_name(char *  src, char *  dest, int  size) {
     char last_c = 0;
     char *p = dest;
-    char *end = dest + size - 1;
+    char *end = dest + size - 1;	/* 路径字符串的尾部 */
 
-    while (*src == '/') src++;
+    while (*src == '/') src++;		/* 去掉前置的/符号 */
 
     while (*src && p < end) {
-        if (last_c == '/' && *src == '/') src++;
-        else last_c = (*p++ = *src++);
+        if (last_c == '/' && *src == '/') src++;	/* 两个连续的/出现 */
+        else last_c = (*p++ = *src++);				/* 拷贝有效的路径名称 */
     }
 
     /* In some cases, (for example, object loading) this currently gets
@@ -337,9 +337,9 @@ int strip_name(char *  src, char *  dest, int  size) {
      *     that doesn't change if this is run again.
      * (2) make sure this routine is only called once on any name.
      *
-     * The first solution is the one currently in use.
+     * The first solution is the one currently in use.目前在用第一种
      */
-    while (p - dest > 2 && p[-1] == 'c' && p[-2] == '.')
+    while (p - dest > 2 && p[-1] == 'c' && p[-2] == '.')	/* 去掉尾部的.c符号 */
         p -= 2;
 
     *p = 0;
@@ -366,7 +366,7 @@ int strip_name(char *  src, char *  dest, int  size) {
  *
  */
 #ifdef LPC_TO_C
-object_t *int_load_object(char *  lname, lpc_object_t *  lpc_obj)
+object_t *int_load_object(char *  lname, lpc_object_t *  lpc_obj)	/* lname是带路径的文件名称，lpc_obj?? */
 #else
 object_t *int_load_object(char *  lname)
 #endif
@@ -1889,7 +1889,7 @@ void error P1V(char *, fmt)
 }
 
 /*
- * This one is called from HUP.
+ * This one is called from HUP.	是否HUP，用以下变量来辨别？
  */
 int MudOS_is_being_shut_down;
 

@@ -80,7 +80,7 @@ typedef struct { /* has to be the same as object_t below */
 #endif
     char *name;
     struct object_s *next_hash;
-    void (**jump_table)();	/* 二级函数指针 */
+    void (**jump_table)();			/* 二级函数指针 */
     struct string_switch_entry_s **string_switch_tables;
 } lpc_object_t;
 #endif

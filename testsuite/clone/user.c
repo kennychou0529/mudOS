@@ -180,16 +180,16 @@ receive_message(string newclass, string msg)
 
 // setup: used to configure attributes that aren't known by this_object()
 // at create() time such as living_name (and so can't be done in create()).
-
+// 一些在create中没有设置的，在这里进行设置
 void
 setup()
 {
-    set_heart_beat(1);
+    set_heart_beat(1);		/* 设置心跳 */
 #ifdef __PACKAGE_UIDS__
     seteuid(getuid(this_object()));
 #endif
 #ifndef __NO_WIZARDS__
-    enable_wizard();
+    enable_wizard();		/* 巫师？？ */
 #endif
 #ifndef __NO_ADD_ACTION__
     set_living_name(query_name());

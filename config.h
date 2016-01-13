@@ -15,7 +15,7 @@
 
 #define CONFIG_STR(x)           config_str[(x) - BASE_CONFIG_STR]	/* 第二个其实就是0 */
 #define CONFIG_INT(x)           config_int[(x) - BASE_CONFIG_INT]	/* x-15 */
-
+/* 下面的CONFIG_STR其实是在查询config的配置 */
 #define MUD_NAME                CONFIG_STR(__MUD_NAME__)
 #define ADDR_SERVER_IP          CONFIG_STR(__ADDR_SERVER_IP__)
 #define MUD_LIB                 CONFIG_STR(__MUD_LIB_DIR__)			/* 2-0 */
@@ -23,7 +23,7 @@
 #define LOG_DIR                 CONFIG_STR(__LOG_DIR__)
 #define INCLUDE_DIRS            CONFIG_STR(__INCLUDE_DIRS__)
 #define SAVE_BINARIES           CONFIG_STR(__SAVE_BINARIES_DIR__)
-#define MASTER_FILE             CONFIG_STR(__MASTER_FILE__)
+#define MASTER_FILE             CONFIG_STR(__MASTER_FILE__)			/* 7-0 */
 #define SIMUL_EFUN              CONFIG_STR(__SIMUL_EFUN_FILE__)
 #define SWAP_FILE               CONFIG_STR(__SWAP_FILE__)
 #define DEBUG_LOG_FILE          CONFIG_STR(__DEBUG_LOG_FILE__)

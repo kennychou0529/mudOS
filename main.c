@@ -184,7 +184,7 @@ int main(int  argc, char **  argv)
             got_defaults = 1;
         }
     }
-    get_version(version_buf);		/* 获取版本号 */
+    get_version(version_buf);		/* 获取版本号存进去 */
     if (!got_defaults) {			/* 没有指定config文件，出错 */
         fprintf(stderr, "%s for %s.\n", version_buf, ARCH);
         fprintf(stderr, "You must specify the configuration filename as an argument.必须指定config文件\n");
@@ -233,7 +233,7 @@ int main(int  argc, char **  argv)
     fprintf(stderr, "%d file descriptors were allocated, (%d were requested).\n",
             getdtablesize(), dtablesize);
 #endif
-#endif	/* 下面这几个数字有点小，好像是和运行时的限制有关系 */
+#endif	/* 右边的数字代表了其位置 */
     time_to_clean_up = TIME_TO_CLEAN_UP;	/* 2 */
     time_to_swap = TIME_TO_SWAP;			/* 4 */
     max_cost = MAX_COST;					/* 8 */
@@ -247,43 +247,43 @@ int main(int  argc, char **  argv)
         reserved_area = (char *) DMALLOC(reserved_size, TAG_RESERVED, "main.c: reserved_area");
     for (i = 0; i < sizeof consts / sizeof consts[0]; i++)
         consts[i] = exp(-i / 900.0);
-    reset_machine(1);		/* 跟栈有关，跟解释器有关 */
-    /*
+    reset_machine(1);		/* 将栈重置为空 */
+    /* 为什么要语法分析两次？答案在这！
      * The flags are parsed twice ! The first time, we only search for the -m
      * flag, which specifies another mudlib, and the D-flags, so that they
      * will be available when compiling master.c.	语法分析两次
      */
     for (i = 1; i < argc; i++) {	/* 在main参数中找到D N y m 四种参数，干啥用？ */
-        if (argv[i][0] != '-')
-            continue;
+        if (argv[i][0] != '-')    continue;
+
         switch (argv[i][1]) {
-        case 'D':
-            if (argv[i][2]) {
-                lpc_predef_t *tmp = ALLOCATE(lpc_predef_t, TAG_PREDEFINES,
-                                             "predef");
-                tmp->flag = argv[i] + 2;
-                tmp->next = lpc_predefs;
-                lpc_predefs = tmp;
-                continue;
-            }
-            fprintf(stderr, "Illegal flag syntax: %s\n", argv[i]);
-            exit(-1);
-        case 'N':
-            no_ip_demon++;
-            continue;
+			case 'D':
+				if (argv[i][2]) {
+					lpc_predef_t *tmp = ALLOCATE(lpc_predef_t, TAG_PREDEFINES,
+												 "predef");
+					tmp->flag = argv[i] + 2;
+					tmp->next = lpc_predefs;
+					lpc_predefs = tmp;
+					continue;
+				}
+				fprintf(stderr, "Illegal flag syntax: %s\n", argv[i]);
+				exit(-1);
+			case 'N':
+				no_ip_demon++;
+				continue;
 #ifdef YYDEBUG
-        case 'y':
-            yydebug = 1;
-            continue;
+			case 'y':
+				yydebug = 1;
+				continue;
 #endif				/* YYDEBUG */
-        case 'm':
-            mud_lib = alloc_cstring(argv[i] + 2, "mudlib dir");
-            if (chdir(mud_lib) == -1) {
-                fprintf(stderr, "Bad mudlib directory: %s\n", mud_lib);
-                exit(-1);
-            }
-            new_mudlib = 1;
-            break;
+			case 'm':
+				mud_lib = alloc_cstring(argv[i] + 2, "mudlib dir");
+				if (chdir(mud_lib) == -1) {		/* 切换进mudlib目录 */
+					fprintf(stderr, "Bad mudlib directory: %s\n", mud_lib);
+					exit(-1);
+				}
+				new_mudlib = 1;
+				break;
         }
     }
     if (!new_mudlib && chdir(mud_lib) == -1) {
@@ -305,7 +305,7 @@ int main(int  argc, char **  argv)
 #endif
 
 #ifndef NO_IP_DEMON
-    if (!no_ip_demon && ADDR_SERVER_IP)
+    if (!no_ip_demon && ADDR_SERVER_IP)						/* 设置服务器IP */
         init_addr_server(ADDR_SERVER_IP, ADDR_SERVER_PORT);	/* 两个参数都是1，所以不用进去 */
 #endif				/* NO_IP_DEMON */
 
@@ -317,68 +317,68 @@ int main(int  argc, char **  argv)
                       SIMUL_EFUN, MASTER_FILE);
         exit(-1);
     } else {
-        init_simul_efun(SIMUL_EFUN);		/* efun出现 */
-        init_master();
+        init_simul_efun(SIMUL_EFUN);		/* 这是simul_efun的初始化 */
+        init_master();						/* 先efun之后才能master */
     }
-    pop_context(&econ);
+    pop_context(&econ);						/* 删掉什么上下文？ */
 
     for (i = 1; i < argc; i++) {
         if (argv[i][0] != '-') {
             continue;
         } else {
-            /*
+            /* 这里有很多的参数的
              * Look at flags. -m and -o has already been tested.
              */
             switch (argv[i][1]) {
-            case 'D':
-            case 'N':
-            case 'm':
-            case 'y':
-                continue;
-            case 'f':
-                save_context(&econ);
-                if (SETJMP(econ.context)) {
-                    debug_message("Error while calling master::flag(\"%s\"), aborting ...\n", argv[i] + 2);
-                    exit(-1);
-                }
-                push_constant_string(argv[i] + 2);
-                apply_master_ob(APPLY_FLAG, 1);
-                if (MudOS_is_being_shut_down) {
-                    debug_message("Shutdown by master object.\n");
-                    exit(0);
-                }
-                pop_context(&econ);
-                continue;
-            case 'e':
-                e_flag++;
-                continue;
-            case 'p':
-                external_port[0].port = atoi(argv[i] + 2);
-                continue;
-            case 'd':
+				case 'D':
+				case 'N':
+				case 'm':
+				case 'y':
+					continue;	/* 这些已经在上面处理过了 */
+				case 'f':
+					save_context(&econ);
+					if (SETJMP(econ.context)) {
+						debug_message("Error while calling master::flag(\"%s\"), aborting ...\n", argv[i] + 2);
+						exit(-1);
+					}
+					push_constant_string(argv[i] + 2);
+					apply_master_ob(APPLY_FLAG, 1);
+					if (MudOS_is_being_shut_down) {
+						debug_message("Shutdown by master object.\n");
+						exit(0);
+					}
+					pop_context(&econ);
+					continue;
+				case 'e':
+					e_flag++;
+					continue;
+				case 'p':		/* 指定external 端口 */
+					external_port[0].port = atoi(argv[i] + 2);
+					continue;
+				case 'd':
 #ifdef DEBUG_MACRO
-                if (argv[i][2])
-                    debug_level_set(&argv[i][2]);
-                else
-                    debug_level |= DBG_d_flag;
+					if (argv[i][2])
+						debug_level_set(&argv[i][2]);
+					else
+						debug_level |= DBG_d_flag;
 #else
-                debug_message("Driver must be compiled with DEBUG_MACRO on to use -d.\n");
+					debug_message("Driver must be compiled with DEBUG_MACRO on to use -d.\n");
 #endif
-                break;
-            case 'c':
-                comp_flag++;
-                continue;
-            case 't':
-                t_flag++;
-                continue;
-            default:
-                debug_message("Unknown flag: %s\n", argv[i]);
-                exit(-1);
+					break;
+				case 'c':
+					comp_flag++;
+					continue;
+				case 't':
+					t_flag++;
+					continue;
+				default:
+					debug_message("Unknown flag: %s\n", argv[i]);
+					exit(-1);
             }
         }
     }
-    if (MudOS_is_being_shut_down)
-        exit(1);
+    if (MudOS_is_being_shut_down)    exit(1);
+
     if (*(DEFAULT_FAIL_MESSAGE)) {
         char buf[8192];
 
@@ -386,45 +386,45 @@ int main(int  argc, char **  argv)
         strcat(buf, "\n");
         default_fail_message = make_shared_string(buf);
     } else
-        default_fail_message = "What?\n";
+        default_fail_message = "What?\n";	/* config没有指定时，遇到不明指令的时候就是回复这个 */
 #ifdef PACKAGE_MUDLIB_STATS
     restore_stat_files();
 #endif
     preload_objects(e_flag);
 #ifdef SIGFPE
-    signal(SIGFPE, sig_fpe);
+    signal(SIGFPE, sig_fpe);	/* 浮点异常 */
 #endif
 #ifdef TRAP_CRASHES
 #ifdef SIGUSR1
-    signal(SIGUSR1, sig_usr1);
+    signal(SIGUSR1, sig_usr1);	/* 自定义,默认终止 */
 #endif
 #ifdef SIGUSR2
     signal(SIGUSR2, sig_usr2);
 #endif
-    signal(SIGTERM, sig_term);
-    signal(SIGINT, sig_int);
+    signal(SIGTERM, sig_term);	/* 终止信号 */
+    signal(SIGINT, sig_int);	/* 中断 */	
 #ifndef DEBUG
 #if defined(SIGABRT) && !defined(LATTICE)
-    signal(SIGABRT, sig_abrt);
+    signal(SIGABRT, sig_abrt);	/* 自己调用abort时产生 */
 #endif
 #ifdef SIGIOT
-    signal(SIGIOT, sig_iot);
+    signal(SIGIOT, sig_iot);	/* 跟abort差不多，差别是机器是什么 */
 #endif
 #ifdef SIGHUP
-    signal(SIGHUP, sig_hup);
+    signal(SIGHUP, sig_hup);	/* 挂起 */
 #endif
 #ifdef SIGBUS
-    signal(SIGBUS, sig_bus);
+    signal(SIGBUS, sig_bus);	/* 非法地址 */
 #endif
 #ifndef LATTICE
-    signal(SIGSEGV, sig_segv);
-    signal(SIGILL, sig_ill);
+    signal(SIGSEGV, sig_segv);	/* 段错误 */
+    signal(SIGILL, sig_ill);	/* 非法指令  */
 #endif
 #endif				/* DEBUG */
 #endif
 #ifndef WIN32
 #ifdef USE_BSD_SIGNALS
-    signal(SIGCHLD, sig_cld);
+    signal(SIGCHLD, sig_cld);	/* 子进程发来的终止信号 */
 #else
     signal(SIGCLD, sig_cld);
 #endif

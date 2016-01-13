@@ -22,7 +22,7 @@ static object_t *find_obj_n (char *);
 /*
  * Object hash function, ripped off from stralloc.c.
  */
-#define ObjHash(s) whashstr(s, 40) & otable_size_minus_one
+#define ObjHash(s) whashstr(s, 40) & otable_size_minus_one		/* 将s的前41字节进行哈希，结果对table大小取余 */
 
 /*
  * hash table - list of pointers to heads of object chains.
@@ -59,7 +59,7 @@ static object_t *find_obj_n(char *  s)
 {
     object_t *curr, *prev;
 
-    h = ObjHash(s);
+    h = ObjHash(s);		/* 以字符串哈希的方式 */
     curr = obj_table[h];
     prev = 0;
 

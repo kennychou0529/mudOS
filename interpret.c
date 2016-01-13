@@ -99,14 +99,14 @@ int num_varargs;
 char *pc;			/* Program pointer. */
 svalue_t *fp;		/* Pointer to first argument. */
 
-svalue_t *sp;
+svalue_t *sp;		/* 栈指针 */
 svalue_t const0, const1, const0u;
 
 int function_index_offset;	/* Needed for inheritance */
 int variable_index_offset;	/* Needed for inheritance */
 int st_num_arg;
 
-static svalue_t start_of_stack[CFG_EVALUATOR_STACK_SIZE];	/* 1000 */
+static svalue_t start_of_stack[CFG_EVALUATOR_STACK_SIZE];				/* size=1000 这就是栈了  */
 svalue_t *end_of_stack = start_of_stack + CFG_EVALUATOR_STACK_SIZE - 5;	/* 可存的最后位置 */
 
 /* Used to throw an error to a catch */
@@ -5431,9 +5431,9 @@ void reset_machine(int  first)
 {
     csp = control_stack - 1;
     if (first)
-        sp = &start_of_stack[-1];	/* 居然可以取-1？ */
+        sp = &start_of_stack[-1];	/* 恶劣的行为 */
     else {
-        pop_n_elems(sp - start_of_stack + 1);
+        pop_n_elems(sp - start_of_stack + 1);	/* 将栈清空了？ */
         IF_DEBUG(stack_in_use_as_temporary = 0);
     }
 }
@@ -5602,7 +5602,7 @@ int save_context(error_context_t *  econ) {
     current_error_context = econ;
     return 1;
 }
-
+/* pop掉上下文？ */
 void pop_context(error_context_t *  econ) {
     current_error_context = econ->save_context;
 }

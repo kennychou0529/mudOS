@@ -126,7 +126,7 @@ hash table size : 7001
 object table size : 1501
 
 # default no-matching-action message
-default fail message : What?
+default fail message : What the hell? 哈哈哈，打错指令了吧
 
 # default message when error() occurs (optional)
 default error message :
