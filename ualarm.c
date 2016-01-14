@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 1985 Regents of the University of California.
  * All rights reserved.
- *
+ * 重新分配
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -37,7 +37,7 @@
 static char sccsid[] = "@(#)ualarm.c	5.5 (Berkeley) 2/23/91";
 #endif				/* LIBC_SCCS and not lint */
 
-#define	USPS	1000000		/* # of microseconds in a second */
+#define	USPS	1000000		/* # of microseconds in a second 1秒 */
 
 unsigned ualarm (register unsigned, register unsigned);
 
@@ -45,18 +45,20 @@ unsigned ualarm (register unsigned, register unsigned);
  * Generate a SIGALRM signal in ``usecs'' microseconds.
  * If ``reload'' is non-zero, keep generating SIGALRM
  * every ``reload'' microseconds after the first signal.
+ * 自定义的alarm信号规则，就是多少秒触发一次等等
  */
+/* 参数(2000000, 0) */
 unsigned ualarm(register unsigned  usecs, register unsigned  reload) {
-    struct itimerval new, old;
+    struct itimerval new, old;		/* 这个结构体是系统带的 */
 
-    new.it_interval.tv_usec = reload % USPS;
+    new.it_interval.tv_usec = reload % USPS;	/* 计时器重启动的时间间隔,若为0,则只触发一次 */
     new.it_interval.tv_sec = reload / USPS;
 
-    new.it_value.tv_usec = usecs % USPS;
+    new.it_value.tv_usec = usecs % USPS;		/* 计时器安装后首先启动的初始值 */
     new.it_value.tv_sec = usecs / USPS;
 
-    if (setitimer(ITIMER_REAL, &new, &old) == 0)
-	return old.it_value.tv_sec * USPS + old.it_value.tv_usec;
+    if (setitimer(ITIMER_REAL, &new, &old) == 0)	/* REAL决定了发送ALARM信号 */
+		return old.it_value.tv_sec * USPS + old.it_value.tv_usec;	
     /* else */
     return -1;
 }

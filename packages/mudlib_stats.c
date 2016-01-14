@@ -272,15 +272,15 @@ void mudlib_stats_decay()
 
     /* Perform this once every hour. */
     if (next_time > current_time)
-	return;
+		return;
     next_time = current_time + 60 * 60;
     for (dl = domains; dl; dl = dl->next) {
-	dl->moves = dl->moves * 99 / 100;
-	dl->heart_beats = dl->heart_beats * 9 / 10;
+		dl->moves = dl->moves * 99 / 100;
+		dl->heart_beats = dl->heart_beats * 9 / 10;
     }
     for (dl = authors; dl; dl = dl->next) {
-	dl->moves = dl->moves * 99 / 100;
-	dl->heart_beats = dl->heart_beats * 9 / 10;
+		dl->moves = dl->moves * 99 / 100;
+		dl->heart_beats = dl->heart_beats * 9 / 10;
     }
 }
 

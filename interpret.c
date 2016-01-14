@@ -308,7 +308,7 @@ push_real(double  n)
 }
 
 /*
- * Push undefined (const0u) onto the value stack.
+ * Push undefined (const0u) onto the value stack. 占位用的吗?
  */
 INLINE
 void push_undefined()
@@ -1176,7 +1176,7 @@ push_control_stack(int  frkind)
         too_deep_error = 1;
         error("Too deep recursion.\n");
     }
-    csp++;
+    csp++;			/* csp是control stack的意思 */
     csp->caller_type = caller_type;
     csp->ob = current_object;
     csp->framekind = frkind;
@@ -1326,7 +1326,7 @@ INLINE void push_shared_string(char *  p) {
 }
 
 /*
- * Push a string on the stack that is already constant.
+ * Push a string on the stack that is already constant.什么都往栈里丢
  */
 INLINE
 void push_constant_string(char *  p)
@@ -1692,8 +1692,8 @@ INLINE_STATIC void do_loop_cond_number()
 }
 
 #ifdef LPC_TO_C
-void
-call_program(program_t *  prog, POINTER_INT  offset) {
+
+void call_program(program_t *  prog, POINTER_INT  offset) {
     if (prog->program_size)
         eval_instruction(prog->program + offset);
     else {

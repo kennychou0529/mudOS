@@ -32,8 +32,7 @@ static char *inet_address (struct sockaddr_in *);
 /*
  * check permission
  */
-int check_valid_socket P5(char *, what, int, fd, object_t *, owner,
-			  char *, addr, int, port)
+int check_valid_socket(char *  what, int  fd, object_t *  owner, char *  addr, int char *0)
 {
     array_t *info;
     svalue_t *mret;

@@ -19,7 +19,7 @@ void CDECL alarm_loop (void *);
 error_context_t *current_error_context = 0;
 
 /*
- * The 'current_time' is updated at every heart beat.
+ * The 'current_time' is updated at every heart beat.	每次心跳会更新当前时间
  */
 int current_time;
 
@@ -50,7 +50,7 @@ void clear_state()
     previous_ob = 0;
     current_prog = 0;
     caller_type = 0;
-    reset_machine(0);		/* Pop down the stack. */
+    reset_machine(0);		/* Pop down the stack.清空栈 */
 }				/* clear_state() */
 
 #if 0
@@ -82,7 +82,7 @@ void logon(object_t *  ob)
 }
 
 /*
- * This is the backend. We will stay here for ever (almost).
+ * This is the backend. We will stay here for ever (almost).后台在这，几乎永远停留在此循环
  */
 int eval_cost;
 
@@ -94,32 +94,32 @@ void backend()
     int there_is_a_port = 0;
     error_context_t econ;
 
-    debug_message("Initializations complete.\n\n");
-    for (i = 0; i < 5; i++) {
+    debug_message("Initializations complete.初始化完成了！\n\n");
+    for (i = 0; i < 5; i++) {			/* 打印1~5个接收信息端口 */
         if (external_port[i].port) {
             debug_message("Accepting connections on port %d.\n",
                           external_port[i].port);
-            there_is_a_port = 1;
+            there_is_a_port = 1;		/* 检查是否有配置端口 */
         }
     }
 
-    if (!there_is_a_port)
+    if (!there_is_a_port)				/* 必须指定监听端口 */
         debug_message("No external ports specified.\n");
 
-    init_user_conn();		/* initialize user connection socket */
+    init_user_conn();		/* initialize user connection socket 先初始化监听的5个端口 */
 #ifdef SIGHUP
     signal(SIGHUP, startshutdownMudOS);
 #endif
     clear_state();
-    save_context(&econ);
+    save_context(&econ);		/* 保存上下文在econ中？ */
     if (SETJMP(econ.context))
         restore_context(&econ);
     if (!t_flag && first_call) {
         first_call = 0;
-        call_heart_beat();
+        call_heart_beat();		/* 设置心跳问题？ */
     }
 
-    while (1) {
+    while (1) {					/* 无限循环 */
         /* Has to be cleared if we jumped out of process_user_command() */
         current_interactive = 0;
         eval_cost = max_cost;
@@ -130,16 +130,16 @@ void backend()
         /*
          * shut down MudOS if MudOS_is_being_shut_down is set.
          */
-        if (MudOS_is_being_shut_down)
+        if (MudOS_is_being_shut_down)		/* 当机啦 */
             shutdownMudOS(0);
         if (slow_shut_down_to_do) {
             int tmp = slow_shut_down_to_do;
 
             slow_shut_down_to_do = 0;
-            slow_shut_down(tmp);
+            slow_shut_down(tmp);			/* 做一些处理再关机 */
         }
         /*
-         * select
+         * select 设置，必须定期设置
          */
         make_selectmasks();
         if (heart_beat_flag) {
@@ -176,7 +176,7 @@ void backend()
             process_io();
         }
         /*
-         * process user commands.
+         * process user commands.	处理用户命令
          */
         for (i = 0; process_user_command() && i < max_users; i++)
             ;
@@ -191,11 +191,11 @@ void backend()
 
 /*
  * Despite the name, this routine takes care of several things.
- * It will run once every 15 minutes.
+ * It will run once every 15 minutes.	15分钟跑一次此函数
  *
  * . It will attempt to reconnect to the address server if the connection has
- *   been lost.
- * . It will loop through all objects.
+ *   been lost.		断了连接就自动重连
+ * . It will loop through all objects.	遍历所有的对象？
  *
  *   . If an object is found in a state of not having done reset, and the
  *     delay to next reset has passed, then reset() will be done.
@@ -233,7 +233,7 @@ static void look_for_objects_to_swap()
 
     if (current_time < next_time)
         return;			/* Not time to look yet */
-    next_time = current_time + 15 * 60;	/* Next time is in 15 minutes */
+    next_time = current_time + 15 * 60;	/* Next time is in 15 minutes 15分钟 */
 
     /*
      * Objects object can be destructed, which means that next object to
@@ -274,7 +274,7 @@ static void look_for_objects_to_swap()
                 continue;
         }
 #endif
-        if (time_to_clean_up > 0) {
+        if (time_to_clean_up > 0) {		/* clean什么？ */
             /*
              * Has enough time passed, to give the object a chance to
              * self-destruct ? Save the O_RESET_STATE, which will be cleared.
@@ -317,7 +317,7 @@ static void look_for_objects_to_swap()
                 ob->flags |= save_reset_state;
             }
         }
-        if (time_to_swap > 0) {
+        if (time_to_swap > 0) {			/* swap什么？ */
             /*
              * At last, there is a possibility that the object can be swapped
              * out.  Always swap out line number information.  If already
@@ -389,11 +389,11 @@ static void call_heart_beat()
 
     heart_beat_flag = 0;
 #ifdef SIGALRM
-    signal(SIGALRM, sigalrm_handler);
+    signal(SIGALRM, sigalrm_handler);	/* 看看是怎么处理的 */
 #endif
 
 #ifdef HAS_UALARM
-    ualarm(HEARTBEAT_INTERVAL, 0);
+    ualarm(HEARTBEAT_INTERVAL, 0);		/* 2s 	定义了alarm的间隔 */
 #else
 #  ifdef WIN32
     if (Win32Thread == -1) Win32Thread = _beginthread(
@@ -411,7 +411,7 @@ static void call_heart_beat()
     if ((num_hb_to_do = num_hb_objs)) {
         num_hb_calls++;
         heart_beat_index = 0;
-        save_context(&econ);
+        save_context(&econ);		/* 这是debug用的吧？ */
         while (!heart_beat_flag) {
             ob = (curr_hb = &heart_beats[heart_beat_index])->ob;
             DEBUG_CHECK(!(ob->flags & O_HEART_BEAT),
@@ -465,10 +465,10 @@ static void call_heart_beat()
     }
     current_prog = 0;
     current_heart_beat = 0;
-    look_for_objects_to_swap();
-    call_out();
+    look_for_objects_to_swap();		/* 不明 */
+    call_out();						/* 调用函数栈中的待调用函数？ */
 #ifdef PACKAGE_MUDLIB_STATS
-    mudlib_stats_decay();
+    mudlib_stats_decay();			/* 不明 */
 #endif
 }				/* call_heart_beat() */
 

@@ -1697,7 +1697,7 @@ object_t *get_empty_object(int  num_var)
         ob->variables[i] = const0u;
     return ob;
 }
-
+/* 将对象给清掉？ */
 void reset_object(object_t *  ob)
 {
     /* Be sure to update time first ! */

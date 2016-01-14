@@ -45,10 +45,10 @@ void init_addr_server();
 #define PSIG(z) z(int  sig)
 #else
 #define SIGPROT (void)
-#define PSIG(z) z()
+#define PSIG(z) z()			/* 这包装。。。。 */
 #endif
 
-static void CDECL sig_fpe SIGPROT;
+static void CDECL sig_fpe SIGPROT;	/* 这是函数 */
 static void CDECL sig_cld SIGPROT;
 
 #ifdef TRAP_CRASHES
@@ -420,7 +420,7 @@ int main(int  argc, char **  argv)
     signal(SIGSEGV, sig_segv);	/* 段错误 */
     signal(SIGILL, sig_ill);	/* 非法指令  */
 #endif
-#endif				/* DEBUG */
+#endif							/* DEBUG */
 #endif
 #ifndef WIN32
 #ifdef USE_BSD_SIGNALS
@@ -429,7 +429,7 @@ int main(int  argc, char **  argv)
     signal(SIGCLD, sig_cld);
 #endif
 #endif
-    backend();
+    backend();					/* 准备工作已经就绪，等待用户了 */
     return 0;
 }		/* main函数的结束 */
 
@@ -578,15 +578,15 @@ static void CDECL PSIG(sig_fpe)
 
 /* send this signal when the machine is about to reboot.  The script
    which restarts the MUD should take an exit code of 1 to mean don't
-   restart
+   restart	
+   机器即将重启的时候发送这个信号，重启脚本应该持一个退出码exit(1)
  */
-
-static void CDECL PSIG(sig_usr1)
+static void CDECL PSIG(sig_usr1)	/* 自定义的干什么？ */
 {
-    push_constant_string("Host machine shutting down");
+    push_constant_string("Host machine shutting down。关机？？");
     push_undefined();
     push_undefined();
-    apply_master_ob(APPLY_CRASH, 3);
+    apply_master_ob(APPLY_CRASH, 3);	/* 销毁master? */
     debug_message("Received SIGUSR1, calling exit(-1)\n");
     exit(-1);
 }
@@ -599,7 +599,7 @@ static void CDECL PSIG(sig_usr2)
 
 /*
  * Actually, doing all this stuff from a signal is probably illegal
- * -Beek
+ * -Beek	非法？？
  */
 static void CDECL PSIG(sig_term)
 {
@@ -632,7 +632,7 @@ static void CDECL PSIG(sig_hup)
     fatal("Hangup!");
 }
 
-static void CDECL PSIG(sig_abrt)
+static void CDECL PSIG(sig_abrt)	/* 参数就是函数名称,而真实参数为空 */
 {
     fatal("Aborted");
 }

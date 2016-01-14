@@ -31,7 +31,7 @@
 #      endif
 #  endif
 #  define symlink(x, y) dos_style_link(x, y)
-#  define CDECL __cdecl
+#  define CDECL __cdecl		/* 表示C语言默认的函数调用方法 */
 #else
 #  define CDECL
 #endif

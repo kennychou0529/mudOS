@@ -533,7 +533,8 @@
 /* BINARIES: define this to enable the 'save_binary' pragma.
  *   This pragma, when set in a program, will cause it to save a
  *   binary image when loaded, so that subsequent loadings will
- *   be much faster.  The binaries are saved in the directory
+ *   be much faster. 后来加载会更快  
+     					The binaries are saved in the directory
  *   specified in the configuration file.  The binaries will not
  *   load if the LPC source or any of the inherited or included
  *   files are out of date, in which case the file is compiled
@@ -689,17 +690,17 @@
  */
 #undef USE_32BIT_ADDRESSES
 
-/* HEARTBEAT_INTERVAL: define heartbeat interval in microseconds (us).
+/* HEARTBEAT_INTERVAL: define heartbeat interval in microseconds (us).微秒
  *   1,000,000 us = 1 second.  The value of this macro specifies
  *   the frequency with which the heart_beat method will be called in
  *   those LPC objects which have called set_heart_beat(1).
- *
+ * 如果用户心跳没有定义，默认用alarm
  * [NOTE: if ualarm() isn't available, alarm() is used instead.  Since
  *  alarm() requires its argument in units of a second, we map 1 - 1,000,000 us
  *  to an actual interval of one (1) second and 1,000,001 - 2,000,000 maps to
  *  an actual interval of two (2) seconds, etc.]
  */
-#define HEARTBEAT_INTERVAL 2000000
+#define HEARTBEAT_INTERVAL 2000000			/* 心跳间隔两秒 */
 
 /* 
  * CALLOUT_CYCLE_SIZE: This is the number of slots in the call_out list.

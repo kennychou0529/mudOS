@@ -14,7 +14,7 @@
 
 #define MAX_LINE_LENGTH 120
 
-char *config_str[NUM_CONFIG_STRS];		/* 什么鬼？ */
+char *config_str[NUM_CONFIG_STRS];		/* size=15 config文件的配置项在里面 */
 int config_int[NUM_CONFIG_INTS];		/* size=24  */
 
 static char *buff;						/* 配置文件中的缓冲区 */

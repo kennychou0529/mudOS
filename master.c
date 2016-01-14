@@ -11,7 +11,7 @@ function_lookup_info_t *master_applies = 0;		/* 挺重要的？什么 */
  * master object, so the only way this can fail is if the master object
  * hasn't loaded yet.  In that case, we return (svalue_t *)-1, and the
  * calling routine should let the check succeed. 失败只可能是还没有load进master
- */
+  这像是在让master调用函数？   */
 svalue_t *apply_master_ob(int  fun, int  num_arg)	/* 将master应用起来？ */
 {
     if (!master_ob) {
@@ -19,7 +19,7 @@ svalue_t *apply_master_ob(int  fun, int  num_arg)	/* 将master应用起来？ */
         return (svalue_t *)-1;
     }
 
-    if (master_applies[fun].func) {
+    if (master_applies[fun].func) {		/* 这里会调用不同的函数，函数都在里边？ */
 #ifdef TRACE
         if (TRACEP(TRACE_APPLY)) {
             do_trace("master apply", master_applies[fun].func->name, "\n");
@@ -27,10 +27,10 @@ svalue_t *apply_master_ob(int  fun, int  num_arg)	/* 将master应用起来？ */
 #endif
         DEBUG_CHECK(master_ob->flags & O_SWAPPED, "Master object swapped!\n");
 
-        call_direct(master_ob, master_applies[fun].index,
-                    ORIGIN_DRIVER, num_arg);
+        call_direct(master_ob, master_applies[fun].index, ORIGIN_DRIVER, num_arg);	/* 像是在调用函数？ */
+
         free_svalue(&apply_ret_value, "apply_master_ob");
-        apply_ret_value = *sp--;
+        apply_ret_value = *sp--;		/* 从栈中取出返回值 */
         return &apply_ret_value;
     } else {
         pop_n_elems(num_arg);

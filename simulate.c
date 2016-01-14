@@ -39,7 +39,7 @@ static int num_objects_this_thread = 0;
 static object_t *restrict_destruct;
 #endif
 
-object_t *obj_list, *obj_list_destruct;
+object_t *obj_list, *obj_list_destruct;		/* 对象链表 */
 #ifdef DEBUG
 int tot_dangling_object = 0;
 object_t *obj_list_dangling = 0;
@@ -1892,7 +1892,7 @@ void error P1V(char *, fmt)
  * This one is called from HUP.	是否HUP，用以下变量来辨别？
  */
 int MudOS_is_being_shut_down;
-
+/* HUP的信号处理 */
 #ifdef SIGNAL_FUNC_TAKES_INT
 void startshutdownMudOS(int  sig)
 #else
@@ -1905,7 +1905,7 @@ void startshutdownMudOS()
 /*
  * This one is called from the command "shutdown".
  * We don't call it directly from HUP, because it is dangerous when being
- * in an interrupt.
+ * in an interrupt.	用户的命令shutdown会引起调用此函数做善后处理
  */
 void shutdownMudOS(int  exit_code)
 {
@@ -1946,7 +1946,7 @@ void shutdownMudOS(int  exit_code)
 
 /*
  * Call this one when there is only little memory left. It will start
- * Armageddon.
+ * Armageddon.	内存不够用，调用这个？
  */
 void slow_shut_down(int  minutes)
 {
@@ -1964,11 +1964,11 @@ void slow_shut_down(int  minutes)
 
         current_object = 0;
         save_command_giver(0);
-        shout_string("MudOS driver shouts: Out of memory.\n");
+        shout_string("MudOS driver shouts: Out of memory. 驱动内存不足了\n");
         restore_command_giver();
         current_object = save_current;
 #ifdef SIGNAL_FUNC_TAKES_INT
-        startshutdownMudOS(1);
+        startshutdownMudOS(1);	/* 可以关机了 */
 #else
         startshutdownMudOS();
 #endif
