@@ -159,18 +159,18 @@ void backend()
             timeout.tv_sec = HEARTBEAT_INTERVAL/1000000;
             timeout.tv_usec = HEARTBEAT_INTERVAL%1000000;
 #else
-            timeout.tv_sec = 60;
+            timeout.tv_sec = 60;		/* 等待时间发生的时间间隔为60s？太长了点吧？ */
             timeout.tv_usec = 0;
 #endif
         }
-#ifndef hpux
+#ifndef hpux	/* 惠普unix的意思？ */
         nb = select(FD_SETSIZE, &readmask, &writemask, (fd_set *) 0, &timeout);
 #else
         nb = select(FD_SETSIZE, (int *) &readmask, (int *) &writemask,
                     (int *) 0, &timeout);
 #endif
         /*
-         * process I/O if necessary.
+         * process I/O if necessary.  处理IO
          */
         if (nb > 0) {
             process_io();

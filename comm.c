@@ -1393,7 +1393,7 @@ INLINE void process_io()
     int i;
 
     /*
-     * check for new user connection.
+     * check for new user connection.  检查是否有新用户连接？
      */
     for (i = 0; i < 5; i++) {
         if (!external_port[i].port) continue;
@@ -1403,27 +1403,27 @@ INLINE void process_io()
         }
     }
     /*
-     * check for data pending on user connections.
+     * check for data pending on user connections. 处理用户发来的数据
      */
     for (i = 0; i < max_users; i++) {
         if (!all_users[i] || (all_users[i]->iflags & (CLOSING | CMD_IN_BUF)))
             continue;
-        if (all_users[i]->iflags & NET_DEAD) {
+        if (all_users[i]->iflags & NET_DEAD) {	/* 用户下线了 */
             remove_interactive(all_users[i]->ob, 0);
             continue;
         }
-        if (FD_ISSET(all_users[i]->fd, &readmask)) {
+        if (FD_ISSET(all_users[i]->fd, &readmask)) {	/* 用户发来数据 */
             debug(connections, ("process_io: USER %d\n", i));
-            get_user_data(all_users[i]);
+            get_user_data(all_users[i]);				/* 获取数据 */
             if (!all_users[i])
                 continue;
         }
-        if (FD_ISSET(all_users[i]->fd, &writemask))
+        if (FD_ISSET(all_users[i]->fd, &writemask))		/* 用户可写？ */
             flush_message(all_users[i]);
     }
 #if defined(PACKAGE_SOCKETS) || defined(PACKAGE_EXTERNAL)
     /*
-     * check for data pending on efun socket connections.
+     * check for data pending on efun socket connections. 这是处理什么？
      */
     for (i = 0; i < max_lpc_socks; i++) {
         if (lpc_socks[i].state != STATE_CLOSED)
@@ -1435,7 +1435,7 @@ INLINE void process_io()
     }
 #endif
     /*
-     * check for data pending from address server.
+     * check for data pending from address server.	/* 地址server竟然会发数据过来？ */
      */
     if (addr_server_fd >= 0) {
         if (FD_ISSET(addr_server_fd, &readmask)) {
@@ -1818,20 +1818,20 @@ exit:
 /*
  * This is the hname input data handler. This function is called by the
  * master handler when data is pending on the hname socket (addr_server_fd).
- */
+   专门处理来自addr_server_fd的数据，由master handler处理。  */
 
 static void hname_handler()
 {
-    static char hname_buf[HNAME_BUF_SIZE];
-    static int hname_buf_pos;
+    static char hname_buf[HNAME_BUF_SIZE];	/* size=200，数据缓冲区,注意静态的 */
+    static int hname_buf_pos;  				/* 注意静态的 */
     int num_bytes;
 
     num_bytes = HNAME_BUF_SIZE - hname_buf_pos - 1; /* room for nul */
-    num_bytes = OS_socket_read(addr_server_fd, hname_buf + hname_buf_pos, num_bytes);
+    num_bytes = OS_socket_read(addr_server_fd, hname_buf + hname_buf_pos, num_bytes);/* 读取数据 */
     if (num_bytes <= 0) {
         if (num_bytes == -1) {
 #ifdef EWOULDBLOCK
-            if (socket_errno == EWOULDBLOCK) {
+            if (socket_errno == EWOULDBLOCK) {	/* 没有数据可读时调用了recv */
                 debug(connections, ("hname_handler: read on fd %d: Operation would block.\n",
                                     addr_server_fd));
                 return;
@@ -1839,11 +1839,11 @@ static void hname_handler()
 #endif
             debug_message("hname_handler: read on fd %d\n", addr_server_fd);
             socket_perror("hname_handler: read", 0);
-        } else {
+        } else {							/* 连接终止了 */
             debug_message("hname_handler: closing address server connection.\n");
         }
-        OS_socket_close(addr_server_fd);
-        addr_server_fd = -1;
+        OS_socket_close(addr_server_fd);	/* 读取不成功就得关闭  */
+        addr_server_fd = -1;				/* 标记一下 */
         return;
     }
 
@@ -1851,19 +1851,19 @@ static void hname_handler()
     hname_buf[hname_buf_pos] = 0;
     debug(connections, ("hname_handler: address server replies: %s", hname_buf));
 
-    while (hname_buf_pos) {
+    while (hname_buf_pos) {		/* 像是在从addr_server接收新客户的ip */
         char *nl, *pp;
 
-        /* if there's no newline, there's more data to come */
+        /* if there's no newline, there's more data to come 如果找不到'\n' */
         if (!(nl = strchr(hname_buf, '\n')))
             break;
         *nl++ = 0;
 
-        if ((pp = strchr(hname_buf, ' ')) != 0) {
+        if ((pp = strchr(hname_buf, ' ')) != 0) {	/* 格式是以空格间隔开来？ */
             *pp++ = 0;
-            got_addr_number(pp, hname_buf);
+            got_addr_number(pp, hname_buf);			/* 获取ip的下标 */
 
-            if (isdigit(hname_buf[0])) {
+            if (isdigit(hname_buf[0])) {			/* 转换成网络字节序地址 */
                 unsigned long laddr;
 
                 if ((laddr = inet_addr(hname_buf)) != INADDR_NONE) {
@@ -2331,14 +2331,14 @@ int query_addr_number(char *  name, svalue_t *  call_back)
         return i + 1;
     }
 }				/* query_addr_number() */
-
+/* 以name在Iptable中搜索它，并将下标push到栈中 */
 static void got_addr_number(char *  number, char *  name)
 {
     int i;
     char *theName, *theNumber;
 
-    /* First remove all the dested ones... */
-    for (i = 0; i < IPSIZE; i++)
+    /* First remove all the dested ones... 删除掉哪些已经处理过的   */
+    for (i = 0; i < IPSIZE; i++)	/* ipsize=200 */
         if (ipnumbertable[i].name
                 && ipnumbertable[i].ob_to_call->flags & O_DESTRUCTED) {
             free_svalue(&ipnumbertable[i].call_back, "got_addr_number");
@@ -2348,7 +2348,7 @@ static void got_addr_number(char *  number, char *  name)
         }
     for (i = 0; i < IPSIZE; i++) {
         if (ipnumbertable[i].name && strcmp(name, ipnumbertable[i].name)== 0) {
-            /* Found one, do the call back... */
+            /* Found one, do the call back... 找到一个跟name一样的ip地址？   */
             theName = ipnumbertable[i].name;
             theNumber = number;
 
@@ -2369,7 +2369,7 @@ static void got_addr_number(char *  number, char *  name)
             } else {
                 push_undefined();
             }
-            push_number(i + 1);
+            push_number(i + 1);		/* 将该ip在iptable中的下标push到栈中 */
             if (ipnumbertable[i].call_back.type == T_STRING)
                 safe_apply(ipnumbertable[i].call_back.u.string,
                            ipnumbertable[i].ob_to_call,
