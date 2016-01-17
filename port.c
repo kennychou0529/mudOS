@@ -77,7 +77,7 @@ char *time_string(time_t  t)
 }
 
 /*
- * Initialize the microsecond clock.
+ * Initialize the microsecond clock. 只是在有定义SEQUENT的时候才会设置
  */
 void init_usec_clock()
 {

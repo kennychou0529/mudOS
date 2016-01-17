@@ -1692,7 +1692,7 @@ INLINE_STATIC void do_loop_cond_number()
 }
 
 #ifdef LPC_TO_C
-
+/* 调用LPC中的函数？ */
 void call_program(program_t *  prog, POINTER_INT  offset) {
     if (prog->program_size)
         eval_instruction(prog->program + offset);
@@ -4447,21 +4447,21 @@ int is_static(char *  fun, object_t *  ob)
  * Call a function by object and index number.  Used by parts of the
  * driver which cache function numbers to optimize away function lookup.
  * The return value is left on the stack.
- * Currently: heart_beats, simul_efuns, master applies.
+ * Currently: heart_beats, simul_efuns, master applies. 调用函数
  */
 void call_direct(object_t *  ob, int  offset, int  origin, int  num_arg) {
     function_t *funp;
     program_t *prog = ob->prog;
 
     ob->time_of_ref = current_time;
-    push_control_stack(FRAME_FUNCTION | FRAME_OB_CHANGE);
+    push_control_stack(FRAME_FUNCTION | FRAME_OB_CHANGE); /* 丢进栈 */
     caller_type = origin;
     csp->num_local_variables = num_arg;
     current_prog = prog;
     funp = setup_new_frame(offset);
     previous_ob = current_object;
     current_object = ob;
-    call_program(current_prog, funp->address);
+    call_program(current_prog, funp->address);			/* 调用函数？ */
 }
 
 void translate_absolute_line P4(int, abs_line, unsigned short *, file_info,

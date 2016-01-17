@@ -33,7 +33,7 @@ static int reserved_size;
 char *reserved_area;		/* reserved for MALLOC() */
 static char *mud_lib;
 
-double consts[NUM_CONSTS];
+double consts[NUM_CONSTS];	/* 5个 */
 
 #ifndef NO_IP_DEMON
 int no_ip_demon = 0;
@@ -113,7 +113,7 @@ int main(int  argc, char **  argv)
 #endif
     boot_time = get_current_time();		/* 记录引擎跑起来的时刻 */
 
-    const0.type = T_NUMBER;
+    const0.type = T_NUMBER;		/* 几个const是用于代表某些特定的变量，比如NULL */
     const0.u.number = 0;
     const1.type = T_NUMBER;
     const1.u.number = 1;
@@ -173,7 +173,7 @@ int main(int  argc, char **  argv)
     /*
      * Initialize the microsecond clock.
      */
-    init_usec_clock();					/* 初始化微秒？没有什么意义吧？ */
+    init_usec_clock();					/* 貌似没用到 */
 
     /* read in the configuration file  读取配置文件 */
 
@@ -191,7 +191,7 @@ int main(int  argc, char **  argv)
         exit(-1);
     }
 
-    printf("Initializing internal tables....下面就是分割线了\n");
+    printf("Initializing internal tables....初始化内部的table\n");
     init_strings();				/* in stralloc.c 初始化了个表，下面的3个大同小异 */ 	
     init_otable();				/* in otable.c */
     init_identifiers();			/* in lex.c 这个涉及到词法分析了 */
@@ -201,7 +201,7 @@ int main(int  argc, char **  argv)
      * If our estimate is larger than FD_SETSIZE, then we need more file
      * descriptors than the operating system can handle.  This is a problem
      * that can be resolved by decreasing MAX_USERS, MAX_EFUN_SOCKS, or both.
-     * 可能会需要超过256的句柄数量,可以增加max_users和max_efun_socks。
+     * 可能会需要超过256的句柄数量,可以增大max_users和max_efun_socks。
      * Unfortunately, since neither MAX_USERS or MAX_EFUN_SOCKS exist any more,
      * we have no clue how many we will need.  This code really should be
      * moved to places where ENFILE/EMFILE is returned.很不幸，这两个文件都不存在
@@ -233,25 +233,26 @@ int main(int  argc, char **  argv)
     fprintf(stderr, "%d file descriptors were allocated, (%d were requested).\n",
             getdtablesize(), dtablesize);
 #endif
-#endif	/* 右边的数字代表了其位置 */
+#endif	/* 右边的数字代表了其参数在参数表中的位置 */
     time_to_clean_up = TIME_TO_CLEAN_UP;	/* 2 */
     time_to_swap = TIME_TO_SWAP;			/* 4 */
     max_cost = MAX_COST;					/* 8 */
     reserved_size = RESERVED_SIZE;			/* 18 */
-    max_array_size = MAX_ARRAY_SIZE;		/* 11  运行时最大的array的大小 */
+    max_array_size = MAX_ARRAY_SIZE;		/* 11 */
     max_buffer_size = MAX_BUFFER_SIZE;		/* 12 */
     max_string_length = MAX_STRING_LENGTH;	/* 14 */
     mud_lib = (char *) MUD_LIB;				/* 2 */
-    set_inc_list(INCLUDE_DIRS);
-    if (reserved_size > 0)
+    set_inc_list(INCLUDE_DIRS);				/* 将lib中的include文件夹下的文件包含进来 */
+
+    if (reserved_size > 0)					/* 保留区域？ */
         reserved_area = (char *) DMALLOC(reserved_size, TAG_RESERVED, "main.c: reserved_area");
-    for (i = 0; i < sizeof consts / sizeof consts[0]; i++)
+    for (i = 0; i < sizeof consts / sizeof consts[0]; i++)	/* 保存了5个double */
         consts[i] = exp(-i / 900.0);
     reset_machine(1);		/* 将栈重置为空 */
-    /* 为什么要语法分析两次？答案在这！
+    /* 为什么要语法分析两次的原因！
      * The flags are parsed twice ! The first time, we only search for the -m
      * flag, which specifies another mudlib, and the D-flags, so that they
-     * will be available when compiling master.c.	语法分析两次
+     * will be available when compiling master.c.	
      */
     for (i = 1; i < argc; i++) {	/* 在main参数中找到D N y m 四种参数，干啥用？ */
         if (argv[i][0] != '-')    continue;
@@ -318,7 +319,7 @@ int main(int  argc, char **  argv)
         exit(-1);
     } else {
         init_simul_efun(SIMUL_EFUN);		/* 这是simul_efun的初始化 */
-        init_master();						/* 先efun之后才能master */
+        init_master();						/* 先simul_efun之后才轮到master */
     }
     pop_context(&econ);						/* 删掉什么上下文？ */
 
@@ -350,7 +351,7 @@ int main(int  argc, char **  argv)
 					pop_context(&econ);
 					continue;
 				case 'e':
-					e_flag++;
+					e_flag++;		/* 预先load的标志位 */
 					continue;
 				case 'p':		/* 指定external 端口 */
 					external_port[0].port = atoi(argv[i] + 2);
@@ -390,7 +391,9 @@ int main(int  argc, char **  argv)
 #ifdef PACKAGE_MUDLIB_STATS
     restore_stat_files();
 #endif
-    preload_objects(e_flag);
+    preload_objects(e_flag);	/* -e选项会使e_flag=1 */
+	
+	/* 下面是与信号相关的。 */
 #ifdef SIGFPE
     signal(SIGFPE, sig_fpe);	/* 浮点异常 */
 #endif

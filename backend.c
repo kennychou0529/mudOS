@@ -589,13 +589,13 @@ void preload_objects(int  eflag)
     VOLATILE int ix;
     error_context_t econ;
 
-    save_context(&econ);
+    save_context(&econ);			/* debug用的 */
     if (SETJMP(econ.context)) {
         restore_context(&econ);
         pop_context(&econ);
         return;
     }
-    push_number(eflag);
+    push_number(eflag);				/* 将数字1丢进栈中 */
     ret = apply_master_ob(APPLY_EPILOG, 1);
     pop_context(&econ);
     if ((ret == 0) || (ret == (svalue_t *)-1) || (ret->type != T_ARRAY))
@@ -621,7 +621,7 @@ void preload_objects(int  eflag)
         eval_cost = max_cost;
 
         push_svalue(((array_t *)prefiles)->item + ix);
-        (void) apply_master_ob(APPLY_PRELOAD, 1);
+        (void) apply_master_ob(APPLY_PRELOAD, 1);	/* 调用函数 */
     }
     free_array((array_t *)prefiles);
     pop_context(&econ);
