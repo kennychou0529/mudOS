@@ -17,7 +17,7 @@ logon()				/* 每个用户登陆进来会调用这个，发送一些信息给用
     set_this_player(this_object());
 #endif
     write("Welcome to Lil!\n\n");
-    cat("/etc/motd");	/* 这是要发送给用户的信息 */
+    cat("/etc/motd");				/* 用户刚来时，要发送给用户的信息 */
     write("\n> ");
 #ifdef __PACKAGE_UIDS__
     seteuid(getuid(this_object()));	/* 设置用户ID */

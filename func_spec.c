@@ -5,10 +5,10 @@
  * This file specifies types and arguments for efuns.
  * An argument can have two different types with the syntax 'type1 | type2'.
  * An argument is marked as optional if it also takes the type 'void'.
- *
+ * 定义了很多efun。
  * Comment out the efuns that you do not want.  Be careful not to comment
  * out something that you need.
- *
+ * 注释掉你不想要的efun。
  * The order in which the efuns are listed here is the order in which opcode
  * #'s will be assigned.  It is in your interest to move the least frequently
  * used efuns to the bottom of this file (and the most frequently used
@@ -16,6 +16,7 @@
  * efuns are most often and least often used.  The reason for ordering
  * the efuns is that only the first 255 efuns are represented using
  * a single byte.  Any additional efuns require two bytes.
+ * 这里的顺序也有关系，常用的放上面，因为前255个只需要一个字节，其他的需要2个。
  */
 
 #ifdef NO_BUFFER_TYPE

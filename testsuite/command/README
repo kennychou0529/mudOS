@@ -1,2 +1,3 @@
 This directory is to contain the objects implementing the commands that
-interactives can use (movement, building, communication, etc).
+interactives can use (movement, building, communication, etc). 
+这个目录是用于实现用户可使用的命令的，比如east就是往东走。

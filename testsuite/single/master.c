@@ -34,7 +34,7 @@ connect()
 	object login_ob;
 	mixed err;
    
-	err = catch(login_ob = new(LOGIN_OB));
+	err = catch(login_ob = new(LOGIN_OB));	/* 新用户来了之后 */
 
 	if (err) {
 		write("It looks like someone is working on the player object.\n");
@@ -117,7 +117,7 @@ epilog(int)
 }
 
 // preload an object 
-//系统按照epilog函数返回的数组载入全局对象后调用次函数，用来判断对象是否成功创建
+//系统按照epilog函数返回的数组载入全局对象后调用此函数，用来判断对象是否成功创建
 void 
 preload(string file)
 {

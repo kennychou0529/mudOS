@@ -1340,17 +1340,17 @@ INLINE void make_selectmasks()
     /*
      * generate readmask and writemask for select() call.
      */
-    FD_ZERO(&readmask);
+    FD_ZERO(&readmask);		/* 清空mask */
     FD_ZERO(&writemask);
     /*
-     * set new user accept fd in readmask.
+     * set new user accept fd in readmask.	监听5个端口
      */
     for (i = 0; i < 5; i++) {
         if (!external_port[i].port) continue;
         FD_SET(external_port[i].fd, &readmask);
     }
     /*
-     * set user fds in readmask.
+     * set user fds in readmask.	监听所有用户的请求
      */
     for (i = 0; i < max_users; i++) {
         if (!all_users[i] || (all_users[i]->iflags & (CLOSING | CMD_IN_BUF)))
@@ -1360,18 +1360,18 @@ INLINE void make_selectmasks()
          * fd so we can get it.
          */
         FD_SET(all_users[i]->fd, &readmask);
-        if (all_users[i]->message_length != 0)
+        if (all_users[i]->message_length != 0)	/* 如果有消息准备发给此用户的话 */
             FD_SET(all_users[i]->fd, &writemask);
     }
     /*
-     * if addr_server_fd is set, set its fd in readmask.
+     * if addr_server_fd is set, set its fd in readmask. 设置addr_server读取mask
      */
     if (addr_server_fd >= 0) {
         FD_SET(addr_server_fd, &readmask);
     }
 #if defined(PACKAGE_SOCKETS) || defined(PACKAGE_EXTERNAL)
     /*
-     * set fd's for efun sockets.
+     * set fd's for efun sockets.	这是什么？
      */
     for (i = 0; i < max_lpc_socks; i++) {
         if (lpc_socks[i].state != STATE_CLOSED) {

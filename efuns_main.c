@@ -53,10 +53,10 @@ void
 f_allocate (void)
 {
     if (st_num_arg == 2) {
-	(sp-1)->u.arr = allocate_array2((sp-1)->u.number, sp);
-	pop_stack();
+        (sp-1)->u.arr = allocate_array2((sp-1)->u.number, sp);
+        pop_stack();
     } else {
-	sp->u.arr = allocate_array(sp->u.number);
+        sp->u.arr = allocate_array(sp->u.number);
     }
     sp->type = T_ARRAY;
 }
@@ -70,10 +70,10 @@ f_allocate_buffer (void)
 
     buf = allocate_buffer(sp->u.number);
     if (buf) {
-	pop_stack();
-	push_refed_buffer(buf);
+        pop_stack();
+        push_refed_buffer(buf);
     } else {
-	assign_svalue(sp, &const0);
+        assign_svalue(sp, &const0);
     }
 }
 #endif
@@ -83,25 +83,25 @@ void
 f_allocate_mapping (void)
 {
     array_t *arr;
-    
+
     if (st_num_arg == 2) {
-	if ((sp-1)->type != T_ARRAY)
-	    error("Bad argument 1 to allocate_mapping()\n");
-	if (sp->type == T_ARRAY) {
-	    arr = (sp-1)->u.arr;
-	    if (sp->u.arr->size != arr->size)
-		error("Arrays passed to allocate_mapping() must be the same size\n");
-	    (sp-1)->u.map = mkmapping(arr, sp->u.arr);
-	} else {
-	    arr = (sp-1)->u.arr;
-	    (sp-1)->u.map = allocate_mapping2(arr, sp);
-	}
-	pop_stack();
-	free_array(arr);
+        if ((sp-1)->type != T_ARRAY)
+            error("Bad argument 1 to allocate_mapping()\n");
+        if (sp->type == T_ARRAY) {
+            arr = (sp-1)->u.arr;
+            if (sp->u.arr->size != arr->size)
+                error("Arrays passed to allocate_mapping() must be the same size\n");
+            (sp-1)->u.map = mkmapping(arr, sp->u.arr);
+        } else {
+            arr = (sp-1)->u.arr;
+            (sp-1)->u.map = allocate_mapping2(arr, sp);
+        }
+        pop_stack();
+        free_array(arr);
     } else if (sp->type == T_NUMBER) {
-	sp->u.map = allocate_mapping(sp->u.number);
+        sp->u.map = allocate_mapping(sp->u.number);
     } else {
-	error("Bad argument 1 to allocate_mapping()\n");
+        error("Bad argument 1 to allocate_mapping()\n");
     }
     sp->type = T_MAPPING;
 }
@@ -117,17 +117,17 @@ f_bind (void)
     svalue_t *res;
 
     if (ob == old_fp->hdr.owner) {
-	/* no change */
-	free_object(ob, "bind nop");
-	sp--;
-	return;
+        /* no change */
+        free_object(ob, "bind nop");
+        sp--;
+        return;
     }
-    
+
     if (old_fp->hdr.type == (FP_LOCAL | FP_NOT_BINDABLE))
-	error("Illegal to rebind a pointer to a local function.\n");
+        error("Illegal to rebind a pointer to a local function.\n");
     if (old_fp->hdr.type & FP_NOT_BINDABLE)
-	error("Illegal to rebind a functional that references globals or local functions.\n");
-    
+        error("Illegal to rebind a functional that references globals or local functions.\n");
+
     /* the object doing the binding */
     push_object(current_object);
 
@@ -136,22 +136,22 @@ f_bind (void)
 
     /* the new owner */
     push_object(ob);
-    
+
     res = apply_master_ob(APPLY_VALID_BIND, 3);
     if (!MASTER_APPROVED(res))
-	error("Master object denied permission to bind() function pointer.\n");
-    
+        error("Master object denied permission to bind() function pointer.\n");
+
     new_fp = ALLOCATE(funptr_t, TAG_FUNP, "f_bind");
     *new_fp = *old_fp;
     new_fp->hdr.ref = 1;
     new_fp->hdr.owner = ob; /* one ref from being on stack */
     if (new_fp->hdr.args)
-	new_fp->hdr.args->ref++;
+        new_fp->hdr.args->ref++;
     if ((old_fp->hdr.type & 0x0f) == FP_FUNCTIONAL) {
-	new_fp->f.functional.prog->func_ref++;
-	debug(d_flag, ("add func ref /%s: now %i\n",
-		   new_fp->f.functional.prog->name,
-		   new_fp->f.functional.prog->func_ref));
+        new_fp->f.functional.prog->func_ref++;
+        debug(d_flag, ("add func ref /%s: now %i\n",
+                       new_fp->f.functional.prog->name,
+                       new_fp->f.functional.prog->func_ref));
     }
 
     free_funp(old_fp);
@@ -166,16 +166,16 @@ static void print_cache_stats(outbuffer_t *  ob)
     outbuf_add(ob, "Function cache information\n");
     outbuf_add(ob, "-------------------------------\n");
     outbuf_addv(ob, "%% cache hits:    %10.2f\n",
-	     100 * ((double) apply_low_cache_hits / apply_low_call_others));
+                100 * ((double) apply_low_cache_hits / apply_low_call_others));
     outbuf_addv(ob, "call_others:     %10lu\n", apply_low_call_others);
     outbuf_addv(ob, "cache hits:      %10lu\n", apply_low_cache_hits);
     outbuf_addv(ob, "cache size:      %10lu\n", APPLY_CACHE_SIZE);
     outbuf_addv(ob, "slots used:      %10lu\n", apply_low_slots_used);
     outbuf_addv(ob, "%% slots used:    %10.2f\n",
-		100 * ((double) apply_low_slots_used / APPLY_CACHE_SIZE));
+                100 * ((double) apply_low_slots_used / APPLY_CACHE_SIZE));
     outbuf_addv(ob, "collisions:      %10lu\n", apply_low_collisions);
     outbuf_addv(ob, "%% collisions:    %10.2f\n",
-	     100 * ((double) apply_low_collisions / apply_low_call_others));
+                100 * ((double) apply_low_collisions / apply_low_call_others));
 }
 
 void f_cache_stats (void)
@@ -189,7 +189,7 @@ void f_cache_stats (void)
 #endif
 
 #ifdef F__CALL_OTHER
- /* enhanced call_other written 930314 by Luke Mewburn <zak@rmit.edu.au> */
+/* enhanced call_other written 930314 by Luke Mewburn <zak@rmit.edu.au> */
 void
 f__call_other (void)
 {
@@ -200,13 +200,13 @@ f__call_other (void)
     object_t *ob;
 
     if (current_object->flags & O_DESTRUCTED) {	/* No external calls allowed */
-	pop_n_elems(num_arg);
-	push_undefined();
-	return;
+        pop_n_elems(num_arg);
+        push_undefined();
+        return;
     }
     arg = sp - num_arg + 1;
     if (arg[1].type == T_STRING)
-	funcname = arg[1].u.string;
+        funcname = arg[1].u.string;
     else {			/* must be T_ARRAY then */
         array_t *v = arg[1].u.arr;
         svalue_t *sv;
@@ -219,31 +219,31 @@ f__call_other (void)
     }
 
     if (arg[0].type == T_OBJECT)
-	ob = arg[0].u.ob;
+        ob = arg[0].u.ob;
     else if (arg[0].type == T_ARRAY) {
-	array_t *ret;
+        array_t *ret;
 
-	ret = call_all_other(arg[0].u.arr, funcname, num_arg - 2);
+        ret = call_all_other(arg[0].u.arr, funcname, num_arg - 2);
         pop_stack();
         free_array(arg->u.arr);
         sp->u.arr = ret;
-	return;
+        return;
     } else {
-	ob = find_object(arg[0].u.string);
-	if (!ob || !object_visible(ob))
-	    error("call_other() couldn't find object\n");
+        ob = find_object(arg[0].u.string);
+        if (!ob || !object_visible(ob))
+            error("call_other() couldn't find object\n");
     }
     /* Send the remaining arguments to the function. */
 #ifdef TRACE
     if (TRACEP(TRACE_CALL_OTHER)) {
-	do_trace("Call other ", funcname, "\n");
+        do_trace("Call other ", funcname, "\n");
     }
 #endif
     call_origin = ORIGIN_CALL_OTHER;
     if (apply_low(funcname, ob, num_arg - 2) == 0) {	/* Function not found */
-	pop_2_elems();
-	push_undefined();
-	return;
+        pop_2_elems();
+        push_undefined();
+        return;
     }
     /*
      * The result of the function call is on the stack.  So is the function
@@ -266,25 +266,25 @@ f_call_out (void)
     int ret;
 
     if (!(current_object->flags & O_DESTRUCTED)) {
-	ret = new_call_out(current_object, arg, arg[1].u.number, num, arg + 2);
-	/* args have been transfered; don't free them;
-	   also don't need to free the int */
-	sp -= num + 1;
+        ret = new_call_out(current_object, arg, arg[1].u.number, num, arg + 2);
+        /* args have been transfered; don't free them;
+           also don't need to free the int */
+        sp -= num + 1;
     } else {
-	ret = 0;
-	pop_n_elems(num);
-	sp--;
+        ret = 0;
+        pop_n_elems(num);
+        sp--;
     }
     /* the function */
     free_svalue(sp, "call_out");
     put_number(ret);
 #else
     if (!(current_object->flags & O_DESTRUCTED)) {
-	new_call_out(current_object, arg, arg[1].u.number, num, arg + 2);
-	sp -= num + 1;
+        new_call_out(current_object, arg, arg[1].u.number, num, arg + 2);
+        sp -= num + 1;
     } else {
-	pop_n_elems(num);
-	sp--;
+        pop_n_elems(num);
+        sp--;
     }
     free_svalue(sp--, "call_out");
 #endif
@@ -304,14 +304,14 @@ static char *origin_name(int  orig) {
     /* FIXME: this should use ffs() if available (BSD) */
     int i = 0;
     static char *origins[] = {
-	"driver",
-	"local",
-	"call_other",
-	"simul",
-	"internal",
-	"efun",
-	"function pointer",
-	"functional"
+        "driver",
+        "local",
+        "call_other",
+        "simul",
+        "internal",
+        "efun",
+        "function pointer",
+        "functional"
     };
     while (orig >>= 1) i++;
     return origins[i];
@@ -326,59 +326,59 @@ f_call_stack (void)
     array_t *ret;
 
     if (sp->u.number < 0 || sp->u.number > 3)
-	error("First argument of call_stack() must be 0, 1, 2, or 3.\n");
+        error("First argument of call_stack() must be 0, 1, 2, or 3.\n");
 
     ret = allocate_empty_array(n);
-    
+
     switch (sp->u.number) {
     case 0:
-	ret->item[0].type = T_STRING;
-	ret->item[0].subtype = STRING_MALLOC;
-	ret->item[0].u.string = add_slash(current_prog->name);
-	for (i = 1; i < n; i++) {
-	    ret->item[i].type = T_STRING;
-	    ret->item[i].subtype = STRING_MALLOC;
-	    ret->item[i].u.string = add_slash((csp - i + 1)->prog->name);
-	}
-	break;
+        ret->item[0].type = T_STRING;
+        ret->item[0].subtype = STRING_MALLOC;
+        ret->item[0].u.string = add_slash(current_prog->name);
+        for (i = 1; i < n; i++) {
+            ret->item[i].type = T_STRING;
+            ret->item[i].subtype = STRING_MALLOC;
+            ret->item[i].u.string = add_slash((csp - i + 1)->prog->name);
+        }
+        break;
     case 1:
-	ret->item[0].type = T_OBJECT;
-	ret->item[0].u.ob = current_object;
-	add_ref(current_object, "f_call_stack: curr");
-	for (i = 1; i < n; i++) {
-	    ret->item[i].type = T_OBJECT;
-	    ret->item[i].u.ob = (csp - i + 1)->ob;
-	    add_ref((csp - i + 1)->ob, "f_call_stack");
-	}
-	break;
+        ret->item[0].type = T_OBJECT;
+        ret->item[0].u.ob = current_object;
+        add_ref(current_object, "f_call_stack: curr");
+        for (i = 1; i < n; i++) {
+            ret->item[i].type = T_OBJECT;
+            ret->item[i].u.ob = (csp - i + 1)->ob;
+            add_ref((csp - i + 1)->ob, "f_call_stack");
+        }
+        break;
     case 2:
-	for (i = 0; i < n; i++) {
-	    ret->item[i].type = T_STRING;
-	    if (((csp - i)->framekind & FRAME_MASK) == FRAME_FUNCTION) {
-		program_t *prog = (i ? (csp-i+1)->prog : current_prog);
-		int index = (csp-i)->fr.table_index;
-		function_t *cfp = &prog->function_table[index];
+        for (i = 0; i < n; i++) {
+            ret->item[i].type = T_STRING;
+            if (((csp - i)->framekind & FRAME_MASK) == FRAME_FUNCTION) {
+                program_t *prog = (i ? (csp-i+1)->prog : current_prog);
+                int index = (csp-i)->fr.table_index;
+                function_t *cfp = &prog->function_table[index];
 
-		ret->item[i].subtype = STRING_SHARED;
-		ret->item[i].u.string = cfp->name;
-		ref_string(cfp->name);
-	    } else {
-		ret->item[i].subtype = STRING_CONSTANT;
-		ret->item[i].u.string = (((csp - i)->framekind & FRAME_MASK) == FRAME_CATCH) ? "CATCH" : "<function>";
-	    }
-	}
-	break;
+                ret->item[i].subtype = STRING_SHARED;
+                ret->item[i].u.string = cfp->name;
+                ref_string(cfp->name);
+            } else {
+                ret->item[i].subtype = STRING_CONSTANT;
+                ret->item[i].u.string = (((csp - i)->framekind & FRAME_MASK) == FRAME_CATCH) ? "CATCH" : "<function>";
+            }
+        }
+        break;
     case 3:
-	ret->item[0].type = T_STRING;
-	ret->item[0].subtype = STRING_CONSTANT;
-	ret->item[0].u.string = origin_name(caller_type);
-	
-	for (i = 1; i < n; i++) {
-	    ret->item[i].type = T_STRING;
-	    ret->item[i].subtype = STRING_CONSTANT;
-	    ret->item[i].u.string = origin_name((csp-i+1)->caller_type);
-	}
-	break;
+        ret->item[0].type = T_STRING;
+        ret->item[0].subtype = STRING_CONSTANT;
+        ret->item[0].u.string = origin_name(caller_type);
+
+        for (i = 1; i < n; i++) {
+            ret->item[i].type = T_STRING;
+            ret->item[i].subtype = STRING_CONSTANT;
+            ret->item[i].u.string = origin_name((csp-i+1)->caller_type);
+        }
+        break;
     }
     put_array(ret);
 }
@@ -389,8 +389,8 @@ void
 f_capitalize (void)
 {
     if (uislower(sp->u.string[0])) {
-	unlink_string_svalue(sp);
-	sp->u.string[0] = toupper((unsigned char)sp->u.string[0]);
+        unlink_string_svalue(sp);
+        sp->u.string[0] = toupper((unsigned char)sp->u.string[0]);
     }
 }
 #endif
@@ -412,11 +412,11 @@ void
 f_classp (void)
 {
     if (sp->type == T_CLASS) {
-	free_class(sp->u.arr);
-	*sp = const1;
+        free_class(sp->u.arr);
+        *sp = const1;
     } else {
-	free_svalue(sp, "f_classp");
-	*sp = const0;
+        free_svalue(sp, "f_classp");
+        *sp = const0;
     }
 }
 #endif
@@ -432,12 +432,12 @@ f_clear_bit (void)
         error("clear_bit() bit requested : %d > maximum bits: %d\n", sp->u.number, MAX_BITS);
     bit = (sp--)->u.number;
     if (bit < 0)
-	error("Bad argument 2 (negative) to clear_bit().\n");
+        error("Bad argument 2 (negative) to clear_bit().\n");
     ind = bit / 6;
     bit %= 6;
     len = SVALUE_STRLEN(sp);
-    if (ind >= len) 
-	return;         /* return first arg unmodified */
+    if (ind >= len)
+        return;         /* return first arg unmodified */
     unlink_string_svalue(sp);
     str = sp->u.string;
 
@@ -467,11 +467,11 @@ f__new (void)
 {
     svalue_t *arg = sp - st_num_arg + 1;
     object_t *ob;
-    
+
     ob = clone_object(arg->u.string, st_num_arg - 1);
     free_string_svalue(sp);
     if (ob) {
-	put_unrefed_undested_object(ob, "f_clone_object");
+        put_unrefed_undested_object(ob, "f_clone_object");
     } else *sp = const0;
 }
 #endif
@@ -524,13 +524,13 @@ f_ctime (void)
 {
     char *cp, *nl, *p;
     int l;
-    
+
     cp = time_string((time_t)sp->u.number);
 
     if ((nl = strchr(cp, '\n')))
-	l = nl - cp;
+        l = nl - cp;
     else
-	l = strlen(cp);
+        l = strlen(cp);
 
     p = new_string(l, "f_ctime");
     strncpy(p, cp, l);
@@ -562,10 +562,10 @@ void
 f_set_debug_level (void)
 {
     if (sp->type == T_STRING) {
-	debug_level_set(sp->u.string);
-	free_string_svalue(sp--);
+        debug_level_set(sp->u.string);
+        free_string_svalue(sp--);
     } else
-	debug_level = (sp--)->u.number;
+        debug_level = (sp--)->u.number;
 }
 
 void
@@ -573,12 +573,12 @@ f_clear_debug_level (void) {
     debug_level_clear(sp->u.string);
 }
 
-void     
+void
 f_debug_levels (void) {
     /* not in debug.h since debug.h is included in many places that don't
        know about mapping_t */
     mapping_t *debug_levels (void);
-    
+
     push_refed_mapping(debug_levels());
 }
 #endif
@@ -624,7 +624,7 @@ void
 f_ed (void)
 {
     if (!command_giver || !command_giver->interactive) {
-	pop_n_elems(st_num_arg);
+        pop_n_elems(st_num_arg);
         return;
     }
 
@@ -634,7 +634,7 @@ f_ed (void)
     } else if (st_num_arg == 1) {
         /* ed(fname) */
         ed_start(sp->u.string, 0, 0, 0, 0);
-	pop_stack();
+        pop_stack();
     } else if (st_num_arg == 2) {
         /* ed(fname,exitfn) */
         ed_start((sp - 1)->u.string, 0, sp->u.string, 0, current_object);
@@ -644,12 +644,12 @@ f_ed (void)
         if (sp->type == T_NUMBER) {
             ed_start((sp - 2)->u.string, 0, (sp - 1)->u.string, sp->u.number,
                      current_object);
-	} else if (sp->type == T_STRING) {
+        } else if (sp->type == T_STRING) {
             ed_start((sp - 2)->u.string, (sp - 1)->u.string, sp->u.string, 0,
                      current_object);
-	} else {
+        } else {
             bad_argument(sp, T_NUMBER | T_STRING, 3, F_ED);
-	}
+        }
         pop_3_elems();
     } else {                    /* st_num_arg == 4 */
         /* ed(fname,writefn,exitfn,restricted) */
@@ -659,7 +659,7 @@ f_ed (void)
             bad_argument(sp, T_NUMBER, 4, F_ED);
         ed_start((sp - 3)->u.string, (sp - 2)->u.string, (sp - 1)->u.string,
                  sp->u.number, current_object);
-	pop_n_elems(4);
+        pop_n_elems(4);
     }
 }
 #endif
@@ -668,22 +668,22 @@ f_ed (void)
 void f_ed_cmd (void)
 {
     char *res;
-    
+
     if (current_object->flags & O_DESTRUCTED)
-	error("destructed objects can't use ed.\n");
+        error("destructed objects can't use ed.\n");
 
     if (!(current_object->flags & O_IN_EDIT))
-	error("ed_cmd() called with no ed session active.\n");
+        error("ed_cmd() called with no ed session active.\n");
 
     res = object_ed_cmd(current_object, sp->u.string);
 
     free_string_svalue(sp);
     if (res) {
-	sp->subtype = STRING_MALLOC;
-	sp->u.string = res;
+        sp->subtype = STRING_MALLOC;
+        sp->u.string = res;
     } else {
-	sp->subtype = STRING_CONSTANT;
-	sp->u.string = "";
+        sp->subtype = STRING_CONSTANT;
+        sp->u.string = "";
     }
 }
 #endif
@@ -696,33 +696,33 @@ void f_ed_start (void)
     int restr = 0;
 
     if (st_num_arg == 2)
-	restr = (sp--)->u.number;
+        restr = (sp--)->u.number;
 
     if (st_num_arg)
-	fname = sp->u.string;
+        fname = sp->u.string;
     else
-	fname = 0;
+        fname = 0;
 
     if (current_object->flags & O_DESTRUCTED)
-	error("destructed objects can't use ed.\n");
+        error("destructed objects can't use ed.\n");
 
     if (current_object->flags & O_IN_EDIT)
-	error("ed_start() called while an ed session is already started.\n");
+        error("ed_start() called while an ed session is already started.\n");
 
     res = object_ed_start(current_object, fname, restr);
 
     if (fname) free_string_svalue(sp);
     else {
-	STACK_INC;
-	sp->type = T_STRING;
+        STACK_INC;
+        sp->type = T_STRING;
     }
-    
+
     if (res) {
-	sp->subtype = STRING_MALLOC;
-	sp->u.string = res;
+        sp->subtype = STRING_MALLOC;
+        sp->u.string = res;
     } else {
-	sp->subtype = STRING_CONSTANT;
-	sp->u.string = "";
+        sp->subtype = STRING_CONSTANT;
+        sp->u.string = "";
     }
 }
 #endif
@@ -732,7 +732,7 @@ void
 f_enable_wizard (void)
 {
     if (current_object->interactive)
-	current_object->flags |= O_IS_WIZARD;
+        current_object->flags |= O_IS_WIZARD;
 }
 #endif
 
@@ -744,14 +744,14 @@ f_error (void)
     char err_buf[2048];
 
     if (sp->u.string[l - 1] == '\n')
-	l--;
+        l--;
     if (l > 2045) l = 2045;
-    
+
     err_buf[0] = '*';
     strncpy(err_buf + 1, sp->u.string, l);
     err_buf[l + 1] = '\n';
     err_buf[l + 2] = 0;
-    
+
     error_handler(err_buf);
 }
 #endif
@@ -761,7 +761,7 @@ void
 f_disable_wizard (void)
 {
     if (current_object->interactive)
-	current_object->flags &= ~O_IS_WIZARD;
+        current_object->flags &= ~O_IS_WIZARD;
 }
 #endif
 
@@ -770,7 +770,7 @@ void
 f_environment (void)
 {
     object_t *ob;
-    
+
     if (st_num_arg) {
         if ((ob = sp->u.ob)->flags & O_DESTRUCTED)
             error("environment() of destructed object.\n");
@@ -795,9 +795,9 @@ f_exec (void)
 
     /* They might have been destructed */
     if (sp->type == T_OBJECT)
-	free_object(sp->u.ob, "f_exec:1");
+        free_object(sp->u.ob, "f_exec:1");
     if ((--sp)->type == T_OBJECT)
-	free_object(sp->u.ob, "f_exec:2");
+        free_object(sp->u.ob, "f_exec:2");
     put_number(i);
 }
 #endif
@@ -809,7 +809,7 @@ f_explode (void)
     array_t *vec;
 
     vec = explode_string((sp - 1)->u.string, SVALUE_STRLEN(sp-1),
-			 sp->u.string, SVALUE_STRLEN(sp));
+                         sp->u.string, SVALUE_STRLEN(sp));
     free_string_svalue(sp--);
     free_string_svalue(sp);
     put_array(vec);
@@ -858,11 +858,11 @@ f_find_call_out (void)
     int i;
 #ifdef CALLOUT_HANDLES
     if (sp->type == T_NUMBER) {
-	i = find_call_out_by_handle(sp->u.number);
+        i = find_call_out_by_handle(sp->u.number);
     } else { /* T_STRING */
 #endif
-	i = find_call_out(current_object, sp->u.string);
-	free_string_svalue(sp);
+        i = find_call_out(current_object, sp->u.string);
+        free_string_svalue(sp);
 #ifdef CALLOUT_HANDLES
     }
 #endif
@@ -875,17 +875,17 @@ void
 f_find_object (void)
 {
     object_t *ob;
-    
+
     if ((sp--)->u.number)
         ob = find_object(sp->u.string);
     else
         ob = find_object2(sp->u.string);
     free_string_svalue(sp);
-    if (ob && object_visible(ob)) { 
-	/* find_object only returns undested objects */
-	put_unrefed_undested_object(ob, "find_object"); 
+    if (ob && object_visible(ob)) {
+        /* find_object only returns undested objects */
+        put_unrefed_undested_object(ob, "find_object");
     } else
-	*sp = const0;
+        *sp = const0;
 }
 #endif
 
@@ -902,20 +902,20 @@ f_function_profile (void)
 
     ob = sp->u.ob;
     if (ob->flags & O_SWAPPED) {
-	load_ob_from_swap(ob);
+        load_ob_from_swap(ob);
     }
     prog = ob->prog;
     nf = prog->num_functions_defined;
     vec = allocate_empty_array(nf);
     for (j = 0; j < nf; j++) {
-	map = allocate_mapping(3);
-	add_mapping_pair(map, "calls", prog->function_table[j].calls);
-	add_mapping_pair(map, "self", prog->function_table[j].self
-			 - prog->function_table[j].children);
-	add_mapping_pair(map, "children", prog->function_table[j].children);
-	add_mapping_shared_string(map, "name", prog->function_table[j].name);
-	vec->item[j].type = T_MAPPING;
-	vec->item[j].u.map = map;
+        map = allocate_mapping(3);
+        add_mapping_pair(map, "calls", prog->function_table[j].calls);
+        add_mapping_pair(map, "self", prog->function_table[j].self
+                         - prog->function_table[j].children);
+        add_mapping_pair(map, "children", prog->function_table[j].children);
+        add_mapping_shared_string(map, "name", prog->function_table[j].name);
+        vec->item[j].type = T_MAPPING;
+        vec->item[j].u.map = map;
     }
     free_object(ob, "f_function_profile");
     put_array(vec);
@@ -930,31 +930,31 @@ f_function_exists (void)
     int l;
     object_t *ob;
     int flag = 0;
-    
+
     if (st_num_arg > 1) {
-	if (st_num_arg > 2)
-	    flag = (sp--)->u.number;
-	ob = (sp--)->u.ob;
-	free_object(ob, "f_function_exists");
+        if (st_num_arg > 2)
+            flag = (sp--)->u.number;
+        ob = (sp--)->u.ob;
+        free_object(ob, "f_function_exists");
     } else {
-	if (current_object->flags & O_DESTRUCTED) {
-	    free_string_svalue(sp);
-	    *sp = const0;
-	    return;
-	}
-	ob = current_object;
+        if (current_object->flags & O_DESTRUCTED) {
+            free_string_svalue(sp);
+            *sp = const0;
+            return;
+        }
+        ob = current_object;
     }
 
     str = function_exists(sp->u.string, ob, flag);
     free_string_svalue(sp);
     if (str) {
-	l = SHARED_STRLEN(str) - 2; /* no .c */
-	res = new_string(l + 1, "function_exists");
-	res[0] = '/';
-	strncpy(res + 1, str, l);
-	res[l + 1] = 0;
+        l = SHARED_STRLEN(str) - 2; /* no .c */
+        res = new_string(l + 1, "function_exists");
+        res[0] = '/';
+        strncpy(res + 1, str, l);
+        res[l + 1] = 0;
 
-	sp->subtype = STRING_MALLOC;
+        sp->subtype = STRING_MALLOC;
         sp->u.string = res;
     } else *sp = const0;
 }
@@ -966,10 +966,10 @@ void f_generate_source (void)
     int i;
 
     if (st_num_arg == 2) {
-	i = generate_source(sp - 1, sp->u.string);
-	pop_stack();
+        i = generate_source(sp - 1, sp->u.string);
+        pop_stack();
     } else
-	i = generate_source(sp, 0);
+        i = generate_source(sp, 0);
     free_svalue(sp, "f_generate_source");
     put_number(i);
 }
@@ -1005,7 +1005,7 @@ void
 f_get_config (void)
 {
     if (!get_config_item(sp, sp))
-	error("Bad argument to get_config()\n");
+        error("Bad argument to get_config()\n");
 }
 #endif
 
@@ -1017,7 +1017,9 @@ f_get_dir (void)
 
     vec = get_dir((sp - 1)->u.string, sp->u.number);
     free_string_svalue(--sp);
-    if (vec) { put_array(vec); }
+    if (vec) {
+        put_array(vec);
+    }
     else *sp = const0;
 }
 #endif
@@ -1029,36 +1031,36 @@ f_implode (void)
     array_t *arr;
     int flag;
     svalue_t *args;
-    
+
     if (st_num_arg == 3) {
-	args = (sp - 2);
-	if (args[1].type == T_STRING)
-	    error("Third argument to implode() is illegal with implode(array, string)\n");
-	flag = 1;
+        args = (sp - 2);
+        if (args[1].type == T_STRING)
+            error("Third argument to implode() is illegal with implode(array, string)\n");
+        flag = 1;
     } else {
-	args = (sp - 1);
-	flag = 0;
+        args = (sp - 1);
+        flag = 0;
     }
     arr = args->u.arr;
     check_for_destr(arr);
 
     if (args[1].type == T_STRING) {
-	/* st_num_arg == 2 here */
-	char *str;
-	    
-	str = implode_string(arr, sp->u.string,
-			     SVALUE_STRLEN(sp));
-	free_string_svalue(sp--);
-	free_array(arr);
-	put_malloced_string(str);
+        /* st_num_arg == 2 here */
+        char *str;
+
+        str = implode_string(arr, sp->u.string,
+                             SVALUE_STRLEN(sp));
+        free_string_svalue(sp--);
+        free_array(arr);
+        put_malloced_string(str);
     } else { /* function */
-	funptr_t *funp = args[1].u.fp;
-	    
-	/* this pulls the extra arg off the stack if it exists */
-	implode_array(funp, arr, args, flag);
-	sp--;
-	free_funp(funp);
-	free_array(arr);
+        funptr_t *funp = args[1].u.fp;
+
+        /* this pulls the extra arg off the stack if it exists */
+        implode_array(funp, arr, args, flag);
+        sp--;
+        free_funp(funp);
+        free_array(arr);
     }
 }
 #endif
@@ -1072,15 +1074,15 @@ f_in_edit (void)
 
 #ifdef OLD_ED
     if (sp->u.ob->interactive)
-	eb = sp->u.ob->interactive->ed_buffer;
+        eb = sp->u.ob->interactive->ed_buffer;
 #else
     if (sp->u.ob->flags & O_IN_EDIT)
-	eb = find_ed_buffer(sp->u.ob);
+        eb = find_ed_buffer(sp->u.ob);
 #endif
     if (eb && (fn = eb->fname)) {
-	free_object(sp->u.ob, "f_in_edit:1");
-	put_malloced_string(add_slash(fn));
-	return;
+        free_object(sp->u.ob, "f_in_edit:1");
+        put_malloced_string(add_slash(fn));
+        return;
     }
     free_object(sp->u.ob, "f_in_edit:1");
     *sp = const0;
@@ -1127,7 +1129,7 @@ f_inherits (void)
     base = (sp--)->u.ob;
     ob = find_object2(sp->u.string);
     if (!ob || (ob->flags & O_SWAPPED)) {
-	free_object(base, "f_inherits");
+        free_object(base, "f_inherits");
         assign_svalue(sp, &const0);
         return;
     }
@@ -1198,7 +1200,7 @@ f_intp (void)
 {
     if (sp->type == T_NUMBER) sp->u.number = 1;
     else {
-	free_svalue(sp, "f_intp");
+        free_svalue(sp, "f_intp");
         put_number(0);
     }
 }
@@ -1209,13 +1211,13 @@ void
 f_functionp (void)
 {
     int i;
-    
+
     if (sp->type == T_FUNCTION) {
         i = sp->u.fp->hdr.type;
-        if (sp->u.fp->hdr.args) 
-	    i |= FP_HAS_ARGUMENTS;
-	if (!sp->u.fp->hdr.owner || (sp->u.fp->hdr.owner->flags & O_DESTRUCTED))
-	    i |= FP_OWNER_DESTED;
+        if (sp->u.fp->hdr.args)
+            i |= FP_HAS_ARGUMENTS;
+        if (!sp->u.fp->hdr.owner || (sp->u.fp->hdr.owner->flags & O_DESTRUCTED))
+            i |= FP_OWNER_DESTED;
         free_funp(sp->u.fp);
         put_number(i);
         return;
@@ -1262,7 +1264,7 @@ f_link (void)
     if (MASTER_APPROVED(ret))
         i = do_rename((sp - 1)->u.string, sp->u.string, F_LINK);
     else
-	i = 0;
+        i = 0;
     (--sp)->type = T_NUMBER;
     sp->u.number = i;
     sp->subtype = 0;
@@ -1278,17 +1280,17 @@ f_lower_case (void)
     str = sp->u.string;
     /* find first upper case letter, if any */
     for (; *str; str++) {
-	if (uisupper(*str)) {
-	    int l = str - sp->u.string;
-	    unlink_string_svalue(sp);
-	    str = sp->u.string + l;
-	    *str = tolower((unsigned char)*str);
-	    for (str++; *str; str++) {
-		if (uisupper(*str))
-		    *str = tolower((unsigned char)*str);
-	    }
-	    return;
-	}
+        if (uisupper(*str)) {
+            int l = str - sp->u.string;
+            unlink_string_svalue(sp);
+            str = sp->u.string + l;
+            *str = tolower((unsigned char)*str);
+            for (str++; *str; str++) {
+                if (uisupper(*str))
+                    *str = tolower((unsigned char)*str);
+            }
+            return;
+        }
     }
 }
 #endif
@@ -1304,22 +1306,22 @@ void f_lpc_info (void)
     outbuf_zero(&out);
     outbuf_addv(&out, "%30s  Loaded  Using compiled program\n", "Program");
     while (*p) {
-	outbuf_addv(&out, "%30s: ", (*p)->fname);
-	ob = lookup_object_hash((*p)->fname);
-	if (ob) {
-	    if (ob->flags & O_COMPILED_PROGRAM) {
-		outbuf_add(&out, " No\n");
-	    } else if (ob->flags & O_SWAPPED) {
-		outbuf_add(&out, " Yes      Swapped\n");
-	    } else if (ob->prog->program_size == 0) {
-		outbuf_add(&out, " Yes      Yes\n");
-	    } else {
-		outbuf_add(&out, " Yes      No\n");
-	    }
-	} else {
-	    outbuf_add(&out, "Something REALLY wierd happened; no record of the object.\n");
-	}
-	p++;
+        outbuf_addv(&out, "%30s: ", (*p)->fname);
+        ob = lookup_object_hash((*p)->fname);
+        if (ob) {
+            if (ob->flags & O_COMPILED_PROGRAM) {
+                outbuf_add(&out, " No\n");
+            } else if (ob->flags & O_SWAPPED) {
+                outbuf_add(&out, " Yes      Swapped\n");
+            } else if (ob->prog->program_size == 0) {
+                outbuf_add(&out, " Yes      Yes\n");
+            } else {
+                outbuf_add(&out, " Yes      No\n");
+            }
+        } else {
+            outbuf_add(&out, "Something REALLY wierd happened; no record of the object.\n");
+        }
+        p++;
     }
     outbuf_push(&out);
 }
@@ -1401,9 +1403,9 @@ void
 f_master (void)
 {
     if (!master_ob)
-	push_number(0);
+        push_number(0);
     else
-	push_object(master_ob);
+        push_object(master_ob);
 }
 #endif
 
@@ -1428,27 +1430,27 @@ f_match_path (void)
     svalue_t *nvalue;
     mapping_t *map;
     char *tmpstr;
-    
+
     value = &const0u;
 
     tmpstr = DMALLOC(SVALUE_STRLEN(sp) + 1, TAG_STRING, "match_path");
 
     src = sp->u.string;
     dst = tmpstr;
-    
+
     while (*src != '\0') {
-	while (*src != '/' && *src != '\0')
-	    *dst++ = *src++;
-	if (*src == '/') {
-	    while (*++src == '/');
-	    if (*src != '\0' || dst == tmpstr)
-		*dst++ = '/';
-	}
-	*dst = '\0';
-	nvalue = find_string_in_mapping((sp - 1)->u.map, tmpstr);
-	
-	if (nvalue != &const0u)
-	    value = nvalue;
+        while (*src != '/' && *src != '\0')
+            *dst++ = *src++;
+        if (*src == '/') {
+            while (*++src == '/');
+            if (*src != '\0' || dst == tmpstr)
+                *dst++ = '/';
+        }
+        *dst = '\0';
+        nvalue = find_string_in_mapping((sp - 1)->u.map, tmpstr);
+
+        if (nvalue != &const0u)
+            value = nvalue;
     }
 
     FREE(tmpstr);
@@ -1485,26 +1487,26 @@ f_member_array (void)
     } else {
         int size = (v = sp->u.arr)->size;
         svalue_t *sv;
-	svalue_t *find;
-	int flen;
+        svalue_t *find;
+        int flen;
 
         find = (sp - 1);
-	/* optimize a bit */
-	if (find->type == T_STRING) {
-	    /* *not* COUNTED_STRLEN() which can do a (costly) strlen() call */
-	    if (find->subtype & STRING_COUNTED)
-		flen = MSTR_SIZE(find->u.string);
-	    else flen = 0;
-	}
+        /* optimize a bit */
+        if (find->type == T_STRING) {
+            /* *not* COUNTED_STRLEN() which can do a (costly) strlen() call */
+            if (find->subtype & STRING_COUNTED)
+                flen = MSTR_SIZE(find->u.string);
+            else flen = 0;
+        }
 
         for (; i < size; i++) {
             switch (find->type|(sv= v->item + i)->type) {
             case T_STRING:
-		if (flen && (sv->subtype & STRING_COUNTED)
-		    && flen != MSTR_SIZE(sv->u.string))
-		    continue;
+                if (flen && (sv->subtype & STRING_COUNTED)
+                        && flen != MSTR_SIZE(sv->u.string))
+                    continue;
                 if (strcmp(find->u.string, sv->u.string)) continue;
-		break;
+                break;
             case T_NUMBER:
                 if (find->u.number == sv->u.number) break;
                 continue;
@@ -1515,14 +1517,14 @@ f_member_array (void)
                 if (find->u.arr == sv->u.arr) break;
                 continue;
             case T_OBJECT:
-	    {
-		if (sv->u.ob->flags & O_DESTRUCTED) {
-		    assign_svalue(sv, &const0u);
-		    continue;
-		}
+            {
+                if (sv->u.ob->flags & O_DESTRUCTED) {
+                    assign_svalue(sv, &const0u);
+                    continue;
+                }
                 if (find->u.ob == sv->u.ob) break;
                 continue;
-	    }
+            }
             case T_MAPPING:
                 if (find->u.map == sv->u.map) break;
                 continue;
@@ -1538,16 +1540,16 @@ f_member_array (void)
                 if (sv->type == T_OBJECT && (sv->u.ob->flags & O_DESTRUCTED)) {
                     assign_svalue(sv, &const0u);
                     if (find->type == T_NUMBER && !find->u.number) break;
-		}
+                }
                 continue;
-	    }
+            }
             break;
-	}
+        }
         if (i == size)
             i = -1;                     /* Return -1 for failure */
         free_array(v);
-	free_svalue(find, "f_member_array");
-	sp--;
+        free_svalue(find, "f_member_array");
+        sp--;
     }
     put_number(i);
 }
@@ -1565,51 +1567,51 @@ f_message (void)
     switch (args[2].type) {
     case T_OBJECT:
     case T_STRING:
-	use = allocate_empty_array(1);
-	use->item[0] = args[2];
-	args[2].type = T_ARRAY;
-	args[2].u.arr = use;
-	break;
+        use = allocate_empty_array(1);
+        use->item[0] = args[2];
+        args[2].type = T_ARRAY;
+        args[2].u.arr = use;
+        break;
     case T_ARRAY:
-	use = args[2].u.arr;
-	break;
+        use = args[2].u.arr;
+        break;
     case T_NUMBER:
-	if (args[2].u.number == 0) {
-	    int len = SVALUE_STRLEN(args + 1);
-	    
-	    /* this is really bad and probably should be rm'ed -Beek;
-	     * on the other hand, we don't have a debug_message() efun yet.
-	     * Well, there is one in contrib now ...
-	     */
-	    /* for compatibility (write() simul_efuns, etc)  -bobf */
-	    if (len > LARGEST_PRINTABLE_STRING)
-		error("Printable strings limited to length of %d.\n",
-		      LARGEST_PRINTABLE_STRING);
+        if (args[2].u.number == 0) {
+            int len = SVALUE_STRLEN(args + 1);
 
-	    add_message(command_giver, args[1].u.string, len);
-	    pop_n_elems(num_arg);
-	    return;
-	}
+            /* this is really bad and probably should be rm'ed -Beek;
+             * on the other hand, we don't have a debug_message() efun yet.
+             * Well, there is one in contrib now ...
+             */
+            /* for compatibility (write() simul_efuns, etc)  -bobf */
+            if (len > LARGEST_PRINTABLE_STRING)
+                error("Printable strings limited to length of %d.\n",
+                      LARGEST_PRINTABLE_STRING);
+
+            add_message(command_giver, args[1].u.string, len);
+            pop_n_elems(num_arg);
+            return;
+        }
     default:
-	bad_argument(&args[2], T_OBJECT | T_STRING | T_ARRAY | T_NUMBER,
-		     3, F_MESSAGE);
+        bad_argument(&args[2], T_OBJECT | T_STRING | T_ARRAY | T_NUMBER,
+                     3, F_MESSAGE);
     }
     if (num_arg == 4) {
-	switch (args[3].type) {
-	case T_OBJECT:
-	    avoid = allocate_empty_array(1);
-	    avoid->item[0] = args[3];
-	    args[3].type = T_ARRAY;
-	    args[3].u.arr = avoid;
-	    break;
-	case T_ARRAY:
-	    avoid = args[3].u.arr;
-	    break;
-	default:
-	    avoid = &the_null_array;
-	}
+        switch (args[3].type) {
+        case T_OBJECT:
+            avoid = allocate_empty_array(1);
+            avoid->item[0] = args[3];
+            args[3].type = T_ARRAY;
+            args[3].u.arr = avoid;
+            break;
+        case T_ARRAY:
+            avoid = args[3].u.arr;
+            break;
+        default:
+            avoid = &the_null_array;
+        }
     } else
-	avoid = &the_null_array;
+        avoid = &the_null_array;
     do_message(&args[0], &args[1], use, avoid, 1);
     pop_n_elems(num_arg);
 }
@@ -1626,7 +1628,7 @@ f_mkdir (void)
         free_string_svalue(sp);
         *sp = const0;
     }
-    else{
+    else {
         free_string_svalue(sp);
         *sp = const1;
     }
@@ -1646,10 +1648,10 @@ f_move_object (void)
         if (!(o2 = find_object(sp->u.string)) || !object_visible(o2))
             error("move_object failed: could not find destination\n");
     }
-    
+
     if ((o1 = current_object)->flags & O_DESTRUCTED)
-	error("move_object(): can't move a destructed object\n");
-    
+        error("move_object(): can't move a destructed object\n");
+
     move_object(o1, o2);
     pop_stack();
 }
@@ -1665,37 +1667,37 @@ void f_mud_status (void)
     verbose = (sp--)->u.number;
 
     if (reserved_area)
-	res = RESERVED_SIZE;
+        res = RESERVED_SIZE;
     else
-	res = 0;
+        res = 0;
 
     if (verbose) {
-	char dir_buf[1024];
-	FILE *testfp;
+        char dir_buf[1024];
+        FILE *testfp;
 
-	if ((testfp = fopen(".mudos_test_file", "w"))) {
-	    fclose(testfp);
-	    outbuf_add(&ob, "Open-file-test succeeded.\n");
-	    unlink(".mudos_test_file");
-	} else {
-	    outbuf_addv(&ob, "Open file test failed: %s\n", port_strerror(errno));
-	}
+        if ((testfp = fopen(".mudos_test_file", "w"))) {
+            fclose(testfp);
+            outbuf_add(&ob, "Open-file-test succeeded.\n");
+            unlink(".mudos_test_file");
+        } else {
+            outbuf_addv(&ob, "Open file test failed: %s\n", port_strerror(errno));
+        }
 
-	outbuf_addv(&ob, "current working directory: %s\n\n",
-		    get_current_dir(dir_buf, 1024));
-	outbuf_add(&ob, "add_message statistics\n");
-	outbuf_add(&ob, "------------------------------\n");
-	outbuf_addv(&ob, "Calls to add_message: %d   Packets: %d   Average packet size: %f\n\n",
-	add_message_calls, inet_packets, (float) inet_volume / inet_packets);
+        outbuf_addv(&ob, "current working directory: %s\n\n",
+                    get_current_dir(dir_buf, 1024));
+        outbuf_add(&ob, "add_message statistics\n");
+        outbuf_add(&ob, "------------------------------\n");
+        outbuf_addv(&ob, "Calls to add_message: %d   Packets: %d   Average packet size: %f\n\n",
+                    add_message_calls, inet_packets, (float) inet_volume / inet_packets);
 
-	stat_living_objects(&ob);
+        stat_living_objects(&ob);
 
 #ifdef F_CACHE_STATS
-	print_cache_stats(&ob);
-	outbuf_add(&ob, "\n");
+        print_cache_stats(&ob);
+        outbuf_add(&ob, "\n");
 #endif
-	print_swap_stats(&ob);
-	outbuf_add(&ob, "\n");
+        print_swap_stats(&ob);
+        outbuf_add(&ob, "\n");
 
         tot = show_otable_status(&ob, verbose);
         outbuf_add(&ob, "\n");
@@ -1705,49 +1707,49 @@ void f_mud_status (void)
         outbuf_add(&ob, "\n");
         tot += print_call_out_usage(&ob, verbose);
     } else {
-	/* !verbose */
-	outbuf_addv(&ob, "Sentences:\t\t\t%8d %8d\n", tot_alloc_sentence,
-		    tot_alloc_sentence * sizeof(sentence_t));
+        /* !verbose */
+        outbuf_addv(&ob, "Sentences:\t\t\t%8d %8d\n", tot_alloc_sentence,
+                    tot_alloc_sentence * sizeof(sentence_t));
 #ifndef DEBUG
-	outbuf_addv(&ob, "Objects:\t\t\t%8d %8d\n",
-		    tot_alloc_object, tot_alloc_object_size);
+        outbuf_addv(&ob, "Objects:\t\t\t%8d %8d\n",
+                    tot_alloc_object, tot_alloc_object_size);
 #else
-	outbuf_addv(&ob, "Objects:\t\t\t%8d %8d (%8d dangling)\n",
-		    tot_alloc_object, tot_alloc_object_size, tot_dangling_object);
+        outbuf_addv(&ob, "Objects:\t\t\t%8d %8d (%8d dangling)\n",
+                    tot_alloc_object, tot_alloc_object_size, tot_dangling_object);
 #endif
-	outbuf_addv(&ob, "Prog blocks:\t\t\t%8d %8d\n",
-		    total_num_prog_blocks, total_prog_block_size);
+        outbuf_addv(&ob, "Prog blocks:\t\t\t%8d %8d\n",
+                    total_num_prog_blocks, total_prog_block_size);
 #ifdef ARRAY_STATS
-	outbuf_addv(&ob, "Arrays:\t\t\t\t%8d %8d\n", num_arrays,
-		    total_array_size);
+        outbuf_addv(&ob, "Arrays:\t\t\t\t%8d %8d\n", num_arrays,
+                    total_array_size);
 #else
-	outbuf_add(&ob, "<Array statistics disabled, no information available>\n");
+        outbuf_add(&ob, "<Array statistics disabled, no information available>\n");
 #endif
-	outbuf_addv(&ob, "Mappings:\t\t\t%8d %8d\n", num_mappings,
-		    total_mapping_size);
-	outbuf_addv(&ob, "Mappings(nodes):\t\t%8d\n", total_mapping_nodes);
-	outbuf_addv(&ob, "Interactives:\t\t\t%8d %8d\n", num_user,
-		    num_user * sizeof(interactive_t));
+        outbuf_addv(&ob, "Mappings:\t\t\t%8d %8d\n", num_mappings,
+                    total_mapping_size);
+        outbuf_addv(&ob, "Mappings(nodes):\t\t%8d\n", total_mapping_nodes);
+        outbuf_addv(&ob, "Interactives:\t\t\t%8d %8d\n", num_user,
+                    num_user * sizeof(interactive_t));
 
-	tot = show_otable_status(&ob, verbose) +
-	    heart_beat_status(&ob, verbose) +
-	    add_string_status(&ob, verbose) +
-	    print_call_out_usage(&ob, verbose);
+        tot = show_otable_status(&ob, verbose) +
+              heart_beat_status(&ob, verbose) +
+              add_string_status(&ob, verbose) +
+              print_call_out_usage(&ob, verbose);
     }
 
     tot += total_prog_block_size +
 #ifdef ARRAY_STATS
-	total_array_size +
+           total_array_size +
 #endif
-	total_mapping_size +
-	tot_alloc_sentence * sizeof(sentence_t) +
-	tot_alloc_object_size +
-	num_user * sizeof(interactive_t) +
-	res;
+           total_mapping_size +
+           tot_alloc_sentence * sizeof(sentence_t) +
+           tot_alloc_object_size +
+           num_user * sizeof(interactive_t) +
+           res;
 
     if (!verbose) {
-	outbuf_add(&ob, "\t\t\t\t\t --------\n");
-	outbuf_addv(&ob, "Total:\t\t\t\t\t %8d\n", tot);
+        outbuf_add(&ob, "\t\t\t\t\t --------\n");
+        outbuf_addv(&ob, "Total:\t\t\t\t\t %8d\n", tot);
     }
     outbuf_push(&ob);
 }
@@ -1775,7 +1777,7 @@ f_opcprof (void)
         opcdump(sp->u.string);
         free_string_svalue(sp--);
     } else
-	opcdump("/OPCPROF");
+        opcdump("/OPCPROF");
 }
 #endif
 
@@ -1808,10 +1810,10 @@ f_present (void)
     int num_arg = st_num_arg;
     svalue_t *arg = sp - num_arg + 1;
     object_t *ob;
-    
+
 #if !defined(NO_RESETS) && defined(LAZY_RESETS)
     if (num_arg == 2) {
-	try_reset(arg[1].u.ob);
+        try_reset(arg[1].u.ob);
     }
 #endif
     ob = object_present(arg, num_arg == 1 ? 0 : arg[1].u.ob);
@@ -1828,20 +1830,20 @@ f_previous_object (void)
     control_stack_t *p;
     int i;
     object_t *ob;
-    
+
     if ((i = sp->u.number) > 0) {
         if (i >= CFG_MAX_CALL_DEPTH) {
             sp->u.number = 0;
             return;
-	}
+        }
         ob = 0;
         p = csp;
         do {
             if ((p->framekind & FRAME_OB_CHANGE) && !(--i)) {
                 ob = p->prev_ob;
                 break;
-	    }
-	} while (--p >= control_stack);
+            }
+        } while (--p >= control_stack);
     } else if (i == -1) {
         array_t *v;
 
@@ -1849,27 +1851,27 @@ f_previous_object (void)
         p = csp;
         do {
             if ((p->framekind & FRAME_OB_CHANGE) && p->prev_ob) i++;
-	} while (--p >= control_stack);
+        } while (--p >= control_stack);
         v = allocate_empty_array(i);
         p = csp;
         if (previous_ob) {
-	    if (!(previous_ob->flags & O_DESTRUCTED)) {
-		v->item[0].type = T_OBJECT;
-		v->item[0].u.ob = previous_ob;
-		add_ref(previous_ob, "previous_object(-1)");
-	    } else v->item[0] = const0u;
+            if (!(previous_ob->flags & O_DESTRUCTED)) {
+                v->item[0].type = T_OBJECT;
+                v->item[0].u.ob = previous_ob;
+                add_ref(previous_ob, "previous_object(-1)");
+            } else v->item[0] = const0u;
             i = 1;
-	} else i = 0;
+        } else i = 0;
         do {
             if ((p->framekind & FRAME_OB_CHANGE) && (ob = p->prev_ob)) {
-		if (!(ob->flags & O_DESTRUCTED)) {
-		    v->item[i].type = T_OBJECT;
-		    v->item[i].u.ob = ob;
-		    add_ref(ob, "previous_object(-1)");
-		} else v->item[i] = const0u;
-		i++;
-	    }
-	} while (--p >= control_stack);
+                if (!(ob->flags & O_DESTRUCTED)) {
+                    v->item[i].type = T_OBJECT;
+                    v->item[i].u.ob = ob;
+                    add_ref(ob, "previous_object(-1)");
+                } else v->item[i] = const0u;
+                i++;
+            }
+        } while (--p >= control_stack);
         put_array(v);
         return;
     } else if (i < 0) {
@@ -1890,16 +1892,16 @@ f_printf (void)
 {
     int num_arg = st_num_arg;
     char *ret;
-    
+
     if (command_giver) {
-	ret = string_print_formatted((sp - num_arg + 1)->u.string,
-				     num_arg - 1, sp - num_arg + 2);
-	if (ret) {
-	    tell_object(command_giver, ret, COUNTED_STRLEN(ret));
-	    FREE_MSTR(ret);
-	}
+        ret = string_print_formatted((sp - num_arg + 1)->u.string,
+                                     num_arg - 1, sp - num_arg + 2);
+        if (ret) {
+            tell_object(command_giver, ret, COUNTED_STRLEN(ret));
+            FREE_MSTR(ret);
+        }
     }
-    
+
     pop_n_elems(num_arg);
 }
 #endif
@@ -1940,9 +1942,9 @@ f_query_ed_mode (void)
        -1 = not in ed
        -2 = more prompt */
     if (current_object->flags & O_IN_EDIT) {
-	push_number(object_ed_mode(current_object));
+        push_number(object_ed_mode(current_object));
     } else
-	push_number(-1);
+        push_number(-1);
 }
 #endif
 
@@ -2010,7 +2012,7 @@ void
 f_query_privs (void)
 {
     object_t *ob;
-    
+
     ob = sp->u.ob;
     if (ob->privs != NULL) {
         free_object(ob, "f_query_privs");
@@ -2029,10 +2031,12 @@ void
 f_query_snooping (void)
 {
     object_t *ob;
-    
+
     ob = query_snooping(sp->u.ob);
     free_object(sp->u.ob, "f_query_snooping");
-    if (ob) { put_unrefed_undested_object(ob, "query_snooping"); }
+    if (ob) {
+        put_unrefed_undested_object(ob, "query_snooping");
+    }
     else *sp = const0;
 }
 #endif
@@ -2042,10 +2046,12 @@ void
 f_query_snoop (void)
 {
     object_t *ob;
-    
+
     ob = query_snoop(sp->u.ob);
     free_object(sp->u.ob, "f_query_snoop");
-    if (ob) { put_unrefed_undested_object(ob, "query_snoop"); }
+    if (ob) {
+        put_unrefed_undested_object(ob, "query_snoop");
+    }
     else *sp = const0;
 }
 #endif
@@ -2055,8 +2061,8 @@ void
 f_random (void)
 {
     if (sp->u.number <= 0) {
-	sp->u.number = 0;
-	return;
+        sp->u.number = 0;
+        return;
     }
     sp->u.number = random_number(sp->u.number);
 }
@@ -2096,10 +2102,10 @@ f_read_buffer (void)
     svalue_t *arg = sp - num_arg + 1;
 
     if (num_arg > 1) {
-       start = arg[1].u.number;
-       if (num_arg == 3) {
-	   len = arg[2].u.number;
-       }
+        start = arg[1].u.number;
+        if (num_arg == 3) {
+            len = arg[2].u.number;
+        }
     }
     if (arg[0].type == T_STRING) {
         from_file = 1;          /* new line */
@@ -2115,7 +2121,7 @@ f_read_buffer (void)
 
         buf = allocate_buffer(rlen);
         memcpy(buf->item, str, rlen);
-	STACK_INC;
+        STACK_INC;
         sp->type = T_BUFFER;
         sp->u.buf = buf;
         FREE_MSTR(str);
@@ -2142,7 +2148,10 @@ f_read_file (void)
     str = read_file(sp->u.string, start, len);
     free_string_svalue(sp);
     if (!str) *sp = const0;
-    else { sp->subtype = STRING_MALLOC; sp->u.string = str; }
+    else {
+        sp->subtype = STRING_MALLOC;
+        sp->u.string = str;
+    }
 }
 #endif
 
@@ -2151,23 +2160,23 @@ void
 f_receive (void)
 {
     if (sp->type == T_STRING) {
-	if (current_object->interactive) {
-	    int len = SVALUE_STRLEN(sp);
-	    
-	    if (len > LARGEST_PRINTABLE_STRING)
-		error("Printable strings limited to length of %d.\n",
-		      LARGEST_PRINTABLE_STRING);
-		
-	    add_message(current_object, sp->u.string, len);
-	}
-	free_string_svalue(sp--);
+        if (current_object->interactive) {
+            int len = SVALUE_STRLEN(sp);
+
+            if (len > LARGEST_PRINTABLE_STRING)
+                error("Printable strings limited to length of %d.\n",
+                      LARGEST_PRINTABLE_STRING);
+
+            add_message(current_object, sp->u.string, len);
+        }
+        free_string_svalue(sp--);
     }
 #ifndef NO_BUFFER_TYPE
     else {
-	if (current_object->interactive)
-	    add_message(current_object, (char *)sp->u.buf->item, sp->u.buf->size);
+        if (current_object->interactive)
+            add_message(current_object, (char *)sp->u.buf->item, sp->u.buf->size);
 
-	free_buffer((sp--)->u.buf);
+        free_buffer((sp--)->u.buf);
     }
 #endif
 }
@@ -2180,16 +2189,16 @@ f_reg_assoc (void) {
     array_t *vec;
 
     arg = sp - st_num_arg + 1;
-    
+
     if (!(arg[2].type == T_ARRAY))
-	error("Bad argument 3 to reg_assoc()\n");
-    
+        error("Bad argument 3 to reg_assoc()\n");
+
     vec = reg_assoc(arg[0].u.string, arg[1].u.arr, arg[2].u.arr, st_num_arg > 3 ? &arg[3] : &const0);
 
     if (st_num_arg == 4)
-	pop_3_elems();
+        pop_3_elems();
     else
-	pop_2_elems();
+        pop_2_elems();
     free_string_svalue(sp);
     sp->type = T_ARRAY;
     sp->u.arr = vec;
@@ -2205,20 +2214,20 @@ f_regexp (void)
 
     if (st_num_arg > 2) {
         if (!(sp->type == T_NUMBER)) error("Bad argument 3 to regexp()\n");
-	if (sp[-2].type == T_STRING) error("3rd argument illegal for regexp(string, string)\n"); 
-	flag = (sp--)->u.number;
+        if (sp[-2].type == T_STRING) error("3rd argument illegal for regexp(string, string)\n");
+        flag = (sp--)->u.number;
     } else flag = 0;
     if (sp[-1].type == T_STRING) {
-	flag = match_single_regexp((sp - 1)->u.string, sp->u.string);
-	free_string_svalue(sp--);
-	free_string_svalue(sp);
-	put_number(flag);
+        flag = match_single_regexp((sp - 1)->u.string, sp->u.string);
+        free_string_svalue(sp--);
+        free_string_svalue(sp);
+        put_number(flag);
     } else {
-	v = match_regexp((sp - 1)->u.arr, sp->u.string, flag);
+        v = match_regexp((sp - 1)->u.arr, sp->u.string, flag);
 
-	free_string_svalue(sp--);
-	free_array(sp->u.arr);
-	sp->u.arr = v;
+        free_string_svalue(sp--);
+        free_array(sp->u.arr);
+        sp->u.arr = v;
     }
 }
 #endif
@@ -2231,19 +2240,19 @@ f_remove_call_out (void)
 
     if (st_num_arg) {
 #ifdef CALLOUT_HANDLES
-	if (sp->type == T_STRING) {
+        if (sp->type == T_STRING) {
 #endif
-	    i = remove_call_out(current_object, sp->u.string);
-	    free_string_svalue(sp);
+            i = remove_call_out(current_object, sp->u.string);
+            free_string_svalue(sp);
 #ifdef CALLOUT_HANDLES
-	} else {
-	    i = remove_call_out_by_handle(sp->u.number);
-	}
+        } else {
+            i = remove_call_out_by_handle(sp->u.number);
+        }
 #endif
     } else {
-	remove_all_call_out(current_object);
-	i = 0;
-	STACK_INC;
+        remove_all_call_out(current_object);
+        i = 0;
+        STACK_INC;
     }
     put_number(i);
 }
@@ -2314,7 +2323,7 @@ void
 f_replace_string (void)
 {
     int plen, rlen, dlen, slen, first, last, cur, j;
-    
+
     char *pattern;
     char *replace;
     register char *src, *dst1, *dst2;
@@ -2325,7 +2334,7 @@ f_replace_string (void)
     char *climit;
     int probe;
     int skip;
-    
+
     if (st_num_arg > 5) {
         error("Too many args to replace_string.\n");
         pop_n_elems(st_num_arg);
@@ -2335,11 +2344,11 @@ f_replace_string (void)
     src = arg->u.string;
     first = 0;
     last = 0;
-    
+
     if (st_num_arg >= 4) {
         CHECK_TYPES((arg+3), T_NUMBER, 4, F_REPLACE_STRING);
         first = (arg+3)->u.number;
-	
+
         if (st_num_arg == 4) {
             last = first;
             first = 0;
@@ -2349,10 +2358,10 @@ f_replace_string (void)
             last = sp->u.number;
         }
     }
-        
+
     if (!last)
         last = max_string_length;
-    
+
     if (first > last) {         /* just return it */
         pop_n_elems(st_num_arg - 1);
         return;
@@ -2361,7 +2370,7 @@ f_replace_string (void)
     plen = SVALUE_STRLEN(arg+1);
     if (!plen) {
         pop_n_elems(st_num_arg - 1);    /* just return it */
-	
+
         return;
     }
     replace = (arg+2)->u.string;
@@ -2370,11 +2379,11 @@ f_replace_string (void)
     cur = 0;
 
     if (rlen <= plen) {
-	/* we're going to do in string replacement */
-	unlink_string_svalue(arg);
-	src = arg->u.string;
+        /* we're going to do in string replacement */
+        unlink_string_svalue(arg);
+        src = arg->u.string;
     }
-    
+
     if (plen > 1) {
         /* build skip table */
         for (j = 0; j < 256; j++) {
@@ -2388,11 +2397,11 @@ f_replace_string (void)
         flimit = slimit - plen + 1;
         probe = plen - 1;
     }
-    
+
     if (rlen <= plen) {
         /* in string replacement */
         dst2 = dst1 = arg->u.string;
-	
+
         if (plen > 1) { /* pattern length > 1, jump table most efficient */
             while (src < flimit) {
                 if ((skip = skip_table[(unsigned char)src[probe]])) {
@@ -2408,8 +2417,8 @@ f_replace_string (void)
                         src += plen;
                         if (cur == last) break;
                     } else {
-			memcpy(dst2, src, plen);
-			dst2 += plen;
+                        memcpy(dst2, src, plen);
+                        dst2 += plen;
                         src += plen;
                     }
                 } else {
@@ -2418,92 +2427,92 @@ f_replace_string (void)
             }
             memcpy(dst2, src, slimit - src);
             dst2 += (slimit - src);
-	    *dst2 = 0;
-	    arg->u.string = extend_string(dst1, dst2 - dst1);
+            *dst2 = 0;
+            arg->u.string = extend_string(dst1, dst2 - dst1);
         } else { /* pattern length <= 1, brute force most efficient */
-	    /* Beek - if it was zero, we already returned, so plen == 1 */
-	    /* assume source string is a string < maximum string length */
-	    if (rlen) {
-		while (*src) {
-		    if (*src == *pattern) {
-			cur++;
-		    
-			if (cur >= first && cur <= last) {
-			    *src = *replace;
-			}
-		    }
-		    src++;
-		}
-	    } else { /* rlen is zero */
-		while (*src) {
-		    if (*src++ == *pattern) {
-			cur++;
-			if (cur >= first) {
-			    dst2 = src - 1;
-			    while (*src) {
-				if (*src == *pattern) {
-				    cur++;
-				    if (cur <= last) {
-					src++;
-					continue;
-				    } else {
-					while (*src)
-					    *dst2++ = *src++;
-					break;
-				    }
-				}
-				*dst2++ = *src++;
-			    }
-			    *dst2 = 0;
-			    arg->u.string = extend_string(dst1, dst2 - dst1);
-			    break;
-			}
-		    }
-		}
-	    }
-	}
+            /* Beek - if it was zero, we already returned, so plen == 1 */
+            /* assume source string is a string < maximum string length */
+            if (rlen) {
+                while (*src) {
+                    if (*src == *pattern) {
+                        cur++;
+
+                        if (cur >= first && cur <= last) {
+                            *src = *replace;
+                        }
+                    }
+                    src++;
+                }
+            } else { /* rlen is zero */
+                while (*src) {
+                    if (*src++ == *pattern) {
+                        cur++;
+                        if (cur >= first) {
+                            dst2 = src - 1;
+                            while (*src) {
+                                if (*src == *pattern) {
+                                    cur++;
+                                    if (cur <= last) {
+                                        src++;
+                                        continue;
+                                    } else {
+                                        while (*src)
+                                            *dst2++ = *src++;
+                                        break;
+                                    }
+                                }
+                                *dst2++ = *src++;
+                            }
+                            *dst2 = 0;
+                            arg->u.string = extend_string(dst1, dst2 - dst1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         pop_n_elems(st_num_arg - 1);
     } else {
         dst2 = dst1 = new_string(max_string_length, "f_replace_string: 2");
-	
+
         if (plen > 1) {
             while (src < flimit) {
                 if ((skip = skip_table[(unsigned char)src[probe]])) {
                     for (climit = dst2 + skip; dst2 < climit; *dst2++ = *src++)
                         ;
-		    
+
                 } else if (memcmp(src, pattern, plen) == 0) {
                     cur++;
                     if ((cur >= first) && (cur <= last)) {
-			if (max_string_length - dlen <= rlen) {
-			    pop_n_elems(st_num_arg);
-			    push_svalue(&const0u);
-			    FREE_MSTR(dst1);
-			    return;
-			}
-			memcpy(dst2, replace, rlen);
-			dst2 += rlen;
-			dlen += rlen;
-			src += plen;
+                        if (max_string_length - dlen <= rlen) {
+                            pop_n_elems(st_num_arg);
+                            push_svalue(&const0u);
+                            FREE_MSTR(dst1);
+                            return;
+                        }
+                        memcpy(dst2, replace, rlen);
+                        dst2 += rlen;
+                        dlen += rlen;
+                        src += plen;
                         if (cur == last) break;
                     } else {
-			dlen += plen;
-			if (max_string_length - dlen <= 0) {
-			    pop_n_elems(st_num_arg);
-			    push_svalue(&const0u);
-			    
-			    FREE_MSTR(dst1);
-			    return;
-			}			    
-			memcpy(dst2, src, plen);
-			dst2 += plen;
+                        dlen += plen;
+                        if (max_string_length - dlen <= 0) {
+                            pop_n_elems(st_num_arg);
+                            push_svalue(&const0u);
+
+                            FREE_MSTR(dst1);
+                            return;
+                        }
+                        memcpy(dst2, src, plen);
+                        dst2 += plen;
                         src += plen;
                     }
                 } else {
                     if (max_string_length - dlen <= 1) {
                         pop_n_elems(st_num_arg);
                         push_svalue(&const0u);
-			
+
                         FREE_MSTR(dst1);
                         return;
                     }
@@ -2520,7 +2529,7 @@ f_replace_string (void)
             memcpy(dst2, src, slimit - src);
             dst2 += (slimit - src);
         } else { /* plen <= 1 */
-	    /* Beek: plen == 1 */
+            /* Beek: plen == 1 */
             while (*src != '\0') {
                 if (*src == *pattern) {
                     cur++;
@@ -2661,30 +2670,30 @@ f_say (void)
 {
     array_t *avoid;
     static array_t vtmp =
-    {1,
+    {   1,
 #ifdef DEBUG
-     1,
+        1,
 #endif
-     1,
+        1,
 #ifdef PACKAGE_MUDLIB_STATS
-     {(mudlib_stats_t *) NULL, (mudlib_stats_t *) NULL}
+        {(mudlib_stats_t *) NULL, (mudlib_stats_t *) NULL}
 #endif
     };
 
     if (st_num_arg == 1) {
-	avoid = &the_null_array;
-	say(sp, avoid);
-	pop_stack();
+        avoid = &the_null_array;
+        say(sp, avoid);
+        pop_stack();
     } else {
-	if (sp->type == T_OBJECT) {
-	    vtmp.item[0].type = T_OBJECT;
-	    vtmp.item[0].u.ob = sp->u.ob;
-	    avoid = &vtmp;
-	} else {		/* must be an array... */
-	    avoid = sp->u.arr;
-	}
-	say(sp - 1, avoid);
-	pop_2_elems();
+        if (sp->type == T_OBJECT) {
+            vtmp.item[0].type = T_OBJECT;
+            vtmp.item[0].u.ob = sp->u.ob;
+            avoid = &vtmp;
+        } else {		/* must be an array... */
+            avoid = sp->u.arr;
+        }
+        say(sp - 1, avoid);
+        pop_2_elems();
     }
 }
 #endif
@@ -2698,17 +2707,17 @@ f_set_eval_limit (void)
 {
     switch (sp->u.number) {
     case 0:
-	sp->u.number = eval_cost = max_cost;
-	break;
+        sp->u.number = eval_cost = max_cost;
+        break;
     case -1:
-	sp->u.number = eval_cost;
-	break;
+        sp->u.number = eval_cost;
+        break;
     case 1:
-	sp->u.number = max_cost;
-	break;
+        sp->u.number = max_cost;
+        break;
     default:
-	max_cost = sp->u.number;
-	break;
+        max_cost = sp->u.number;
+        break;
     }
 }
 #endif
@@ -2724,25 +2733,25 @@ f_set_bit (void)
         error("set_bit() bit requested: %d > maximum bits: %d\n", sp->u.number, MAX_BITS);
     bit = (sp--)->u.number;
     if (bit < 0)
-	error("Bad argument 2 (negative) to set_bit().\n");
+        error("Bad argument 2 (negative) to set_bit().\n");
     ind = bit/6;
     bit %= 6;
     old_len = len = SVALUE_STRLEN(sp);
     if (ind >= len)
         len = ind + 1;
     if (ind < old_len) {
-	unlink_string_svalue(sp);
-	str = sp->u.string;
+        unlink_string_svalue(sp);
+        str = sp->u.string;
     } else {
-	str = new_string(len, "f_set_bit: str");
-	str[len] = '\0';
-	if (old_len)
-	    memcpy(str, sp->u.string, old_len);
-	if (len > old_len)
-	    memset(str + old_len, ' ', len - old_len);
-	free_string_svalue(sp);
-	sp->subtype = STRING_MALLOC;
-	sp->u.string = str;
+        str = new_string(len, "f_set_bit: str");
+        str[len] = '\0';
+        if (old_len)
+            memcpy(str, sp->u.string, old_len);
+        if (len > old_len)
+            memset(str + old_len, ' ', len - old_len);
+        free_string_svalue(sp);
+        sp->subtype = STRING_MALLOC;
+        sp->u.string = str;
     }
 
     if (str[ind] > 0x3f + ' ' || str[ind] < ' ')
@@ -2764,7 +2773,7 @@ void
 f_query_heart_beat (void)
 {
     object_t *ob;
-    
+
     free_object(ob = sp->u.ob, "f_query_heart_beat");
     put_number(query_heart_beat(ob));
 }
@@ -2775,19 +2784,19 @@ void
 f_set_hide (void)
 {
     if (!valid_hide(current_object)) {
-	sp--;
-	return;
+        sp--;
+        return;
     }
     if ((sp--)->u.number) {
-	num_hidden++;
-	if (!(current_object->flags & O_HIDDEN) && current_object->interactive)
-	    num_hidden_users++;
-	current_object->flags |= O_HIDDEN;
+        num_hidden++;
+        if (!(current_object->flags & O_HIDDEN) && current_object->interactive)
+            num_hidden_users++;
+        current_object->flags |= O_HIDDEN;
     } else {
-	num_hidden--;
-	if ((current_object->flags & O_HIDDEN) && current_object->interactive)
-	    num_hidden_users--;
-	current_object->flags &= ~O_HIDDEN;
+        num_hidden--;
+        if ((current_object->flags & O_HIDDEN) && current_object->interactive)
+            num_hidden_users--;
+        current_object->flags &= ~O_HIDDEN;
     }
 }
 #endif
@@ -2802,7 +2811,7 @@ f_set_light (void)
     o1 = current_object;
 #ifndef NO_ENVIRONMENT
     while (o1->super)
-	o1 = o1->super;
+        o1 = o1->super;
 #endif
     sp->u.number = o1->total_light;
 }
@@ -2819,11 +2828,11 @@ f_set_privs (void)
         free_string(ob->privs);
     if (!(sp->type == T_STRING)) {
         ob->privs = NULL;
-	sp--; /* It's a number */
+        sp--; /* It's a number */
     } else {
         ob->privs = make_shared_string(sp->u.string);
-	free_string_svalue(sp--);
-    }	    
+        free_string_svalue(sp--);
+    }
     free_object(ob, "f_set_privs");
     sp--;
 }
@@ -2840,9 +2849,9 @@ f_shadow (void)
         ob = ob->shadowed;
         free_object(sp->u.ob, "f_shadow:1");
         if (ob) {
-	  add_ref(ob, "shadow(ob, 0)");
-	  sp->u.ob = ob;
-	}
+            add_ref(ob, "shadow(ob, 0)");
+            sp->u.ob = ob;
+        }
         else *sp = const0;
         return;
     }
@@ -2854,7 +2863,7 @@ f_shadow (void)
             free_object(ob, "f_shadow:2");
             *sp = const0;
             return;
-	}
+        }
         /*
          * The shadow is entered first in the chain.
          */
@@ -2863,7 +2872,7 @@ f_shadow (void)
         current_object->shadowing = ob;
         ob->shadowed = current_object;
         free_object(sp->u.ob, "f_shadow:3");
-	add_ref(ob, "shadow(ob, 1)");
+        add_ref(ob, "shadow(ob, 1)");
         sp->u.ob = ob;
         return;
     }
@@ -2886,10 +2895,10 @@ void
 f_shutdown (void)
 {
     if (st_num_arg) {
-	shutdownMudOS(sp->u.number);
+        shutdownMudOS(sp->u.number);
     } else {
-	shutdownMudOS(0);
-	push_number(0);
+        shutdownMudOS(0);
+        push_number(0);
     }
 }
 #endif
@@ -2902,30 +2911,30 @@ f_sizeof (void)
 
     switch (sp->type) {
     case T_CLASS:
-	i = sp->u.arr->size;
-	free_class(sp->u.arr);
-	break;
+        i = sp->u.arr->size;
+        free_class(sp->u.arr);
+        break;
     case T_ARRAY:
-	i = sp->u.arr->size;
-	free_array(sp->u.arr);
-	break;
+        i = sp->u.arr->size;
+        free_array(sp->u.arr);
+        break;
     case T_MAPPING:
-	i = sp->u.map->count;
-	free_mapping(sp->u.map);
-	break;
+        i = sp->u.map->count;
+        free_mapping(sp->u.map);
+        break;
 #ifndef NO_BUFFER_TYPE
     case T_BUFFER:
-	i = sp->u.buf->size;
-	free_buffer(sp->u.buf);
-	break;
+        i = sp->u.buf->size;
+        free_buffer(sp->u.buf);
+        break;
 #endif
     case T_STRING:
-	i = SVALUE_STRLEN(sp);
-	free_string_svalue(sp);
-	break;
+        i = SVALUE_STRLEN(sp);
+        free_string_svalue(sp);
+        break;
     default:
-	i = 0;
-	free_svalue(sp, "f_sizeof");
+        i = 0;
+        free_svalue(sp, "f_sizeof");
     }
     sp->type = T_NUMBER;
     sp->u.number = i;
@@ -2942,19 +2951,19 @@ f_snoop (void)
      */
     if (st_num_arg == 1) {
         if (!new_set_snoop(sp->u.ob, 0) || (sp->u.ob->flags & O_DESTRUCTED)) {
-	    free_object(sp->u.ob, "f_snoop:1");
-	    *sp = const0;
-	}
+            free_object(sp->u.ob, "f_snoop:1");
+            *sp = const0;
+        }
     } else {
-        if (!new_set_snoop((sp - 1)->u.ob, sp->u.ob) || 
-	    (sp->u.ob->flags & O_DESTRUCTED)) {
-	    free_object((sp--)->u.ob, "f_snoop:2");
-	    free_object(sp->u.ob, "f_snoop:3");
-	    *sp = const0;
-	} else {
-	    free_object((--sp)->u.ob, "f_snoop:4");
-	    sp->u.ob = (sp+1)->u.ob;
-	}
+        if (!new_set_snoop((sp - 1)->u.ob, sp->u.ob) ||
+                (sp->u.ob->flags & O_DESTRUCTED)) {
+            free_object((sp--)->u.ob, "f_snoop:2");
+            free_object(sp->u.ob, "f_snoop:3");
+            *sp = const0;
+        } else {
+            free_object((--sp)->u.ob, "f_snoop:4");
+            sp->u.ob = (sp+1)->u.ob;
+        }
     }
 }
 #endif
@@ -2973,11 +2982,11 @@ f_sprintf (void)
     STACK_INC;
     sp->type = T_STRING;
     if (!s) {
-	sp->subtype = STRING_CONSTANT;
-	sp->u.string = "";
+        sp->subtype = STRING_CONSTANT;
+        sp->u.string = "";
     } else {
-	sp->subtype = STRING_MALLOC;
-	sp->u.string = s;
+        sp->subtype = STRING_MALLOC;
+        sp->u.string = s;
     }
 }
 #endif
@@ -2990,7 +2999,7 @@ f_stat (void)
     char *path;
     array_t *v;
     object_t *ob;
-    
+
     path = check_valid_path((--sp)->u.string, current_object, "stat", 0);
     if (!path) {
         free_string_svalue(sp);
@@ -3015,11 +3024,13 @@ f_stat (void)
             free_string_svalue(sp);
             put_array(v);
             return;
-	}
+        }
     }
     v = get_dir(sp->u.string, (sp+1)->u.number);
     free_string_svalue(sp);
-    if (v) { put_array(v); }
+    if (v) {
+        put_array(v);
+    }
     else *sp = const0;
 }
 #endif
@@ -3046,12 +3057,12 @@ f_strsrch (void)
     if (sp->type == T_NUMBER) {
         little = buf;
         if ((buf[0] = (char) sp->u.number))
-	    llen = 1;
-	else
-	    llen = 0;
+            llen = 1;
+        else
+            llen = 0;
     } else {
         little = sp->u.string;
-	llen = SVALUE_STRLEN(sp);
+        llen = SVALUE_STRLEN(sp);
     }
 
     if (!llen || blen < llen) {
@@ -3075,16 +3086,16 @@ f_strsrch (void)
             do {
                 do {
                     if (*pos == c) break;
-		} while (--pos >= big);
+                } while (--pos >= big);
                 if (*pos != c) {
                     pos = NULL;
                     break;
-		}
+                }
                 for (i = 1; little[i] && (pos[i] == little[i]); i++);   /* scan all chars */
                 if (!little[i])
                     break;
-	    } while (--pos >= big);
-	}
+            } while (--pos >= big);
+        }
     }
 
     if (!pos)
@@ -3148,12 +3159,12 @@ f_swap (void)
 
     /* a few sanity checks */
     if (!(ob->flags & O_SWAPPED) && (ob != current_object)) {
-	for (p = csp; p >= control_stack; p--)
-	    if (ob == csp->ob) {
-		pop_stack();
-		return;
-	    }
-	(void) swap(sp->u.ob);
+        for (p = csp; p >= control_stack; p--)
+            if (ob == csp->ob) {
+                pop_stack();
+                return;
+            }
+        (void) swap(sp->u.ob);
     }
 
     pop_stack();
@@ -3176,20 +3187,20 @@ f_tell_room (void)
 {
     array_t *avoid;
     static array_t vtmp =
-    {1,
+    {   1,
 #ifdef DEBUG
-     1,
+        1,
 #endif
-     1,
+        1,
 #ifdef PACKAGE_MUDLIB_STATS
-     {(mudlib_stats_t *) NULL, (mudlib_stats_t *) NULL}
+        {(mudlib_stats_t *) NULL, (mudlib_stats_t *) NULL}
 #endif
     };
 
     int num_arg = st_num_arg;
     svalue_t *arg = sp - num_arg + 1;
     object_t *ob;
-    
+
     if (arg->type == T_OBJECT) {
         ob = arg[0].u.ob;
     } else {                    /* must be a string... */
@@ -3201,18 +3212,18 @@ f_tell_room (void)
     if (num_arg == 2) {
         avoid = &the_null_array;
     } else {
-	if (arg[2].type == T_OBJECT) {
-	    vtmp.item[0].type = T_OBJECT;
-	    vtmp.item[0].u.ob = arg[2].u.ob;
-	    avoid = &vtmp;
-	} else {
-	    avoid = arg[2].u.arr;
-	}
+        if (arg[2].type == T_OBJECT) {
+            vtmp.item[0].type = T_OBJECT;
+            vtmp.item[0].u.ob = arg[2].u.ob;
+            avoid = &vtmp;
+        } else {
+            avoid = arg[2].u.arr;
+        }
     }
 
     tell_room(ob, &arg[1], avoid);
     if (num_arg > 2 && arg[2].type != T_OBJECT)
-	free_array(avoid);
+        free_array(avoid);
     free_svalue(arg + 1, "f_tell_room");
     free_svalue(arg, "f_tell_room");
     sp = arg - 1;
@@ -3248,54 +3259,54 @@ f_next_bit (void)
     int start = (sp--)->u.number;
     int len = SVALUE_STRLEN(sp);
     int which, bit, value;
-    
+
     if (!len || start / 6 >= len) {
         free_string_svalue(sp);
-	put_number(-1);
+        put_number(-1);
         return;
     }
     /* Find the next bit AFTER start */
     if (start > 0) {
-	if (start % 6 == 5) {
-	    which = (start / 6) + 1;
-	    value = sp->u.string[which] - ' ';
-	} else {
-	    /* we have a partial byte to check */
-	    which = start / 6;
-	    bit = 0x3f - ((1 << ((start % 6) + 1)) - 1);
-	    value = (sp->u.string[which] - ' ') & bit;
-	}
+        if (start % 6 == 5) {
+            which = (start / 6) + 1;
+            value = sp->u.string[which] - ' ';
+        } else {
+            /* we have a partial byte to check */
+            which = start / 6;
+            bit = 0x3f - ((1 << ((start % 6) + 1)) - 1);
+            value = (sp->u.string[which] - ' ') & bit;
+        }
     } else {
-	which = 0;
-	value = *sp->u.string - ' ';
+        which = 0;
+        value = *sp->u.string - ' ';
     }
 
     while (1) {
-	if (value)  {
-	    if (value & 0x07) {
-		if (value & 0x01)
-		    bit = which * 6;
-		else if (value & 0x02)
-		    bit = which * 6 + 1;
-		else if (value & 0x04)
-		    bit = which * 6 + 2;
-		break;
-	    } else if (value & 0x38) {
-		if (value & 0x08)
-		    bit = which * 6 + 3;
-		else if (value & 0x10)
-		    bit = which * 6 + 4;
-		else if (value & 0x20)
-		    bit = which * 6 + 5;
-		break;
-	    }
-	}
-	which++;
-	if (which == len) {
-	    bit = -1;
-	    break;
-	}
-	value = sp->u.string[which] - ' ';
+        if (value)  {
+            if (value & 0x07) {
+                if (value & 0x01)
+                    bit = which * 6;
+                else if (value & 0x02)
+                    bit = which * 6 + 1;
+                else if (value & 0x04)
+                    bit = which * 6 + 2;
+                break;
+            } else if (value & 0x38) {
+                if (value & 0x08)
+                    bit = which * 6 + 3;
+                else if (value & 0x10)
+                    bit = which * 6 + 4;
+                else if (value & 0x20)
+                    bit = which * 6 + 5;
+                break;
+            }
+        }
+        which++;
+        if (which == len) {
+            bit = -1;
+            break;
+        }
+        value = sp->u.string[which] - ' ';
     }
 
     free_string_svalue(sp);
@@ -3316,13 +3327,13 @@ void
 f_this_player (void)
 {
     if (sp->u.number) {
-	if (current_interactive)
-	    put_unrefed_object(current_interactive, "this_player(1)");
-	else sp->u.number = 0;
+        if (current_interactive)
+            put_unrefed_object(current_interactive, "this_player(1)");
+        else sp->u.number = 0;
     } else {
-	if (command_giver)
-	    put_unrefed_object(command_giver, "this_player(0)");
-	/* else zero is on stack already */
+        if (command_giver)
+            put_unrefed_object(command_giver, "this_player(0)");
+        /* else zero is on stack already */
     }
 }
 #endif
@@ -3332,9 +3343,9 @@ void
 f_set_this_player (void)
 {
     if (sp->type == T_NUMBER)
-	set_command_giver(0);
+        set_command_giver(0);
     else
-	set_command_giver(sp->u.ob);
+        set_command_giver(sp->u.ob);
     pop_stack();
 }
 #endif
@@ -3364,15 +3375,15 @@ f__to_float (void)
     double temp = 0;
 
     switch(sp->type) {
-        case T_NUMBER:
-            sp->type = T_REAL;
-            sp->u.real = (double) sp->u.number;
-            break;
-        case T_STRING:
-            sscanf(sp->u.string, "%lf", &temp);
-            free_string_svalue(sp);
-            sp->type = T_REAL;
-            sp->u.real = temp;
+    case T_NUMBER:
+        sp->type = T_REAL;
+        sp->u.real = (double) sp->u.number;
+        break;
+    case T_STRING:
+        sscanf(sp->u.string, "%lf", &temp);
+        free_string_svalue(sp);
+        sp->type = T_REAL;
+        sp->u.real = temp;
     }
 }
 #endif
@@ -3382,58 +3393,58 @@ void
 f__to_int (void)
 {
     switch(sp->type) {
-        case T_REAL:
-            sp->type = T_NUMBER;
-            sp->u.number = (int) sp->u.real;
-            break;
-        case T_STRING:
-        {
-            int temp;
-	    char *p;
-	    
-            temp = strtol(sp->u.string, &p, 10);
-	    if (*p) {
-		/* have to be a little careful here.  Checkign if p ==
-		 * sp->u.string isn't good enough.
-		 * 
-		 * Odd cases:
-		 * to_int("  foo")  // p == sp->u.string + 2
-		 *
-		 * POSIX guarantees the strtol() works in terms of isspace(),
-		 * though.  If there is something other than whitespace, then
-		 * there was a valid character consistent with the base,
-		 * so we were successful.
-		 *
-		 * (note: this means to_int("10x") == 10.  If you want to
-		 *  detect trailing garbage, use sscanf(str, "%d%s", ...).
-		 */
-		while (p > sp->u.string && uisspace(*(p - 1)))
-		    p--;
+    case T_REAL:
+        sp->type = T_NUMBER;
+        sp->u.number = (int) sp->u.real;
+        break;
+    case T_STRING:
+    {
+        int temp;
+        char *p;
 
-		if (p == sp->u.string) {
-		    free_string_svalue(sp);
-		    *sp = const0u;
-		    break;
-		}
-	    }
-            free_string_svalue(sp);
-            sp->u.number = temp;
-            sp->type = T_NUMBER;
-            break;
-	}
+        temp = strtol(sp->u.string, &p, 10);
+        if (*p) {
+            /* have to be a little careful here.  Checkign if p ==
+             * sp->u.string isn't good enough.
+             *
+             * Odd cases:
+             * to_int("  foo")  // p == sp->u.string + 2
+             *
+             * POSIX guarantees the strtol() works in terms of isspace(),
+             * though.  If there is something other than whitespace, then
+             * there was a valid character consistent with the base,
+             * so we were successful.
+             *
+             * (note: this means to_int("10x") == 10.  If you want to
+             *  detect trailing garbage, use sscanf(str, "%d%s", ...).
+             */
+            while (p > sp->u.string && uisspace(*(p - 1)))
+                p--;
+
+            if (p == sp->u.string) {
+                free_string_svalue(sp);
+                *sp = const0u;
+                break;
+            }
+        }
+        free_string_svalue(sp);
+        sp->u.number = temp;
+        sp->type = T_NUMBER;
+        break;
+    }
 #ifndef NO_BUFFER_TYPE
-        case T_BUFFER:
-            if (sp->u.buf->size < sizeof(int)) {
-                free_buffer(sp->u.buf);
-                *sp = const0;
-	    } else {
-                int hostint, netint;
+    case T_BUFFER:
+        if (sp->u.buf->size < sizeof(int)) {
+            free_buffer(sp->u.buf);
+            *sp = const0;
+        } else {
+            int hostint, netint;
 
-                memcpy((char *) &netint, sp->u.buf->item, sizeof(int));
-                hostint = ntohl(netint);
-                free_buffer(sp->u.buf);
-                put_number(hostint);
-	    }
+            memcpy((char *) &netint, sp->u.buf->item, sizeof(int));
+            hostint = ntohl(netint);
+            free_buffer(sp->u.buf);
+            put_number(hostint);
+        }
 #endif
     }
 }
@@ -3456,7 +3467,7 @@ f_undefinedp (void)
 {
     if (sp->type == T_NUMBER) {
         if (!sp->u.number && (sp->subtype == T_UNDEFINED)) {
-	    *sp = const1;
+            *sp = const1;
         } else *sp = const0;
     } else {
         free_svalue(sp, "f_undefinedp");
@@ -3533,44 +3544,44 @@ f_write_bytes (void)
     int i;
 
     switch(sp->type) {
-        case T_NUMBER:
-        {
-            int netint;
-            char *netbuf;
+    case T_NUMBER:
+    {
+        int netint;
+        char *netbuf;
 
-            if (!sp->u.number) bad_arg(3, F_WRITE_BYTES);
-            netint = htonl(sp->u.number);       /* convert to network
-                                                 * byte-order */
-            netbuf = (char *) &netint;
-            i = write_bytes((sp - 2)->u.string, (sp - 1)->u.number, netbuf,
-                            sizeof(int));
-            break;
-	}
+        if (!sp->u.number) bad_arg(3, F_WRITE_BYTES);
+        netint = htonl(sp->u.number);       /* convert to network
+                                             * byte-order */
+        netbuf = (char *) &netint;
+        i = write_bytes((sp - 2)->u.string, (sp - 1)->u.number, netbuf,
+                        sizeof(int));
+        break;
+    }
 
 #ifndef NO_BUFFER_TYPE
-        case T_BUFFER:
-        {
-            i = write_bytes((sp - 2)->u.string, (sp - 1)->u.number,
-                            (char *) sp->u.buf->item, sp->u.buf->size);
-            break;
-	}
+    case T_BUFFER:
+    {
+        i = write_bytes((sp - 2)->u.string, (sp - 1)->u.number,
+                        (char *) sp->u.buf->item, sp->u.buf->size);
+        break;
+    }
 #endif
 
-        case T_STRING:
-        {
-            i = write_bytes((sp - 2)->u.string, (sp - 1)->u.number,
-                            sp->u.string, SVALUE_STRLEN(sp));
-            break;
-	}
+    case T_STRING:
+    {
+        i = write_bytes((sp - 2)->u.string, (sp - 1)->u.number,
+                        sp->u.string, SVALUE_STRLEN(sp));
+        break;
+    }
 
-        default:
-        {
+    default:
+    {
 #ifdef NO_BUFFER_TYPE
-            bad_argument(sp, T_STRING | T_NUMBER, 3, F_WRITE_BYTES);
+        bad_argument(sp, T_STRING | T_NUMBER, 3, F_WRITE_BYTES);
 #else
-            bad_argument(sp, T_BUFFER | T_STRING | T_NUMBER, 3, F_WRITE_BYTES);
+        bad_argument(sp, T_BUFFER | T_STRING | T_NUMBER, 3, F_WRITE_BYTES);
 #endif
-	}
+    }
     }
     free_svalue(sp--, "f_write_bytes");
     free_string_svalue(--sp);
@@ -3590,37 +3601,37 @@ f_write_buffer (void)
     }
 
     switch(sp->type) {
-        case T_NUMBER:
-        {
-            int netint;
-            char *netbuf;
+    case T_NUMBER:
+    {
+        int netint;
+        char *netbuf;
 
-            netint = htonl(sp->u.number);       /* convert to network
-                                                 * byte-order */
-            netbuf = (char *) &netint;
-            i = write_buffer((sp - 2)->u.buf, (sp - 1)->u.number, netbuf,
-                            sizeof(int));
-            break;
-	}
+        netint = htonl(sp->u.number);       /* convert to network
+                                             * byte-order */
+        netbuf = (char *) &netint;
+        i = write_buffer((sp - 2)->u.buf, (sp - 1)->u.number, netbuf,
+                         sizeof(int));
+        break;
+    }
 
-        case T_BUFFER:
-        {
-            i = write_buffer((sp - 2)->u.buf, (sp - 1)->u.number,
-                            (char *) sp->u.buf->item, sp->u.buf->size);
-            break;
-	}
+    case T_BUFFER:
+    {
+        i = write_buffer((sp - 2)->u.buf, (sp - 1)->u.number,
+                         (char *) sp->u.buf->item, sp->u.buf->size);
+        break;
+    }
 
-        case T_STRING:
-        {
-            i = write_buffer((sp - 2)->u.buf, (sp - 1)->u.number,
-                            sp->u.string, SVALUE_STRLEN(sp));
-            break;
-	}
+    case T_STRING:
+    {
+        i = write_buffer((sp - 2)->u.buf, (sp - 1)->u.number,
+                         sp->u.string, SVALUE_STRLEN(sp));
+        break;
+    }
 
-        default:
-        {
-            bad_argument(sp, T_BUFFER | T_STRING | T_NUMBER, 3, F_WRITE_BUFFER);
-	}
+    default:
+    {
+        bad_argument(sp, T_BUFFER | T_STRING | T_NUMBER, 3, F_WRITE_BUFFER);
+    }
     }
     free_svalue(sp--, "f_write_buffer");
     free_svalue(--sp, "f_write_buffer");
@@ -3669,35 +3680,35 @@ f_memory_info (void)
 {
     int mem, swapped;
     object_t *ob;
-    
-    if (st_num_arg == 0) {
-	int res, tot;
 
-	if (reserved_area)
-	    res = RESERVED_SIZE;
-	else
-	    res = 0;
-	tot = total_prog_block_size +
+    if (st_num_arg == 0) {
+        int res, tot;
+
+        if (reserved_area)
+            res = RESERVED_SIZE;
+        else
+            res = 0;
+        tot = total_prog_block_size +
 #ifdef ARRAY_STATS
-	    total_array_size +
+              total_array_size +
 #endif
-	    total_mapping_size +
-	    tot_alloc_object_size +
-	    tot_alloc_sentence * sizeof(sentence_t) +
-	    num_user * sizeof(interactive_t) +
-	    show_otable_status(0, -1) +
-	    heart_beat_status(0, -1) +
-	    add_string_status(0, -1) +
-	    print_call_out_usage(0, -1) + res;
-	push_number(tot);
-	return;
+              total_mapping_size +
+              tot_alloc_object_size +
+              tot_alloc_sentence * sizeof(sentence_t) +
+              num_user * sizeof(interactive_t) +
+              show_otable_status(0, -1) +
+              heart_beat_status(0, -1) +
+              add_string_status(0, -1) +
+              print_call_out_usage(0, -1) + res;
+        push_number(tot);
+        return;
     }
     if (sp->type != T_OBJECT)
-	bad_argument(sp, T_OBJECT, 1, F_MEMORY_INFO);
+        bad_argument(sp, T_OBJECT, 1, F_MEMORY_INFO);
     ob = sp->u.ob;
     /* if swapped, reload it temporarily to get info and then swap it back out */
     if ((swapped = (ob->flags & O_SWAPPED)) == O_SWAPPED)
-	load_ob_from_swap(ob);
+        load_ob_from_swap(ob);
     /* as documented, object memory usage is not additive due to sharing of
        structures, so always include the program's total size even if this
        object is a clone or the program has more than one reference to it.
@@ -3705,7 +3716,7 @@ f_memory_info (void)
        included or not to be more accurate -- Marius, 30-Jul-2000 */
     mem = ob->prog->total_size;
     if (swapped == O_SWAPPED)
-	swap(ob);
+        swap(ob);
     mem += (data_size(ob) + sizeof(object_t));
     free_object(ob, "f_memory_info");
     put_number(mem);
@@ -3726,7 +3737,7 @@ void
 f_query_shadowing (void)
 {
     object_t *ob;
-    
+
     if ((sp->type == T_OBJECT) && (ob = sp->u.ob)->shadowing) {
         add_ref(ob->shadowing, "query_shadowing(ob)");
         sp->u.ob = ob->shadowing;
@@ -3748,7 +3759,7 @@ f_set_reset (void)
         sp--;
     } else {
         sp->u.ob->next_reset = current_time + TIME_TO_RESET / 2 +
-            random_number(TIME_TO_RESET / 2);
+                               random_number(TIME_TO_RESET / 2);
         free_object((sp--)->u.ob, "f_set_reset:2");
     }
 }
@@ -3773,16 +3784,16 @@ f_floatp (void)
 void
 f_flush_messages (void) {
     if (st_num_arg == 1) {
-	if (sp->u.ob->interactive)
-	    flush_message(sp->u.ob->interactive);
-	pop_stack();
+        if (sp->u.ob->interactive)
+            flush_message(sp->u.ob->interactive);
+        pop_stack();
     } else {
-	int i;
-	
-	for (i = 0; i < max_users; i++) {
-	    if (all_users[i] && !(all_users[i]->iflags & CLOSING))
-		flush_message(all_users[i]);
-	}
+        int i;
+
+        for (i = 0; i < max_users; i++) {
+            if (all_users[i] && !(all_users[i]->iflags & CLOSING))
+                flush_message(all_users[i]);
+        }
     }
 }
 #endif
@@ -3792,10 +3803,12 @@ void
 f_first_inventory (void)
 {
     object_t *ob;
-    
+
     ob = first_inventory(sp);
     free_svalue(sp, "f_first_inventory");
-    if (ob) { put_unrefed_undested_object(ob, "first_inventory"); }
+    if (ob) {
+        put_unrefed_undested_object(ob, "first_inventory");
+    }
     else *sp = const0;
 }
 #endif
@@ -3805,19 +3818,19 @@ void
 f_next_inventory (void)
 {
     object_t *ob;
-    
+
     ob = sp->u.ob->next_inv;
     free_object(sp->u.ob, "f_next_inventory");
 
 #ifdef F_SET_HIDE
     while (ob && (ob->flags & O_HIDDEN) && !object_visible(ob))
-	ob = ob->next_inv;
+        ob = ob->next_inv;
 #endif
 
     if (ob) {
-	add_ref(ob, "next_inventory(ob) : 1");
-	sp->u.ob = ob;
+        add_ref(ob, "next_inventory(ob) : 1");
+        sp->u.ob = ob;
     } else
-	*sp = const0;
+        *sp = const0;
 }
 #endif

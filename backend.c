@@ -139,7 +139,7 @@ void backend()
             slow_shut_down(tmp);			/* 做一些处理再关机 */
         }
         /*
-         * select 设置，必须定期设置
+         * select 设置，每次循环都要重新设置
          */
         make_selectmasks();
         if (heart_beat_flag) {

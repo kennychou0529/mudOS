@@ -584,7 +584,11 @@
  * if PACKAGE_XYZZY is defined here, then the code in packages/xyzzy.c      *
  * and the efuns in packages/xyzzy_spec.c will be added to the driver.      *
  ****************************************************************************/
-
+/*
+ 定义：package的格式是，在 /packages/ 目录下有两个文件，分别是xxx.c和xxx_spec.c。
+ 其中xxx是定义文件名（或者称为包名）。
+ 使用：如果决定要使用此包，就在这里以大写的文件名定义即可，编译的时候会自动包含进去。 
+*/
 /* various miscellaneous efuns */
 #define PACKAGE_CONTRIB
 
